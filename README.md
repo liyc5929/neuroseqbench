@@ -18,6 +18,13 @@ torchaudio               2.2.0+cu121
 torchvision              0.17.0+cu121
 ```
 
+```
+python train_ptb.py --nlayers 2 --dataset PTB --data-path ./datasource/ --epochs 100 --batch-size 20 --time-step 70 --emb-dim 400 --hidden-dim 1100 --name PTB_LIF
+python train_ptb.py --nlayers 2 --dataset PTB --data-path ./datasource/ --epochs 100 --batch-size 20 --time-step 70 --emb-dim 400 --hidden-dim 1100 --recurrent --name PTB_RLIF
+
+python train_psmnist.py --dataset psmnist --batch-size 256 --lr 5e-3 --decay 1 --alpha 1 --step-lr --optim adam --time-step 784 --amp --name PSMNIST_LIF
+python train_psmnist.py --dataset psmnist --batch-size 256 --lr 3e-3 --decay 0.5 --alpha 0.6 --threshold 0.5 --time-step 784 --step-lr --optim adam --recurrent --amp  --name PSMNIST_RLIF
+```
 
 
 The file structure of the repository is outlined below. The `network` and `utils` components serve as the primary interfaces for contributors wishing to add their own features:
