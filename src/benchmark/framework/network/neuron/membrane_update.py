@@ -22,10 +22,10 @@ def _no_temporal_dimention_update(x, *_, **__):
 __func_name__ = {
     "STBP_hard": _spatio_temporal_backpropagation_based_hard_update,
     "STBP_soft": _spatio_temporal_backpropagation_based_soft_update,
-    "SDBP_soft": _spatio_domain_backpropagation_based_hard_update,
-    "SDBP_hard": _spatio_domain_backpropagation_based_soft_update,
-    "noTD_soft": _no_temporal_dimention_update,
+    "SDBP_hard": _spatio_domain_backpropagation_based_hard_update,
+    "SDBP_soft": _spatio_domain_backpropagation_based_soft_update,
     "noTD_hard": _no_temporal_dimention_update,
+    "noTD_soft": _no_temporal_dimention_update,
 }
 
 
