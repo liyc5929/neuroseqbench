@@ -41,9 +41,9 @@ The file structure of the repository is outlined below. The `network` and `utils
 │   │   ├── accelerationkernel.pyd
 │   ├── network/
 │   │   ├── __init__.py
-│   │   ├── architecture
-│   │   ├── neuron
-│   │   ├── synapse
+│   │   ├── ann_layers
+│   │   ├── snn_layers
+│   │   ├── structure
 │   │   └── trainer
 │   ├── utils/
 │   │   ├── __init__.py
@@ -61,12 +61,12 @@ The file structure of the repository is outlined below. The `network` and `utils
 
 The table below lists several components along with their instances. These examples illustrate the roles these components play within the `framework`.
 
-| Components      |                  Description / Instances                   |
-| --------------- | :--------------------------------------------------------: |
-| network/neuron  |                LIF, ALIF, PLIF, GLIF, etc.                 |
-| network/synapse |                    Normalization Layers                    |
-| network/trainer |    Surrogate Gradient Functions, STBP, SLTT, OTTT, etc.    |
-| utils/dataset   | Penn Treebank, Permuted Sequential MNIST, DvsGesture, etc. |
+| Components         |                  Description / Instances                   |
+| ------------------ | :--------------------------------------------------------: |
+| network/ann_layers |                    Normalization Layers                    |
+| network/snn_layers |                LIF, ALIF, PLIF, GLIF, etc.                 |
+| network/trainer    |    Surrogate Gradient Functions, STBP, SLTT, OTTT, etc.    |
+| utils/dataset      | Penn Treebank, Permuted Sequential MNIST, DvsGesture, etc. |
 
 
 
