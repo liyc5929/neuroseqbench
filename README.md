@@ -41,14 +41,14 @@ The file structure of the repository is outlined below. The `network` and `utils
 │   │   ├── accelerationkernel.pyd
 │   ├── network/
 │   │   ├── __init__.py
-│   │   ├── ann_layers
-│   │   ├── snn_layers
+│   │   ├── ann_layer
+│   │   ├── snn_layer
 │   │   ├── structure
 │   │   └── trainer
 │   ├── utils/
 │   │   ├── __init__.py
-│   │   ├── dataset
 │   │   ├── criterion
+│   │   ├── dataset
 ├── configs/
 │   ├── __init__.py
 │   ├── benchmark_config1.toml
