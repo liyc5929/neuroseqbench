@@ -155,3 +155,43 @@ class LIF(BaseNeuron):
     def _temporal_fused_process(self, tx):
         if not self.recurrent:
             return FusedLIF.apply(tx, self.rest, self.decay, self.threshold, self.time_step, self.surro_grad, self.training)
+
+
+class NonSpikingLIF(BaseNeuron):
+    """
+        $$ 
+        v_i^{(t)} = k_{\tau} \cdot v_i^{(t-1)} \cdot (1 - y_i^{(t-1)}) + V_\text{rest} \cdot y_i^{(t-1)} + x_i^{(t)} \\
+        y_i^{(t)} = v_i^{(t)}
+        $$
+    """
+
+    def __init__(
+            self,
+            rest: float = 0.0,
+            decay: float = 0.2,
+            time_step: int = None,
+            exec_mode: str = "serial"
+    ):
+        super(NonSpikingLIF, self).__init__(exec_mode=exec_mode)
+        self.rest = rest
+        self.decay = decay
+        self.time_step = time_step
+
+    def __repr__(self):
+        return (
+            f"{self.__class__.__name__}("
+            f"rest={self.rest}, "
+            f"decay={self.decay}, "
+            f"time_step={self.time_step}, "
+            f"execution_mode=\"{self.exec_mode}\""
+            f")"
+        )
+
+    def _serial_process(self, tx, v=None):
+        ty = []
+        y = torch.zeros_like(tx[0])
+        v = torch.ones_like(tx[0]) * self.rest
+        for x in tx:
+            v = self.decay * v * (1.0 - y) + self.rest * y + x
+            ty.append(v)
+        return torch.stack(ty)
