@@ -1,3 +1,5 @@
+from .penn_treebank import PennTreebank
+
 import torchvision
 from torchvision.transforms import transforms
 import numpy as np

@@ -79,7 +79,7 @@ def main():
 
     is_cuda = torch.cuda.is_available()
     assert is_cuda, "CPU is not supported!"
-    device = torch.device("cuda")
+    device = torch.device("cuda:1")
     set_random_seed(seed=args.seed)
     torch.backends.cudnn.benchmark = False
     args.gpu = "cuda"
@@ -89,7 +89,14 @@ def main():
 
     logging.info("args:" + str(args))
 
-    train_dataset, val_dataset, test_dataset, vocab_size = build_lm_dataloader(dataset=args.dataset, data_path=args.data_path, train_batch_size=args.batch_size)
+    # train_dataset, val_dataset, test_dataset, vocab_size = build_lm_dataloader(dataset=args.dataset, data_path=args.data_path, train_batch_size=args.batch_size)
+    from src.benchmark.framework.utils.dataset import PennTreebank
+    T = args.time_step
+    B = args.batch_size
+    train_dataset = PennTreebank(root="/benchmark_data/PennTreebank", subset="train", time_step=T, chunk_num=B, device=device)
+    val_dataset   = PennTreebank(root="/benchmark_data/PennTreebank", subset="valid", time_step=T, chunk_num=10, device=device)
+    test_dataset  = PennTreebank(root="/benchmark_data/PennTreebank", subset="test",  time_step=T, chunk_num=1, device=device)
+    vocab_size = 10000
     logging.info(f"Dataset {args.dataset} has {vocab_size} tokens")
 
     if args.neuron == "lif":
@@ -191,7 +198,8 @@ def train_one_epoch(train_loader, model, criterion, optimizer, epoch, scaler, nt
     data_time = AverageMeter("Data", ":6.3f")
     losses = AverageMeter("Loss", ":.4e")
     seq_length = args.time_step
-    num_batches = (train_loader.size(0) - 1) // seq_length
+    # num_batches = (train_loader.size(0) - 1) // seq_length
+    num_batches = len(train_loader)
 
     progress = ProgressMeter(
         num_batches,
@@ -205,8 +213,9 @@ def train_one_epoch(train_loader, model, criterion, optimizer, epoch, scaler, nt
 
     hidden = model.init_hidden(args.batch_size)
 
-    for batch_index, i in enumerate(range(0, train_loader.size(0) - 1, seq_length)):
-        data, targets = get_batch(train_loader, i, seq_len=seq_length, batch_first=False)
+    # for batch_index, i in enumerate(range(0, train_loader.size(0) - 1, seq_length)):
+    #     data, targets = get_batch(train_loader, i, seq_len=seq_length, batch_first=False)
+    for batch_index, (data, targets) in enumerate(train_loader): 
         # Measure data loading time
         data_time.update(time.time() - end)
         data = data.cuda(args.gpu, non_blocking=True)
@@ -239,13 +248,14 @@ def validate_one_epoch(val_loader, model, criterion, ntokens, eval_batch_size, a
     # switch to evaluate mode
     model.eval()
     seq_length = args.time_step
-    iter_range = range(0, val_loader.size(0) - 1, seq_length)
+    # iter_range = range(0, val_loader.size(0) - 1, seq_length)
     with torch.no_grad():
         # initialize hidden states
         hidden = model.init_hidden(eval_batch_size)
         # iterate evaluation data
-        for num_iter, index in enumerate(iter_range):
-            data, targets = get_batch(val_loader, index, seq_len=seq_length, batch_first=False)
+        # for num_iter, index in enumerate(iter_range):
+        #     data, targets = get_batch(val_loader, index, seq_len=seq_length, batch_first=False)
+        for _, (data, targets) in enumerate(val_loader): 
             data = data.cuda(args.gpu, non_blocking=True)
             targets = targets.cuda(args.gpu, non_blocking=True)
 
