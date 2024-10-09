@@ -119,7 +119,7 @@ class PTB_SNNDelay(Module):
             Dcls1d(self.input_size, self.hidden_size, kernel_count=1, groups=1, dilated_kernel_size=self.max_delay, bias=False, version="gauss"),
             Permute(2, 0, 1),
             # Calculate neurons
-            ANNSequential(BatchNorm1d(self.hidden_size, eps=1e-05, momentum=0.1, affine=True, track_running_stats=False),),
+            ANNSequential(BatchNorm1d(self.hidden_size, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),),
             self.spiking_neuron,
 
             # Calculate delays
@@ -128,7 +128,7 @@ class PTB_SNNDelay(Module):
             Dcls1d(self.hidden_size, self.hidden_size, kernel_count=1, groups=1, dilated_kernel_size=self.max_delay, bias=False, version="gauss"),
             Permute(2, 0, 1),
             # Calculate neurons
-            ANNSequential(BatchNorm1d(self.hidden_size, eps=1e-05, momentum=0.1, affine=True, track_running_stats=False),),
+            ANNSequential(BatchNorm1d(self.hidden_size, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),),
             self.spiking_neuron,
 
             # Calculate delays
@@ -185,10 +185,15 @@ def main():
 
     is_cuda = torch.cuda.is_available()
     assert is_cuda, "CPU is not supported!"
-    device = torch.device("cuda:3")
-    set_random_seed(seed=args.seed)
-    torch.backends.cudnn.benchmark = False
-    args.gpu = "cuda:3"
+    device = torch.device("cuda:4")
+    # set_random_seed(seed=args.seed)
+    # torch.backends.cudnn.benchmark = False
+    args.gpu = "cuda:4"
+    # Set Random Seeds
+    torch.manual_seed(args.seed)
+    torch.cuda.manual_seed_all(args.seed)
+    torch.backends.cudnn.benchmark     = False
+    torch.backends.cudnn.deterministic = True
 
     with open(save_path + "/args.json", "w") as fid:
         json.dump(args.__dict__, fid, indent=2)
