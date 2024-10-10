@@ -68,8 +68,8 @@ The table below lists several components along with their instances. These examp
 
 | Components         |                  Description / Instances                   |
 | ------------------ | :--------------------------------------------------------: |
-| network/ann_layers |                    Normalization Layers                    |
-| network/snn_layers |                LIF, ALIF, PLIF, GLIF, etc.                 |
+| network/ann_layer  |                    Normalization Layers                    |
+| network/snn_layer  |                LIF, ALIF, PLIF, GLIF, etc.                 |
 | network/trainer    |    Surrogate Gradient Functions, STBP, SLTT, OTTT, etc.    |
 | utils/dataset      | Penn Treebank, Permuted Sequential MNIST, DvsGesture, etc. |
 
