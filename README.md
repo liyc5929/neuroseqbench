@@ -54,13 +54,13 @@ The file structure of the repository is outlined below. The `network` and `utils
     │   ├── configs/
     │   │   ├── config1.toml
     │   │   └── config2.toml
-    │   ├── experiment1.py
+    │   ├── main.py
     │   └── logs
     └── experiment2/
         ├── configs/
         │   ├── config1.toml
         │   └── config2.toml
-        ├── experiment2.py
+        ├── main.py
         └── logs
 ```
 
