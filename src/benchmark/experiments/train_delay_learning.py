@@ -11,8 +11,8 @@ from datetime import datetime
 from src.benchmark.framework.utils.tools import set_random_seed, setup_logging, save_checkpoint, AverageMeter, ProgressMeter
 from src.benchmark.framework.utils.dataset import build_lm_dataloader, get_batch
 from src.benchmark.framework.network.trainer import SurrogateGradient
-from src.benchmark.framework.network.neuron import LIF
-from src.benchmark.framework.network.architecture import LMSNN
+from src.benchmark.framework.network.snn_layer import LIF
+from src.benchmark.framework.network.structure import LMSNN
 
 parser = argparse.ArgumentParser()
 
@@ -65,8 +65,8 @@ parser.add_argument("--recurrent", action="store_true", default=False, help="")
 
 from torch.nn import Module, Sequential, Embedding, ConstantPad1d, BatchNorm1d
 from DCLS.construct.modules import Dcls1d
-from src.benchmark.framework.network.neuron import LIF, NonSpikingLIF
-from src.benchmark.framework.network.architecture import Permute, ANNSequential
+from src.benchmark.framework.network.snn_layer import LIF, NonSpikingLIF
+from src.benchmark.framework.network.structure import Permute, ANNSequential
 
 class PTB_SNNDelay(Module):
     def __init__(self, 

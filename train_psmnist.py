@@ -11,8 +11,8 @@ from torch.cuda import amp
 from src.benchmark.framework.utils.tools import set_random_seed, setup_logging, save_checkpoint, AverageMeter, ProgressMeter, accuracy, count_parameters
 from src.benchmark.framework.utils.dataset import build_dataset
 from src.benchmark.framework.network.trainer import SurrogateGradient
-from src.benchmark.framework.network.neuron import LIF
-from src.benchmark.framework.network.architecture import SpikingNet
+from src.benchmark.framework.network.snn_layer import LIF
+from src.benchmark.framework.network.structure import SpikingNet
 
 parser = argparse.ArgumentParser()
 # datasets

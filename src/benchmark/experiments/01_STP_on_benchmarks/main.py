@@ -16,8 +16,8 @@ current_directory = os.getcwd()
 if current_directory not in sys.path:
     sys.path.append(current_directory) 
 
-from src.benchmark.framework.network.neuron import LIF
-from src.benchmark.framework.network.architecture import MergeDimension, SplitDimension, Permute
+from src.benchmark.framework.network.snn_layer import LIF
+from src.benchmark.framework.network.structure import MergeDimension, SplitDimension, Permute
 from src.benchmark.framework.network.trainer import SurrogateGradient
 from src.benchmark.framework.utils.dataset import (
     SMNIST, GoogleSpeechCommands, SpikingHeidelbergDigits, SpikingSpeechCommands, TIMIT

@@ -11,8 +11,8 @@ from datetime import datetime
 from src.benchmark.framework.utils.tools import set_random_seed, setup_logging, save_checkpoint, AverageMeter, ProgressMeter
 from src.benchmark.framework.utils.dataset import build_lm_dataloader, get_batch
 from src.benchmark.framework.network.trainer import SurrogateGradient
-from src.benchmark.framework.network.neuron import LIF
-from src.benchmark.framework.network.architecture import LMSNN
+from src.benchmark.framework.network.snn_layer import LIF
+from src.benchmark.framework.network.structure import LMSNN
 
 parser = argparse.ArgumentParser()
 
