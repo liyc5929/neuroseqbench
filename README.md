@@ -26,14 +26,16 @@ python train_psmnist.py --dataset psmnist --batch-size 256 --lr 5e-3 --decay 1 -
 python train_psmnist.py --dataset psmnist --batch-size 256 --lr 3e-3 --decay 0.5 --alpha 0.6 --threshold 0.5 --time-step 784 --step-lr --optim adam --recurrent --amp  --name PSMNIST_RLIF
 ```
 
+Examples:
+```
+python runner.py --experiment 01_STP_on_benchmarks --config SHD_STBP.toml --data_root <path_to_dataset> --device 0
+```
+
 
 The file structure of the repository is outlined below. The `network` and `utils` components serve as the primary interfaces for contributors wishing to add their own features:
 
 ```
 /src/benchmark/
-├── README.md
-├── requirements.txt
-├── runner.py
 ├── framework/
 │   ├── kernel/
 │   │   ├── accelerationkernel.so

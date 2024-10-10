@@ -1,0 +1,16 @@
+seed = 42
+task = "SHD"
+max_epoch = 200
+time_step = 250
+batch_size = 256
+learning_rate = 5e-4
+weight_decay = 0
+arch = "MLP2"
+mlp_hidden = 128
+
+neuron_decay = 0.9
+neuron_thresh = 0.5
+neuron_surrogate = "rectangle"
+neuron_surro_hyperparam = 1.0
+neuron_reset_mode = "soft"
+neuron_prop_mode = "STBP"

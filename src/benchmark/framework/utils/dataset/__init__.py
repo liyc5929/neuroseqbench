@@ -1,4 +1,9 @@
 from .penn_treebank import PennTreebank
+from .sequential_mnist import SMNIST
+from .google_speech_commands import GoogleSpeechCommands
+from .spiking_heidelberg_digits import SpikingHeidelbergDigits
+from .spiking_speech_commands import SpikingSpeechCommands
+from .timit import TIMIT
 
 import torchvision
 from torchvision.transforms import transforms
