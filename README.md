@@ -33,30 +33,33 @@ The file structure of the repository is outlined below. The `network` and `utils
 /src/benchmark/
 ├── README.md
 ├── requirements.txt
-├── __init__.py
+├── runner.py
 ├── framework/
 │   ├── kernel/
-│   │   ├── __init__.py
 │   │   ├── accelerationkernel.so
-│   │   ├── accelerationkernel.pyd
+│   │   └── accelerationkernel.pyd
 │   ├── network/
 │   │   ├── __init__.py
 │   │   ├── ann_layer
 │   │   ├── snn_layer
 │   │   ├── structure
 │   │   └── trainer
-│   ├── utils/
-│   │   ├── __init__.py
-│   │   ├── criterion
-│   │   ├── dataset
-├── configs/
-│   ├── __init__.py
-│   ├── benchmark_config1.toml
-│   └── benchmark_config2.toml
+│   └── utils/
+│       ├── criterion
+│       └── dataset
 └── experiments/
-    ├── __init__.py
-    ├── experiment1.py
-    └── experiment2.py
+    ├── experiment1/
+    │   ├── configs/
+    │   │   ├── config1.toml
+    │   │   └── config2.toml
+    │   ├── experiment1.py
+    │   └── logs
+    └── experiment2/
+        ├── configs/
+        │   ├── config1.toml
+        │   └── config2.toml
+        ├── experiment2.py
+        └── logs
 ```
 
 The table below lists several components along with their instances. These examples illustrate the roles these components play within the `framework`.
