@@ -1,7 +1,5 @@
 import torch
 import torch.nn as nn
-import numpy as np
-import math
 
 
 class MutiStepNoisyRateScheduler:
@@ -25,29 +23,6 @@ class MutiStepNoisyRateScheduler:
                 print('change noise rate as ' + str(self.p))
                 self.set_noisy_rate(self.p, model)
                 break
-
-def get_temperatures(net):
-    temperatures = []
-    for m in net.modules():
-        if isinstance(m, EfficientNoisySpike):
-            temperatures.append(m.inv_sg.get_temperature())
-    temperatures = torch.cat(temperatures).cpu()
-    return temperatures
-
-
-class InvSigmoid(nn.Module):
-    def __init__(self, alpha: float = 1.0, learnable=False):
-        super(InvSigmoid, self).__init__()
-        self.learnable = learnable
-        self.alpha = alpha
-
-    def get_temperature(self):
-        return self.alpha.detach().clone()
-
-    def forward(self, x):
-        if self.learnable and not isinstance(self.alpha, nn.Parameter):
-            self.alpha = nn.Parameter(torch.Tensor([self.alpha]).to(x.device))
-        return torch.sigmoid((1/self.alpha) * x) # in original setting, a= 1/alpha.
 
 
 class InvRectangle(nn.Module):

@@ -8,12 +8,11 @@ class SpikingNet(Module):
         output_size,
         spiking_neuron,
         num_hidden_layers = 1,
-        args = None
+        dataset = None,
     ):
         super(SpikingNet, self).__init__()
 
         self.num_hidden_layers = num_hidden_layers
-        self.args = args
         if isinstance(hidden_size, int):
             hidden_size = [hidden_size] * num_hidden_layers
         else:
@@ -23,7 +22,7 @@ class SpikingNet(Module):
         for hidden_layer_i in range(num_hidden_layers):
             exec("self.fc" + str(hidden_layer_i) + " = Linear(in_features=input_size, out_features=hidden_size[hidden_layer_i])")
 
-            if self.args.dataset in ['psmnist'] and hidden_layer_i == (num_hidden_layers - 1):
+            if dataset in ['PSMNIST'] and hidden_layer_i == (num_hidden_layers - 1):
                 exec("self.spk" + str(hidden_layer_i) + " = spiking_neuron(neuron_num=hidden_size[hidden_layer_i], recurrent=False)")
             else:
                 exec("self.spk" + str(hidden_layer_i) + " = spiking_neuron(neuron_num=hidden_size[hidden_layer_i])")

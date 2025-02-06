@@ -1,0 +1,19 @@
+max_epoch     = 50
+batch_size    = 250
+time_step     = 100
+learning_rate = 5e-3
+weight_decay  = 0.0
+momentum      = 0.9
+optimizer     = "AdamW"
+use_cos_lr    = false
+grad_clip     = 0.0
+
+hidden_size   = 128
+hidden_layers = 2
+model_dim     = [128, 128]
+
+neuron_decay  = 0.98
+neuron_thresh = 0.5
+surro_alpha   = 0.4
+truncated_t   = 10000
+recurrent     = false

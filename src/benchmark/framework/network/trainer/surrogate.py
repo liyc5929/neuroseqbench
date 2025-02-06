@@ -45,6 +45,7 @@ def _multigaussian_function(v, threshold, a, *_, **__):
     grad_v = temp.float() * a
 
     return grad_v
+
 def _atan_function(v, threshold, a, *_, **__):
     """
     W. Fang \emph{et al.}, Incorporating Learnable Membrane Time Constants to Enhance Learning of Spiking Neural Networks, 2021.
@@ -60,7 +61,7 @@ __func_config__ = {
     "multigauss" : _multigaussian_function,
     "sigmoid"  : _sigmoid_function,
     "atan"     : _atan_function,
-    "others"   : None, # TODO: Add more surrogate funcions
+    "others"   : None, # Add more surrogate funcions
 }
 
 
@@ -100,27 +101,3 @@ class TriangleSurroGrad(torch.autograd.Function):
         tmp = (1 / gamma) * (1 / gamma) * ((gamma - input.abs()).clamp(min=0))
         grad_input = grad_input * tmp
         return grad_input, None
-
-class PMSN_surrogate(torch.autograd.Function):
-    @staticmethod
-    def forward(ctx, input, thresh, gamma=1.):
-        # tm=torch.arange(input.size(-1),device=input.device).repeat(input.size(0),input.size(1),1) * thresh + (2-1e-3) * thresh
-        cum_x = input.cumsum(dim=-1)
-        cum_x_shift = cum_x.clone()
-        cum_x_shift[..., 1:] = cum_x[..., :-1]
-        cum_x_shift[..., 0] = 0
-        spike_shift = (cum_x_shift / thresh).floor().clamp(min=0)
-        out = ((cum_x - spike_shift * thresh) / thresh).floor().clamp(min=0,max=1)
-        L = torch.tensor([gamma])
-        ctx.save_for_backward(thresh, cum_x - spike_shift * thresh, L)
-        return out
-
-    @staticmethod
-    def backward(ctx, grad_output):
-        (thresh, delta, others) = ctx.saved_tensors
-        gamma = others[0].item()
-        grad_input = grad_output.clone()
-        #tmp = (1 / gamma) * (1 / gamma) * ((gamma - abs(delta-thresh)).clamp(min=0))  # triangle
-        tmp = (gamma - abs(delta - thresh) > 0) * gamma  # rectangle
-        grad_output = grad_input * tmp
-        return grad_output, None

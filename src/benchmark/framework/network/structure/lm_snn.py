@@ -97,7 +97,7 @@ class LMSNN(nn.Module):
                     num_layers=1, batch_first=False, dropout=0
                 ) for l in range(nlayers)
             ]
-        elif rnn_type in ['lif']:
+        elif rnn_type in ['lif', 'rlif', 'plif', 'glif', 'alif', 'clif', 'celif', 'tclif', 'spsn', 'lmh', 'adlif', 'pmsn', 'ltc', 'ssm']:
             self.linears = [
                 nn.Linear(
                     emb_dim if l == 0 else hidden_dim,
@@ -105,10 +105,21 @@ class LMSNN(nn.Module):
                 ) for l in range(nlayers)
             ]
             self.snns = [spiking_neuron(neuron_num=emb_dim if l == nlayers - 1 else hidden_dim) for l in range(nlayers)]
+        elif rnn_type == 'dhsnn':
+            self.snns = [spiking_neuron(input_features=emb_dim if l == 0 else hidden_dim, neuron_num=emb_dim if l == nlayers - 1 else hidden_dim) for l in range(nlayers)]
         else:
             raise NotImplementedError(f"Model '{rnn_type}' not implemented.")
-        if rnn_type in ['lif']:
+
+        if self.rnn_type == 'celif':
+            self.TE = nn.Parameter(torch.zeros(max(emb_dim, hidden_dim),self.snns[0].time_step))
+            nn.init.normal_(self.TE, 0.01, 0.01)
+            for i in range(nlayers):
+                self.snns[i].TE = self.TE
+
+        if rnn_type in ['lif', 'rlif', 'plif', 'glif', 'alif', 'clif', 'celif', 'tclif', 'spsn', 'lmh', 'adlif', 'pmsn', 'ltc', 'ssm']:
             self.linears = nn.ModuleList(self.linears)
+            self.snns = nn.ModuleList(self.snns)
+        elif rnn_type in ['dhsnn']:
             self.snns = nn.ModuleList(self.snns)
         else:
             self.rnns = nn.ModuleList(self.rnns)
@@ -132,13 +143,68 @@ class LMSNN(nn.Module):
                 weight.new_zeros(1, batch_size, self.emb_dim if l == self.nlayers - 1 else self.hidden_dim)
                 for l in range(self.nlayers)
             ]
-        elif self.rnn_type in {'lif'}:
+        elif self.rnn_type in {'lif', 'rlif','plif','glif', 'spsn', 'pmsn'}:
             return [
                 (
                     weight.new_zeros(batch_size, self.emb_dim if l == self.nlayers - 1 else self.hidden_dim),
                     weight.new_zeros(batch_size, self.emb_dim if l == self.nlayers - 1 else self.hidden_dim)
                 ) for l in range(self.nlayers)
             ]
+        elif self.rnn_type in {'alif'}:
+            return [(weight.new_zeros(batch_size,
+                                     self.emb_dim if l == self.nlayers - 1 else self.hidden_dim),
+                     weight.new_zeros(batch_size,
+                                      self.emb_dim if l == self.nlayers - 1 else self.hidden_dim),
+                     weight.new_full((batch_size,
+                                      self.emb_dim if l == self.nlayers - 1 else self.hidden_dim), 0.01) # v, y, b
+                     )
+                    for l in range(self.nlayers)]
+        elif self.rnn_type in {'ltc'}:
+            return [(weight.new_zeros(batch_size,
+                                     self.emb_dim if l == self.nlayers - 1 else self.hidden_dim),
+                     weight.new_zeros(batch_size,
+                                      self.emb_dim if l == self.nlayers - 1 else self.hidden_dim),
+                     weight.new_full((batch_size,
+                                      self.emb_dim if l == self.nlayers - 1 else self.hidden_dim), 0.5) # v, y, b
+                     )
+                    for l in range(self.nlayers)]
+        elif self.rnn_type in {'celif'}:
+            return [(weight.new_zeros(batch_size,
+                                     self.emb_dim if l == self.nlayers - 1 else self.hidden_dim),
+                     weight.new_zeros(batch_size,
+                                      self.emb_dim if l == self.nlayers - 1 else self.hidden_dim),
+                     weight.new_full((batch_size,
+                                      self.emb_dim if l == self.nlayers - 1 else self.hidden_dim), 0.5) # v, y, thresh
+                     )
+                    for l in range(self.nlayers)]
+        elif self.rnn_type in {'lmh'}:
+            return [(weight.new_zeros(batch_size,
+                                     self.emb_dim if l == self.nlayers - 1 else self.hidden_dim),
+                     weight.new_full((batch_size,
+                                      self.emb_dim if l == self.nlayers - 1 else self.hidden_dim), 0.25),
+                     weight.new_zeros(batch_size,
+                                      self.emb_dim if l == self.nlayers - 1 else self.hidden_dim) # vd, vs, y
+                     )
+                    for l in range(self.nlayers)]
+        elif self.rnn_type in {'dhsnn'}:
+            branch = self.snns[0].branch
+            return [(weight.new_zeros(batch_size,
+                                     self.emb_dim if l == self.nlayers - 1 else self.hidden_dim),
+                     weight.new_zeros(batch_size,
+                                      self.emb_dim if l == self.nlayers - 1 else self.hidden_dim),
+                     weight.new_zeros(batch_size,
+                                      self.emb_dim if l == self.nlayers - 1 else self.hidden_dim, branch) # v, y, d
+                     )
+                    for l in range(self.nlayers)]
+        elif self.rnn_type in {'clif', 'tclif', 'adlif'}:
+            return [(weight.new_zeros(batch_size,
+                                     self.emb_dim if l == self.nlayers - 1 else self.hidden_dim),
+                     weight.new_zeros(batch_size,
+                                      self.emb_dim if l == self.nlayers - 1 else self.hidden_dim),
+                     weight.new_zeros(batch_size,
+                                      self.emb_dim if l == self.nlayers - 1 else self.hidden_dim) # clif: u,y,m; tclif: v1,v2,y; adlif: v y wt
+                     )
+                    for l in range(self.nlayers)]
         else:
             raise NotImplementedError(f"Model `{self.rnn_type}` not implemented.")
 
@@ -176,12 +242,21 @@ class LMSNN(nn.Module):
         hiddens = embedded
         self.loss = []
 
-        for l, (linear, snn) in enumerate(zip(self.linears, self.snns)):
-            hiddens = linear(hiddens)
-            hiddens, final_states = snn(hiddens, state[l])
-            new_states.append(final_states)
-            if l != self.nlayers - 1:
-                hiddens = self.locked_dropout(hiddens, dropout=self.dropout_forward)
+        if self.rnn_type == 'dhsnn':
+            for l, (snn) in enumerate(self.snns):
+                hiddens, final_states = snn(hiddens, state[l])
+                new_states.append(final_states)
+                if l != self.nlayers - 1:
+                    hiddens = self.locked_dropout(
+                        hiddens, dropout=self.dropout_forward)
+
+        else:
+            for l, (linear, snn) in enumerate(zip(self.linears, self.snns)):
+                hiddens = linear(hiddens)
+                hiddens, final_states = snn(hiddens, state[l])
+                new_states.append(final_states)
+                if l != self.nlayers - 1:
+                    hiddens = self.locked_dropout(hiddens, dropout=self.dropout_forward)
 
         # decoder forward
         hiddens = self.locked_dropout(hiddens, self.dropout)

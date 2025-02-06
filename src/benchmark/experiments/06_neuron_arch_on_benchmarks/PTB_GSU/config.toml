@@ -1,0 +1,22 @@
+max_epoch         = 100
+time_step         = 70
+batch_size        = 20
+learning_rate     = 3
+weight_decay      = 1.2e-6
+momentum          = 0.9
+optimizer         = "SGD"
+use_cos_lr        = true
+grad_clip         = 0.25
+
+embedding_dim     = 400
+hidden_dim        = 250
+num_layers        = 2
+dropout_embedding = 0.4
+dropout_words     = 0.1
+dropout_forward   = 0.25
+dropout           = 0.4
+
+neuron_decay      = 0.5
+neuron_thresh     = 0.5
+surro_alpha       = 1.0
+recurrent         = false

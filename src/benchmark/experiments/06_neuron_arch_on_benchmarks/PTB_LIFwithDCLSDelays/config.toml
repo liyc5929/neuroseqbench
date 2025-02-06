@@ -1,0 +1,15 @@
+seed          = 42
+
+max_epoch     = 100
+time_step     = 70
+batch_size    = 20
+learning_rate = 3
+weight_decay  = 1.2e-6
+momentum      = 0.9
+optimizer     = "SGD"
+grad_clip     = 0.25
+
+input_size    = 400
+hidden_size   = 32
+output_size   = 10000
+max_delay     = 25

@@ -1,0 +1,16 @@
+seed          = 42
+
+max_epoch     = 50
+time_step     = 100
+batch_size    = 250
+learning_rate = 1e-3
+weight_decay  = 0.0
+
+input_size    = 2
+hidden_size   = 110
+output_size   = 10
+max_delay     = 300
+output_mode   = "last_time_step"
+
+neuron_decay  = 0.3
+neuron_thresh = 0.3

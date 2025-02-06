@@ -1,4 +1,6 @@
 from .penn_treebank import PennTreebank
+from .permuted_sequential_mnist import PSMNIST
+from .adding_problem import AddingProblem
 from .sequential_mnist import SMNIST
 from .google_speech_commands import GoogleSpeechCommands
 from .spiking_heidelberg_digits import SpikingHeidelbergDigits

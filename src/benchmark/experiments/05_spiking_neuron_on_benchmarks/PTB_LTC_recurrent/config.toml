@@ -1,0 +1,6 @@
+hidden_dim    = 480
+embedding_dim = 400
+
+neuron_decay  = 0.5
+neuron_thresh = 0.5
+recurrent     = true
