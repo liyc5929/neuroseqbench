@@ -71,26 +71,26 @@ def _in_projection_packed(q, k, v, w, b=None,):
 
 
 def spk_multi_head_attention_forward(
-        query,
-        key,
-        value,
-        embed_dim_to_check,
-        num_heads,
-        in_proj_weight,
-        in_proj_bias,
-        bias_k,
-        bias_v,
-        dropout_p,
-        out_proj_weight,
-        out_proj_bias,
-        q_lif=None,
-        k_lif=None,
-        v_lif=None,
-        attn_lif=None,
-        training=True,
-        key_padding_mask=None,
-        need_weights=True,
-        attn_mask=None,
+    query,
+    key,
+    value,
+    embed_dim_to_check,
+    num_heads,
+    in_proj_weight,
+    in_proj_bias,
+    bias_k,
+    bias_v,
+    dropout_p,
+    out_proj_weight,
+    out_proj_bias,
+    q_lif=None,
+    k_lif=None,
+    v_lif=None,
+    attn_lif=None,
+    training=True,
+    key_padding_mask=None,
+    need_weights=True,
+    attn_mask=None,
 ):
     r"""
     Args:
@@ -168,13 +168,9 @@ def spk_multi_head_attention_forward(
     q = q_lif(q)
     k = k_lif(k)
     v = v_lif(v)
-    # prep attention mask
-    # assert attn_mask is None, "Not implemented!"
 
     # prep key padding mask
     assert key_padding_mask is None, "Not implemented"
-
-    # add bias along batch dimension (currently second)
 
     assert bias_k is None
     assert bias_v is None
@@ -503,15 +499,16 @@ class PositionalEncoding(nn.Module):
 
 class SpkTransformerNet(nn.Module):
     def __init__(self,
-                 input_size,
-                 hidden_size,
-                 output_size,
-                 nhead,
-                 num_hidden_layers=1,
-                 dropout=0,
-                 spiking_neuron=None,
-                 T=4,
-                 use_pool=False):
+        input_size,
+        hidden_size,
+        output_size,
+        nhead,
+        num_hidden_layers=1,
+        dropout=0,
+        spiking_neuron=None,
+        T=4,
+        use_pool=False,
+    ):
         super(SpkTransformerNet, self).__init__()
         self.use_pool = use_pool
         if self.use_pool:
@@ -519,14 +516,17 @@ class SpkTransformerNet(nn.Module):
             self.max_pool = nn.MaxPool2d(4, 4)
         self.encoder = nn.Linear(input_size, hidden_size)
 
-        encoder_layer = SpkTransformerEncoderLayer(d_model=hidden_size, nhead=nhead, dim_feedforward=hidden_size * 4,
-                                                dropout=dropout, spiking_neuron=spiking_neuron
-                                                )
+        encoder_layer = SpkTransformerEncoderLayer(
+            d_model=hidden_size, nhead=nhead, dim_feedforward=hidden_size * 4,
+            dropout=dropout, spiking_neuron=spiking_neuron,
+        )
         encoder_norm = nn.LayerNorm(hidden_size)
         custom_encoder = nn.TransformerEncoder(encoder_layer, num_hidden_layers, encoder_norm)
-        self.transformer = nn.Transformer(d_model=hidden_size, nhead=nhead, dim_feedforward=hidden_size * 4,
-                                          num_encoder_layers=num_hidden_layers, dropout=dropout,
-                                          custom_encoder=custom_encoder).encoder
+        self.transformer = nn.Transformer(
+            d_model=hidden_size, nhead=nhead, dim_feedforward=hidden_size * 4,
+            num_encoder_layers=num_hidden_layers, dropout=dropout,
+            custom_encoder=custom_encoder,
+        ).encoder
 
         self.linear_spk = spiking_neuron()
         self.time_window = T

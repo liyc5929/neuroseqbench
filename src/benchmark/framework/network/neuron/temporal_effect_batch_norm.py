@@ -15,7 +15,7 @@ class _BatchNorm1d(nn.BatchNorm1d):
 
     def forward(self, x: torch.Tensor):
         if x.dim() != 4 and x.dim() != 3:
-            raise ValueError(f'expected x with shape [T, N, C, L] or [T, N, C], but got x with shape {x.shape}!')
+            raise ValueError(f"Expected `x` with shape [T, N, C, L] or [T, N, C], got `x` with shape {x.shape}.")
         x_seq = x
         stateless_module = super().forward
         y_shape = [x_seq.shape[0], x_seq.shape[1]]

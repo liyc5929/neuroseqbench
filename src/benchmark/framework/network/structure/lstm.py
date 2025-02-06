@@ -85,7 +85,6 @@ class GSUCell(nn.Module):
 
         cy = cx * updategate + (1 - updategate) * cell_gate
         hy = surrogate_function(cy - threshold)
-        #cy = cy - cy * hy
 
         return hy, (hy, cy)
 
@@ -110,10 +109,10 @@ class LSTMCell(nn.Module):
         hx, cx = state
 
         gates = (
-                torch.mm(input, self.weight_ih.t())
-                + self.bias_ih
-                + torch.mm(hx, (self.weight_hh).t())
-                + self.bias_hh
+            torch.mm(input, self.weight_ih.t())
+            + self.bias_ih
+            + torch.mm(hx, (self.weight_hh).t())
+            + self.bias_hh
         )
         ingate, forgetgate, cellgate, outgate = gates.chunk(4, 1)
 
@@ -129,13 +128,13 @@ class LSTMCell(nn.Module):
 
 
 def script_lstm(
-        input_size,
-        hidden_size,
-        num_layers,
-        bias=True,
-        batch_first=False,
-        GSU=False,
-        spiking_neuron=None
+    input_size,
+    hidden_size,
+    num_layers,
+    bias=True,
+    batch_first=False,
+    GSU=False,
+    spiking_neuron=None
 ):
     """Returns a ScriptModule that mimics a PyTorch native LSTM."""
 

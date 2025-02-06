@@ -7,10 +7,6 @@ class ThresholdDependentBatchNorm1d(_BatchNorm):
         Hanle Zheng \emph{et al.}, Going Deeper With Directly-Trained Larger Spiking Neural Networks, 2021.
     """
     def __init__(self, alpha: float, v_th: float, *args, **kwargs):
-        """
-        Threshold-Dependent Batch Normalization.
-        "Going Deeper With Directly-Trained Larger Spiking Neural Networks", https://arxiv.org/abs/2011.05280.
-        """
         super().__init__(*args, **kwargs)
         self.alpha = alpha
         self.v_th = v_th

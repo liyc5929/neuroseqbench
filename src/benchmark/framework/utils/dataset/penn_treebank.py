@@ -68,7 +68,7 @@ class PennTreebank(Dataset):
         data_source                      = "src/benchmark/framework/utils/datasource/PennTreebank", 
         time_step: int                   = 1,
         chunk_num: int                   = 1,       # generally be the batch size
-        device: Union[str, torch.device] = "cpu"
+        device: Union[str, torch.device] = "cpu",
     ):
         self.root      = root
         self.subset    = subset

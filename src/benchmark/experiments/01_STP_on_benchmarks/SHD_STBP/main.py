@@ -15,7 +15,7 @@ if current_directory not in sys.path:
 from src.benchmark.framework.network.neuron import LIF
 from src.benchmark.framework.network.structure import MergeDimension, SplitDimension
 from src.benchmark.framework.network.trainer import SurrogateGradient
-from src.benchmark.framework.utils.dataset import SpikingHeidelbergDigits
+from src.benchmark.framework.utils.dataset import SpikingHeidelbergDigits, SpikingSpeechCommands, TIMIT
 
 
 class SHD_MLP(Module):

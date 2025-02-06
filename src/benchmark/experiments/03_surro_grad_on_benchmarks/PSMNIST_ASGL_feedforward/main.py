@@ -20,7 +20,7 @@ from src.benchmark.framework.utils.tools import setup_logging, save_checkpoint, 
 from src.benchmark.framework.utils.dataset import PSMNIST
 from src.benchmark.framework.network.neuron import ASGL_LIF
 from src.benchmark.framework.network.structure import MergeDimension, SplitDimension
-from src.benchmark.framework.network.trainer.ASGL_surrogate import MutiStepNoisyRateScheduler
+from src.benchmark.framework.network.trainer import MutiStepNoisyRateScheduler
 
 
 class FFSNN(nn.Module):

@@ -196,8 +196,7 @@ class LMTCN(nn.Module):
         # Tie weights of embedding and decoder
         self.decoder.weight = self.embeddings.weight
 
-        self.tcn = TemporalConvNet(emb_dim, num_channels, kernel_size, dropout=dropout_forward,
-                                   spiking_neuron=spiking_neuron)
+        self.tcn = TemporalConvNet(emb_dim, num_channels, kernel_size, dropout=dropout_forward, spiking_neuron=spiking_neuron)
         assert num_channels[-1] == emb_dim
 
         self.spiking = spiking_neuron is not None

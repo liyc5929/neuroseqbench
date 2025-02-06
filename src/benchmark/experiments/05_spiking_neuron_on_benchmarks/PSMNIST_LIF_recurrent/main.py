@@ -8,6 +8,7 @@ from functools import partial
 from datetime import datetime
 import toml
 import torch
+import torch.nn as nn
 
 # Check and add current working directory
 current_directory = os.getcwd()
@@ -18,7 +19,52 @@ from src.benchmark.framework.utils.tools import setup_logging, save_checkpoint, 
 from src.benchmark.framework.utils.dataset import PSMNIST
 from src.benchmark.framework.network.trainer import SurrogateGradient
 from src.benchmark.framework.network.neuron import Recurrent_LIF
-from src.benchmark.framework.network.structure import SpikingNet
+
+
+class SpikingNet(nn.Module):
+    def __init__(self,
+        input_size,
+        hidden_size,
+        output_size,
+        spiking_neuron,
+        num_hidden_layers = 1,
+        dataset = None,
+    ):
+        super(SpikingNet, self).__init__()
+
+        self.num_hidden_layers = num_hidden_layers
+        if isinstance(hidden_size, int):
+            hidden_size = [hidden_size] * num_hidden_layers
+        else:
+            assert len(hidden_size) == num_hidden_layers
+
+        for hidden_layer_i in range(num_hidden_layers):
+            exec("self.fc" + str(hidden_layer_i) + " = nn.Linear(in_features=input_size, out_features=hidden_size[hidden_layer_i])")
+
+            if hidden_layer_i == (num_hidden_layers - 1):
+                exec("self.spk" + str(hidden_layer_i) + " = spiking_neuron(neuron_num=hidden_size[hidden_layer_i], recurrent=False)")
+            else:
+                exec("self.spk" + str(hidden_layer_i) + " = spiking_neuron(neuron_num=hidden_size[hidden_layer_i])")
+            input_size = hidden_size[hidden_layer_i]
+        self.classifier = nn.Linear(in_features=input_size, out_features=output_size)
+
+    def single_step_forward(self, x):
+        for hidden_layer_i in range(self.num_hidden_layers):
+            x = eval("self.fc" + str(hidden_layer_i))(x)
+            x = eval("self.spk" + str(hidden_layer_i))(x)
+        x = self.classifier(x)
+        return x
+
+    def forward(self, x):
+        output = self.multi_step_forward(x)
+        return output
+
+    def multi_step_forward(self, x):
+        for hidden_layer_i in range(0, self.num_hidden_layers):
+            x = eval("self.fc" + str(hidden_layer_i))(x)
+            x = eval("self.spk" + str(hidden_layer_i))(x)
+        x = self.classifier(x)
+        return x
 
 
 def parse_args():
@@ -26,7 +72,6 @@ def parse_args():
     parser.add_argument("--device", type=str, default="0", help="GPU device number")
     parser.add_argument("--config", type=str, default="config.toml", help="TOML config file name")
     parser.add_argument("--data_root", type=str, default="/benchmark_data")
-
 
     parser.add_argument("--save-path", default="", type=str, help="the directory used to save the trained models")
     parser.add_argument("--save-ckpt", action="store_true", default=True, help="")

@@ -1,9 +1,12 @@
+"""
+According to: Ziming Wang \emph{et al.}, Adaptive Smoothing Gradient Learning for Spiking Neural Networks, 2023.
+"""
+
 import torch
 import torch.nn as nn
 
 
 class MutiStepNoisyRateScheduler:
-
     def __init__(self, init_p=1, reduce_ratio=0.9, milestones=[0.3, 0.7, 0.9, 0.95], num_epoch=100, start_epoch=0):
         self.reduce_ratio = reduce_ratio
         self.p = init_p
@@ -20,7 +23,7 @@ class MutiStepNoisyRateScheduler:
         for one in self.milestones:
             if one + self.start_epoch == epoch:
                 self.p *= self.reduce_ratio
-                print('change noise rate as ' + str(self.p))
+                print("change noise rate as " + str(self.p))
                 self.set_noisy_rate(self.p, model)
                 break
 
@@ -40,11 +43,7 @@ class InvRectangle(nn.Module):
         return torch.clamp(x + 0.5 * self.alpha, 0, 1.0 * self.alpha)
 
 
-
 class EfficientNoisySpike(nn.Module):
-    """
-    ASGL https://github.com/Windere/ASGL-SNN
-    """
     def __init__(self, inv_sg=InvRectangle(), p=0.1, spike=True):
         super(EfficientNoisySpike, self).__init__()
         self.inv_sg = inv_sg

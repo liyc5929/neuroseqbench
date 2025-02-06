@@ -20,7 +20,7 @@ from datetime import datetime
 
 from src.benchmark.framework.utils.tools import setup_logging, save_checkpoint, AverageMeter, ProgressMeter
 from src.benchmark.framework.network.neuron import ASGL_LIF
-from src.benchmark.framework.network.trainer.ASGL_surrogate import MutiStepNoisyRateScheduler
+from src.benchmark.framework.network.trainer import MutiStepNoisyRateScheduler
 
 
 class LMSNN(nn.Module):
