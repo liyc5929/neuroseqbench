@@ -13,8 +13,9 @@
 </p>
 
 
+This open-source initiative is based on our research, which emphasizes the importance of a more comprehensive evaluation of temporal processing in Spiking Neural Networks (SNNs). To explore more possibilities with SNNs in handling **extended temporal sequences**, we introduce the **Segregated Temporal Probe**, a method developed to isolate the influence of temporal processing functions, enabling a more accurate assessment of the ability of SNNs to manage long-term temporal dependencies. 
 
-This open-source initiative is based on our research, which emphasizes the importance of a more comprehensive evaluation of temporal processing in Spiking Neural Networks (SNNs). To explore more possibilities with SNNs in handling **extended temporal sequences**, we introduce the **Segregated Temporal Probe**, a method developed to isolate the influence of temporal processing functions, enabling a more accurate assessment of the ability of SNNs to manage long-term temporal dependencies. (See <u>the full paper</u> for details.)
+Notably, the Segregated Temporal Probe incorporates three learning algorithms: **STBP**, **SDBP**, and **NoTD**, that enhance the evaluation of Spiking Neural Networks in temporal processing. Furthermore, three benchmark suites—**PTB**, **PS-MNIST**, and **Binary Adding**—have been adopted to validate the feasibility of this method. (See <u>the full paper</u> for details.)
 
 Additionally, our project features a **brain-inspired modeling framework** complete with acceleration modules, which streamlines both the definition and application of models. Furthermore, we provide detailed examples to assist users in utilizing our framework effectively.
 
