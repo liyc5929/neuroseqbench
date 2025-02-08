@@ -13,13 +13,12 @@
 </p>
 
 
-This open-source initiative is based on our research, which emphasizes the importance of a more comprehensive evaluation of temporal processing in Spiking Neural Networks (SNNs). To explore more possibilities with SNNs in handling **extended temporal sequences**, we introduce the **Segregated Temporal Probe**, a method developed to isolate the influence of temporal processing functions, enabling a more accurate assessment of the ability of SNNs to manage long-term temporal dependencies. 
 
-Notably, the Segregated Temporal Probe incorporates three learning algorithms: **STBP**, **SDBP**, and **NoTD**, that enhance the evaluation of Spiking Neural Networks in temporal processing. Furthermore, three benchmark suites—**PTB**, **PS-MNIST**, and **Binary Adding**—have been adopted to validate the feasibility of this method. (See <u>the full paper</u> for details.)
+This open-source initiative is based on our research, which emphasizes the importance of a more comprehensive evaluation of temporal processing in Spiking Neural Networks (SNNs). To explore more possibilities with SNNs in handling **extended temporal sequences**, we introduce the **Segregated Temporal Probe (STP)**, a method developed to isolate the influence of temporal processing functions, enabling a more accurate assessment of the ability of SNNs to manage long-term temporal dependencies. 
 
-Additionally, our project features a **brain-inspired modeling framework** complete with acceleration modules, which streamlines both the definition and application of models. Furthermore, we provide detailed examples to assist users in utilizing our framework effectively.
+Notably, STP incorporates three learning algorithms: **Spatio-Temporal Backpropagation (STBP)**, **Spatial Domain Backpropagation (SDBP)**, and **No Temporal Domain (NoTD)**, enhancing the evaluation of SNNs in temporal processing. Additionally, three benchmark suites—**Penn Treebank (PTB)**, **Permuted-Sequential MNIST (PS-MNIST)**, and **Binary Adding**—have been adopted to validate the feasibility of these methods. Alongside these benchmarks, the initiative also provides a **brain-inspired modeling framework** that streamlines the definition and application of models, offering detailed examples to assist users effectively. (See <u>the full paper</u> for details.)
 
-Beyond the core framework, we also welcome contributors to enrich our benchmark by sharing their expertise on **brain-inspired modules**, **datasets**, and **other related resources**.
+To further the development of this initiative, we welcome contributors to share their expertise on **brain-inspired modules**, **datasets**, and **other related resources** that are instrumental for temporal processing.
 
 ## Overview
 
