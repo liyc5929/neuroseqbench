@@ -30,19 +30,21 @@ To further the development of this initiative, we welcome contributors to share 
 <p align="center">
   <img src="./docs/_statics/image-20250211234801918.png" alt="Neuron Results" width="60%" />
 </p>
+
 - Performance results for different **neural architectures** across benchmark suites
 
 
 <p align="center">
   <img src="./docs/_statics/image-20250211235113576.png" alt="Architecture Results" width="60%" />
 </p>
+
 - Performance results for different **surrogate gradient functions** across benchmark suites
 
 <p align="center">
   <img src=".\docs\_statics\image-20250211235319579.png" alt="Surro. Func. Results" width="60%" />
 </p>
-- Performance results for different **learning algorithms** across benchmark suites
 
+- Performance results for different **learning algorithms** across benchmark suites
 
 <p align="center">
   <img src=".\docs\_statics\image-20250211235503328.png" alt="Learning Algo. Results" width="60%" />
