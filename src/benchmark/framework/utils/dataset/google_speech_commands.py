@@ -16,8 +16,7 @@ URL = "speech_commands_v0.02"
 
 
 class GoogleSpeechCommands(SPEECHCOMMANDS):
-    def __init__(
-        self,
+    def __init__(self,
         root: Union[str, Path],
         url: str                         = URL,
         folder_in_archive: str           = FOLDER_IN_ARCHIVE,

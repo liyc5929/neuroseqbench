@@ -1,8 +1,57 @@
 # Neuromorphic Sequential Benchmark
 
-This open-source initiative sets a benchmark for evaluating the capability of neuromorphic models to process **extended temporal sequences**. We have carefully selected datasets that meet our theoretical standards to effectively test the capability for handling long temporal sequences. Additionally, our project also introduces a **brain-inspired modeling framework**, complete with **acceleration modules**, which streamlines both the definition and application of models. To aid in the utilization of our framework, we provide detailed examples. We welcome contributors to enrich our benchmark by sharing their expertise on **brain-inspired modules**, **datasets**, and **other related resources**.
 
-## Quick Start
+
+<p align="center">
+  <picture>
+    <img src="./docs/_statics/overview.png" alt="STP Structure" width="40%" />
+  </picture>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <picture>
+    <img src="./docs/_statics/benchmark_result.png" alt="STP Result" width="50%" />
+  </picture>
+</p>
+
+
+
+This open-source initiative is based on our research, which emphasizes the importance of a more comprehensive evaluation of temporal processing in Spiking Neural Networks (SNNs). To explore more possibilities with SNNs in handling **extended temporal sequences**, we introduce the **Segregated Temporal Probe (STP)**, a method developed to isolate the influence of temporal processing functions, enabling a more accurate assessment of the ability of SNNs to manage long-term temporal dependencies. 
+
+Notably, STP incorporates three learning algorithms: **Spatio-Temporal Backpropagation (STBP)**, **Spatial Domain Backpropagation (SDBP)**, and **No Temporal Domain (NoTD)**, enhancing the evaluation of SNNs in temporal processing. Additionally, three benchmark suites—**Penn Treebank (PTB)**, **Permuted-Sequential MNIST (PS-MNIST)**, and **Binary Adding**—have been adopted to validate the feasibility of these methods. Alongside these benchmarks, the initiative also provides a **brain-inspired modeling framework** that streamlines the definition and application of models, offering detailed examples to assist users effectively. (See <u>the full paper</u> for details.)
+
+To further the development of this initiative, we welcome contributors to share their expertise on **brain-inspired modules**, **datasets**, and **other related resources** that are instrumental for temporal processing.
+
+
+
+## Main Results
+
+- Performance results for different **neuron models** across benchmark suites
+
+
+<p align="center">
+  <img src="./docs/_statics/image-20250211234801918.png" alt="Neuron Results" width="60%" />
+</p>
+
+- Performance results for different **neural architectures** across benchmark suites
+
+
+<p align="center">
+  <img src="./docs/_statics/image-20250211235113576.png" alt="Architecture Results" width="60%" />
+</p>
+
+- Performance results for different **surrogate gradient functions** across benchmark suites
+
+<p align="center">
+  <img src=".\docs\_statics\image-20250211235319579.png" alt="Surro. Func. Results" width="60%" />
+</p>
+
+- Performance results for different **learning algorithms** across benchmark suites
+
+<p align="center">
+  <img src=".\docs\_statics\image-20250211235503328.png" alt="Learning Algo. Results" width="60%" />
+</p>
+
+
+## Getting Started
 
 Clone this repository by running the following command:
 
@@ -13,24 +62,50 @@ git clone https://github.com/liyc5929/neuroseqbench.git
 After cloning, navigate to the repository's directory and install the requirements listed below:
 
 ```shell
-torch                    2.2.0+cu121
-torchaudio               2.2.0+cu121
-torchvision              0.17.0+cu121
+# Environment dependencies
+torch, torchvision, torchaudio
+
+# Configuration management
+toml
+
+# Data processing
+h5py, tqdm
 ```
 
-```
-python train_ptb.py --nlayers 2 --dataset PTB --data-path ./datasource/ --epochs 100 --batch-size 20 --time-step 70 --emb-dim 400 --hidden-dim 1100 --name PTB_LIF
-python train_ptb.py --nlayers 2 --dataset PTB --data-path ./datasource/ --epochs 100 --batch-size 20 --time-step 70 --emb-dim 400 --hidden-dim 1100 --recurrent --name PTB_RLIF
+After completing the configuration of requirements as outlined above, please see the **Examples** section to run existing experiments, or refer to the **Contributing Guide** for information on how to contribute.
 
-python train_psmnist.py --dataset psmnist --batch-size 256 --lr 5e-3 --decay 1 --alpha 1 --step-lr --optim adam --time-step 784 --amp --name PSMNIST_LIF
-python train_psmnist.py --dataset psmnist --batch-size 256 --lr 3e-3 --decay 0.5 --alpha 0.6 --threshold 0.5 --time-step 784 --step-lr --optim adam --recurrent --amp  --name PSMNIST_RLIF
+
+
+## Examples
+
+The Linux commands for all experiments are contained in the following files:
+
+- `scripts/run_01_STP_on_benchmarks.sh`
+- `scripts/run_02_training_algo_on_benchmarks.sh`
+- `scripts/run_03_surro_grad_on_benchmarks.sh`
+- `scripts/run_04_normalization_on_benchmarks.sh`
+- `scripts/run_05_spiking_neuron_on_benchmarks.sh`
+- `scripts/run_06_neuron_arch_on_benchmarks.sh`
+
+As an example, to conduct baseline experiments on datasets PennTreebank, PS-MNIST, and Binary Adding using the `run_05_spiking_neuron_on_benchmarks.sh`, execute the following commands:
+
+```shell
+# PennTreebank
+python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PTB_LIF_feedforward --data_root <path_to_dataset> --device 0
+python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PTB_LIF_recurrent --data_root <path_to_dataset> --device 0
+
+# PS-MNIST
+python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PSMNIST_LIF_feedforward --data_root <path_to_dataset> --device 0
+python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PSMNIST_LIF_recurrent --data_root <path_to_dataset> --device 0
+
+# Binary Adding
+python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item BinaryAdding_LIF_feedforward --data_root <path_to_dataset> --device 0
+python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item BinaryAdding_LIF_recurrent --data_root <path_to_dataset> --device 0
 ```
 
-Examples:
-```
-python runner.py --experiment 01_STP_on_benchmarks --config SHD_STBP.toml --data_root <path_to_dataset> --device 0
-```
 
+
+## Contributing Guide
 
 The file structure of the repository is outlined below. The `network` and `utils` components serve as the primary interfaces for contributors wishing to add their own features:
 
@@ -38,59 +113,49 @@ The file structure of the repository is outlined below. The `network` and `utils
 /src/benchmark/
 ├── framework/
 │   ├── kernel/
-│   │   ├── accelerationkernel.so
-│   │   └── accelerationkernel.pyd
+│   │   ├── accelerationkernel.so   # To run on Linux
+│   │   └── accelerationkernel.pyd  # To run on Windows
 │   ├── network/
-│   │   ├── __init__.py
-│   │   ├── ann_layer
-│   │   ├── snn_layer
+│   │   ├── neuron
 │   │   ├── structure
 │   │   └── trainer
 │   └── utils/
-│       ├── criterion
-│       └── dataset
+│       ├── dataset
+│       └── tools
 └── experiments/
-    ├── experiment1/
-    │   ├── configs/
-    │   │   ├── config1.toml
-    │   │   └── config2.toml
-    │   ├── main.py
-    │   └── logs
-    └── experiment2/
-        ├── configs/
-        │   ├── config1.toml
-        │   └── config2.toml
-        ├── main.py
-        └── logs
+    ├── 01_STP_on_benchmarks/
+    │   ├── logs/
+    │   │   ├── log1.txt
+    │   │   └── log2.txt
+    │   ├── config.toml
+    │   └── main.py
+    ├── 02_training_algo_on_benchmarks/
+    ├── 03_surro_grad_on_benchmarks/
+    ├── 04_normalization_on_benchmarks/
+    ├── 05_spiking_neuron_on_benchmarks/
+    └── 06_neuron_arch_on_benchmarks/
 ```
 
 The table below lists several components along with their instances. These examples illustrate the roles these components play within the `framework`.
 
-| Components         |                  Description / Instances                   |
-| ------------------ | :--------------------------------------------------------: |
-| network/ann_layer  |                    Normalization Layers                    |
-| network/snn_layer  |                LIF, ALIF, PLIF, GLIF, etc.                 |
-| network/trainer    |    Surrogate Gradient Functions, STBP, SLTT, OTTT, etc.    |
-| utils/dataset      | Penn Treebank, Permuted Sequential MNIST, DvsGesture, etc. |
+<div align="center">
 
+| Components      |                   Description / Instances                    |
+| --------------- | :----------------------------------------------------------: |
+| network/neuron  |      LIF, ALIF, PLIF, GLIF, Normalization Layers, etc.       |
+| network/trainer |              Surrogate Gradient Functions, etc.              |
+| utils/dataset   | Penn Treebank, Permuted Sequential MNIST, Binary Adding, etc. |
 
+</div>
 
-## Experimental Results
+## Cite & Contact
 
-This section presents partial results from our main experiments conducted on selected benchmarks.
+Please cite it as follows if you have adopted or contributed to this work in your research:
 
-- Comparison of Different Propagation Methods on Selected Benchmarks![image-20240808162511322](./figures/image-20240808162511322.png)
+```latex
+@article{
 
-- Comparison of Different Normalization Operators on Selected Benchmarks![image-20240808162813421](./figures/image-20240808162813421.png)
+}
+```
 
-- Comparison of Different Surrogate Functions on Selected Benchmarks![image-20240808162854997](./figures/image-20240808162854997.png)
-
-- Comparison of Different Neurons on Selected Benchmarks![image-20240808163004828](./figures/image-20240808163004828.png)
-
-We are currently conducting additional experiments for our benchmark and warmly invite contributions from others.
-
-
-
-## Contact
-
-If you encounter any problems or have suggestions, please file a report on our GitHub Issues page or contact us at `chenxiang.ma@connect.polyu.hk`.
+Please file a report on our GitHub Issues page or contact us at `chenxiang.ma@connect.polyu.hk` if you encounter any problems or have suggestions.

@@ -4,7 +4,6 @@ import h5py
 import torch
 import numpy as np
 import torchaudio
-import python_speech_features as sf
 from typing import Union
 
 
@@ -204,14 +203,37 @@ class TIMIT(torch.utils.data.Dataset):
     def get_features(self, filename, numcep, numfilt, winlen, winstep, grad):
         waveform, samplerate = torchaudio.load(filename)
         frames = waveform.size(1)  # Number of frames
-        data = waveform.numpy()
+        data_tensor = waveform
     
         # Calculate MFCC
-        feat_raw, energy = sf.fbank(data, samplerate, winlen, winstep, nfilt=numfilt)
-        feat = np.log(feat_raw)
-        feat = sf.dct(feat, type=2, axis=1, norm="ortho")[:, :numcep]
-        feat = sf.lifter(feat,L=22)
-        feat = np.asarray(feat)
+        mel_spectrogram_transform = torchaudio.transforms.MelSpectrogram(
+            sample_rate=samplerate,
+            n_fft=int(samplerate * winlen),
+            hop_length=int(samplerate * winstep),
+            n_mels=numfilt,
+            center=False  # To match behavior of fbank in python_speech_features
+        )
+        mel_spectrogram = mel_spectrogram_transform(data_tensor)
+        energy = mel_spectrogram.sum(dim=1)
+
+        mfcc_transform = torchaudio.transforms.MFCC(
+            sample_rate=samplerate,
+            n_mfcc=numcep,
+            melkwargs={
+                "n_fft": int(samplerate * winlen),
+                "hop_length": int(samplerate * winstep),
+                "n_mels": numfilt,
+                "center": False
+            }
+        )
+        mfcc = mfcc_transform(data_tensor)
+
+        def lifter(cepstra, L):
+            n_frames, n_coeffs = cepstra.shape
+            lifter_coeffs = 1 + (L / 2) * torch.sin(torch.pi * torch.arange(n_coeffs) / L)
+            return cepstra * lifter_coeffs
+        mfcc_liftered = lifter(mfcc, L=22)
+        feat = mfcc_liftered.numpy()
     
         # Calculate log energy
         log_energy = np.log(energy) #np.log( np.sum(feat_raw**2, axis=1) )

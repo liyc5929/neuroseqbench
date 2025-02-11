@@ -1,0 +1,17 @@
+max_epoch     = 100
+batch_size    = 20
+time_step     = 70
+learning_rate = 3.0
+weight_decay  = 1.2e-6
+momentum      = 0.9
+optimizer     = "SGD"
+
+embedding_dim = 400
+hidden_dim    = 1100
+num_layers    = 2
+
+neuron_decay  = 0.5
+neuron_thresh = 0.5
+surro_grad    = "rectangle"
+surro_alpha   = 1.0
+recurrent     = false

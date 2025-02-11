@@ -1,0 +1,3 @@
+neuron_decay  = 0.5
+neuron_thresh = 0.3
+recurrent     = false

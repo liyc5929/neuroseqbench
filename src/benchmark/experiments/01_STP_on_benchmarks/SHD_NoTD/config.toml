@@ -1,0 +1,15 @@
+seed              = 42
+
+max_epoch         = 200
+time_step         = 250
+batch_size        = 256
+learning_rate     = 5e-4
+weight_decay      = 0.0
+
+mlp_hidden        = 128
+
+neuron_decay      = 0.9
+neuron_thresh     = 0.1
+neuron_surrogate  = "rectangle"
+neuron_reset_mode = "soft"
+neuron_exec_mode  = "serial"
