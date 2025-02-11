@@ -20,24 +20,90 @@ Notably, STP incorporates three learning algorithms: **Spatio-Temporal Backpropa
 
 To further the development of this initiative, we welcome contributors to share their expertise on **brain-inspired modules**, **datasets**, and **other related resources** that are instrumental for temporal processing.
 
-## Overview
-
-### Main Contents
-
-The table below lists several components along with their instances. These examples illustrate the roles these components play within the `framework`.
-
-<div align="center">
-
-| Components      |                   Description / Instances                    |
-| --------------- | :----------------------------------------------------------: |
-| network/neuron  |      LIF, ALIF, PLIF, GLIF, Normalization Layers, etc.       |
-| network/trainer |              Surrogate Gradient Functions, etc.              |
-| utils/dataset   | Penn Treebank, Permuted Sequential MNIST, Binary Adding, etc. |
-
-</div>
 
 
-### Benchmark Structure
+## Main Results
+
+- Performance results for different **neuron models** across benchmark suites
+
+
+<p align="center">
+  <img src="./docs/_statics/image-20250211234801918.png" alt="Neuron Results" width="60%" />
+</p>
+- Performance results for different **neural architectures** across benchmark suites
+
+
+<p align="center">
+  <img src="./docs/_statics/image-20250211235113576.png" alt="Architecture Results" width="60%" />
+</p>
+- Performance results for different **surrogate gradient functions** across benchmark suites
+
+<p align="center">
+  <img src=".\docs\_statics\image-20250211235319579.png" alt="Surro. Func. Results" width="60%" />
+</p>
+- Performance results for different **learning algorithms** across benchmark suites
+
+
+<p align="center">
+  <img src=".\docs\_statics\image-20250211235503328.png" alt="Learning Algo. Results" width="60%" />
+</p>
+
+
+## Getting Started
+
+Clone this repository by running the following command:
+
+```shell
+git clone https://github.com/liyc5929/neuroseqbench.git
+```
+
+After cloning, navigate to the repository's directory and install the requirements listed below:
+
+```shell
+# Environment dependencies
+torch, torchvision, torchaudio
+
+# Configuration management
+toml
+
+# Data processing
+h5py, tqdm
+```
+
+After completing the configuration of requirements as outlined above, please see the **Examples** section to run existing experiments, or refer to the **Contributing Guide** for information on how to contribute.
+
+
+
+## Examples
+
+The Linux commands for all experiments are contained in the following files:
+
+- `scripts/run_01_STP_on_benchmarks.sh`
+- `scripts/run_02_training_algo_on_benchmarks.sh`
+- `scripts/run_03_surro_grad_on_benchmarks.sh`
+- `scripts/run_04_normalization_on_benchmarks.sh`
+- `scripts/run_05_spiking_neuron_on_benchmarks.sh`
+- `scripts/run_06_neuron_arch_on_benchmarks.sh`
+
+As an example, to conduct baseline experiments on datasets PennTreebank, PS-MNIST, and Binary Adding using the `run_05_spiking_neuron_on_benchmarks.sh`, execute the following commands:
+
+```shell
+# PennTreebank
+python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PTB_LIF_feedforward --data_root <path_to_dataset> --device 0
+python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PTB_LIF_recurrent --data_root <path_to_dataset> --device 0
+
+# PS-MNIST
+python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PSMNIST_LIF_feedforward --data_root <path_to_dataset> --device 0
+python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PSMNIST_LIF_recurrent --data_root <path_to_dataset> --device 0
+
+# Binary Adding
+python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item BinaryAdding_LIF_feedforward --data_root <path_to_dataset> --device 0
+python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item BinaryAdding_LIF_recurrent --data_root <path_to_dataset> --device 0
+```
+
+
+
+## Contributing Guide
 
 The file structure of the repository is outlined below. The `network` and `utils` components serve as the primary interfaces for contributors wishing to add their own features:
 
@@ -68,57 +134,17 @@ The file structure of the repository is outlined below. The `network` and `utils
     └── 06_neuron_arch_on_benchmarks/
 ```
 
+The table below lists several components along with their instances. These examples illustrate the roles these components play within the `framework`.
 
+<div align="center">
 
-## Quick Start
+| Components      |                   Description / Instances                    |
+| --------------- | :----------------------------------------------------------: |
+| network/neuron  |      LIF, ALIF, PLIF, GLIF, Normalization Layers, etc.       |
+| network/trainer |              Surrogate Gradient Functions, etc.              |
+| utils/dataset   | Penn Treebank, Permuted Sequential MNIST, Binary Adding, etc. |
 
-### Setup and Get Involved
-
-To get started, clone this repository by running the following command:
-
-```shell
-git clone https://github.com/liyc5929/neuroseqbench.git
-```
-
-After cloning, navigate to the repository's directory and install the requirements listed below:
-
-```shell
-# Environment dependencies
-torch, torchvision, torchaudio
-
-# Configuration management
-toml
-
-# Data processing
-h5py, tqdm
-```
-
-### Examples
-
-The Linux commands for all experiments are contained in the following files:
-
-- `scripts/run_01_STP_on_benchmarks.sh`
-- `scripts/run_02_training_algo_on_benchmarks.sh`
-- `scripts/run_03_surro_grad_on_benchmarks.sh`
-- `scripts/run_04_normalization_on_benchmarks.sh`
-- `scripts/run_05_spiking_neuron_on_benchmarks.sh`
-- `scripts/run_06_neuron_arch_on_benchmarks.sh`
-
-As an example, to conduct baseline experiments on datasets PennTreebank, PS-MNIST, and Binary Adding using the `run_05_spiking_neuron_on_benchmarks.sh`, execute the following commands:
-
-```shell
-# PennTreebank
-python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PTB_LIF_feedforward --data_root <path_to_dataset> --device 0
-python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PTB_LIF_recurrent --data_root <path_to_dataset> --device 0
-
-# PS-MNIST
-python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PSMNIST_LIF_feedforward --data_root <path_to_dataset> --device 0
-python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PSMNIST_LIF_recurrent --data_root <path_to_dataset> --device 0
-
-# Binary Adding
-python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item BinaryAdding_LIF_feedforward --data_root <path_to_dataset> --device 0
-python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item BinaryAdding_LIF_recurrent --data_root <path_to_dataset> --device 0
-```
+</div>
 
 ## Cite & Contact
 
