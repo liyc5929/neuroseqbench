@@ -295,8 +295,8 @@ class LMTCN(nn.Module):
             #     else:
             #         output = output + self.tcn(hiddens)
             # hiddens = output / T
-            x = (x.unsqueeze(0)).repeat(self.time_window, 1, 1, 1)
-            y1 = self.tcn(x).mean(0)
+            hiddens = (hiddens.unsqueeze(0)).repeat(self.time_window, 1, 1, 1)
+            hiddens = self.tcn(hiddens).mean(0)
         else:
             hiddens = self.tcn(hiddens)
         hiddens = hiddens.permute(2, 0, 1).contiguous()
