@@ -56,27 +56,27 @@ The table below provides a comprehensive overview of the SNN methods that have b
 #### Main Results
 
 >
->  The experimental results are subject to ongoing updates to reflect the latest advancements and findings in the field.
+>  Results will be updated regularly to ensure they reflect the most current data.
 >
 
-- Results for different **learning algorithms** across benchmark suites, "FF" and "Rec." refer to "feedforward" and "recurrent" architectures, respectively. "PPL" stands for "perplexity".
+- Results for different **learning algorithms** on temporal processing tasks. "FF" and "Rec." refer to "feedforward" and "recurrent" architectures, respectively. "PPL" stands for "perplexity".
 
 <table border="1" style="width: 100%; border-collapse: collapse;" align="center">
     <thead>
         <tr>
-            <th>Dataset</th>
-            <th colspan="2" style="text-align: center;">PTB ($T=70$)</th>
-            <th colspan="2" style="text-align: center;">PS-MNIST ($T=784$)</th>
-            <th colspan="2" style="text-align: center;">Binary Adding ($T=100$)</th>
+            <td><strong>Dataset</strong></td>
+            <td colspan="2"><strong>PTB ($T=70$)</strong></td>
+            <td colspan="2"><strong>PS-MNIST ($T=784$)</strong></td>
+            <td colspan="2"><strong>Binary Adding ($T=100$)</strong></td>
         </tr>
         <tr>
-            <th>Metric</th>
-            <th style="text-align: center;">PPL $\downarrow$</th>
-            <th style="text-align: center;">Rec.</th>
-            <th style="text-align: center;">Acc. $\uparrow$</th>
-            <th style="text-align: center;">Rec.</th>
-            <th style="text-align: center;">Acc. $\uparrow$</th>
-            <th style="text-align: center;">Rec.</th>
+            <td><strong>Metric</strong></td>
+            <td><strong>PPL $\downarrow$</strong></td>
+            <td><strong>Rec.</strong></td>
+            <td><strong>Acc. $\uparrow$</strong></td>
+            <td><strong>Rec.</strong></td>
+            <td><strong>Acc. $\uparrow$</strong></td>
+            <td><strong>Rec.</strong></td>
         </tr>
     </thead>
     <tbody>
@@ -129,24 +129,24 @@ The table below provides a comprehensive overview of the SNN methods that have b
 </table>
 
 
-- Results for different **neuron models** across benchmark suites.
+- Results for different **neuron models** on temporal processing tasks
 
 <table border="1" align="center">
     <thead>
         <tr>
-            <th>Network</th>
-            <th colspan="2" style="text-align: center;">PTB ($T=70$)</th>
-            <th colspan="2" style="text-align: center;">PS-MNIST ($T=784$)</th>
-            <th colspan="2" style="text-align: center;">Binary Adding ($T=100$)</th>
+            <td><strong>Network</strong></td>
+            <td colspan="2"><strong>PTB ($T=70$)</strong></td>
+            <td colspan="2"><strong>PS-MNIST ($T=784$)</strong></td>
+            <td colspan="2"><strong>Binary Adding ($T=100$)</strong></td>
         </tr>
         <tr>
-            <th>Metric</th>
-            <th style="text-align: center;">FF</th>
-            <th style="text-align: center;">Rec.</th>
-            <th style="text-align: center;">FF</th>
-            <th style="text-align: center;">Rec.</th>
-            <th style="text-align: center;">FF</th>
-            <th style="text-align: center;">Rec.</th>
+            <td><strong>Metric</strong></td>
+            <td><strong>FF</strong></td>
+            <td><strong>Rec.</strong></td>
+            <td><strong>FF</strong></td>
+            <td><strong>Rec.</strong></td>
+            <td><strong>FF</strong></td>
+            <td><strong>Rec.</strong></td>
         </tr>
     </thead>
     <tbody>
@@ -280,27 +280,27 @@ The table below provides a comprehensive overview of the SNN methods that have b
 </table>
 
 
-- Results for different **neural architectures** across benchmark suites
+- Results for different **neural architectures** on temporal processing tasks
 
 <table border="1" style="width: 100%; border-collapse: collapse;" align="center">
     <thead>
         <tr>
-            <th>Dataset</th>
-            <th style="text-align: center;">PTB ($T=70$)</th>
-            <th style="text-align: center;">PS-MNIST ($T=784$)</th>
-            <th colspan="2" style="text-align: center;">Binary Adding</th>
+            <td><strong>Dataset</strong></td>
+            <td><strong>PTB ($T=70$)</strong></td>
+            <td><strong>PS-MNIST ($T=784$)</strong></td>
+            <td colspan="2"><strong>Binary Adding</strong></td>
         </tr>
         <tr>
-            <th>Metric</th>
-            <th style="text-align: center;">PPL $\downarrow$</th>
-            <th style="text-align: center;">Acc. $\uparrow$</th>
-            <th style="text-align: center;">$T$ $\uparrow$</th>
-            <th style="text-align: center;">Acc. $\uparrow$</th>
+            <td><strong>Metric</strong></td>
+            <td><strong>PPL $\downarrow$</strong></td>
+            <td><strong>Acc. $\uparrow$</strong></td>
+            <td><strong>$T \uparrow$</strong></td>
+            <td><strong>Acc. $\uparrow$</strong></td>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <th><strong>#Params.</strong></th>
+            <td><strong>#Params.</strong></td>
             <td>~5M</td>
             <td>~90K</td>
             <td colspan="2">~40K</td>
