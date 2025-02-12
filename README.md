@@ -4,6 +4,10 @@ The goal of Neuromorphic Sequential Benchmark is to enable consistent performanc
 
 This repository currently contains the source code and implementation details for the evaluation results in the research paper titled ["Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects"](link). We are in the process of developing a comprehensive benchmark suite tailored for neuromorphic temporal processing. Guidelines will be provided to guarantee fair and consistent evaluations of emerging SNN approaches using this benchmark suite.
 
+We warmly invite researchers and practitioners in the field of neuromorphic temporal processing to engage with us by providing feedback and contributing. By integrating more comprehensive temporal processing benchmarks and advanced SNN methods, your contributions can significantly advance this field. We value your insights and look forward to collaborating to drive innovation together.
+
+
+
 ---
 
 <h3 align="center"> Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects </h3>
@@ -11,6 +15,26 @@ This repository currently contains the source code and implementation details fo
 ---
 
 > **Abstract:** Temporal processing is fundamental for both biological and artificial intelligence systems, as it enables the comprehension of dynamic environments and facilitates timely responses. Spiking Neural Networks (SNNs) excel in handling such data with high efficiency, owing to their rich neuronal dynamics and sparse activity patterns. Given the recent surge in the development of SNNs, there is an urgent need for a comprehensive evaluation of their temporal processing capabilities. In this paper, we first conduct an in-depth assessment of commonly used neuromorphic benchmarks, revealing critical limitations in their ability to evaluate the temporal processing capabilities of SNNs. To bridge this gap, we further introduce a benchmark suite consisting of three temporal processing tasks characterized by rich temporal dynamics across multiple timescales. Utilizing this benchmark suite, we perform a thorough evaluation of recently introduced SNN approaches to elucidate the current status of SNNs in temporal processing. Our findings indicate significant advancements in recently developed spiking neuron models and neural architectures regarding their temporal processing capabilities, while also highlighting a performance gap in handling long-range dependencies when compared to state-of-the-art non-spiking models. Finally, we discuss the key challenges and outline potential avenues for future research.
+
+### Features
+
+The following illustration depicts the Segregated Temporal Probe (STP), an analytical tool for assessing the effectiveness of neuromorphic benchmarks in evaluating the temporal processing capabilities of SNNs. The STP incorporates three algorithms—Spatio-Temporal Backpropagation (STBP), Spatial Domain Backpropagation (SDBP), and No Temporal Domain (NoTD)—which systematically disrupt the temporal processing pathways within an SNN to elucidate their significance.
+
+<p align="center">
+  <img src="./docs/_statics/overview.jpg" alt="STP overview" width="95%" />
+</p>
+
+The table below provides a detailed table outlining the key components of our framework. Each component is described with examples of instances and where they can be found within the repository. This information is intended to help users quickly understand the capabilities and structure of our system.
+
+<div align="center">
+
+| Components          |                   Description / Instances                    |      Repository Location      |
+| ------------------- | :----------------------------------------------------------: | :---------------------------: |
+| Neuron Model        |      LIF, ALIF, PLIF, GLIF, Normalization Layers, etc.       |  `framework/network/neuron`   |
+| Neural Architecture | DCLS-Delays, SpikingTCN, Gated Spiking Neuron, Spike-Driven Transformer, etc. | `framework/network/structure` |
+| Dataset             | Penn Treebank, Permuted Sequential MNIST, Binary Adding, etc. |   `framework/utils/dataset`   |
+
+</div>
 
 ### Main Results
 
@@ -365,23 +389,6 @@ python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_
 python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item BinaryAdding_LIF_feedforward --data_root <path_to_dataset> --device 0
 python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item BinaryAdding_LIF_recurrent --data_root <path_to_dataset> --device 0
 ```
-
-
-
-## Features
-
-Below is a detailed table outlining the key components of our framework. Each component is described with examples of instances and where they can be found within the repository. This information is intended to help users quickly understand the capabilities and structure of our system.
-
-<div align="center">
-
-| Components          |                   Description / Instances                    |      Repository Location      |
-| ------------------- | :----------------------------------------------------------: | :---------------------------: |
-| Neuron Model        |      LIF, ALIF, PLIF, GLIF, Normalization Layers, etc.       |  `framework/network/neuron`   |
-| Neural Architecture | DCLS-Delays, SpikingTCN, Gated Spiking Neuron, Spike-Driven Transformer, etc. | `framework/network/structure` |
-| Dataset             | Penn Treebank, Permuted Sequential MNIST, Binary Adding, etc. |   `framework/utils/dataset`   |
-
-</div>
-
 
 
 ## Cite & Contact
