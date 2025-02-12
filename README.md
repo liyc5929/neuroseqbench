@@ -6,8 +6,6 @@ This repository currently contains the source code and implementation details fo
 
 We warmly invite researchers and practitioners in the field of neuromorphic temporal processing to engage with us by providing feedback and contributing. By integrating more comprehensive temporal processing benchmarks and advanced SNN methods, your contributions can significantly advance this field. We value your insights and look forward to collaborating to drive innovation together.
 
-
-
 ---
 
 <h3 align="center"> Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects </h3>
@@ -16,27 +14,50 @@ We warmly invite researchers and practitioners in the field of neuromorphic temp
 
 > **Abstract:** Temporal processing is fundamental for both biological and artificial intelligence systems, as it enables the comprehension of dynamic environments and facilitates timely responses. Spiking Neural Networks (SNNs) excel in handling such data with high efficiency, owing to their rich neuronal dynamics and sparse activity patterns. Given the recent surge in the development of SNNs, there is an urgent need for a comprehensive evaluation of their temporal processing capabilities. In this paper, we first conduct an in-depth assessment of commonly used neuromorphic benchmarks, revealing critical limitations in their ability to evaluate the temporal processing capabilities of SNNs. To bridge this gap, we further introduce a benchmark suite consisting of three temporal processing tasks characterized by rich temporal dynamics across multiple timescales. Utilizing this benchmark suite, we perform a thorough evaluation of recently introduced SNN approaches to elucidate the current status of SNNs in temporal processing. Our findings indicate significant advancements in recently developed spiking neuron models and neural architectures regarding their temporal processing capabilities, while also highlighting a performance gap in handling long-range dependencies when compared to state-of-the-art non-spiking models. Finally, we discuss the key challenges and outline potential avenues for future research.
 
-### Features
+#### Features
 
-The following illustration depicts the Segregated Temporal Probe (STP), an analytical tool for assessing the effectiveness of neuromorphic benchmarks in evaluating the temporal processing capabilities of SNNs. The STP incorporates three algorithms—Spatio-Temporal Backpropagation (STBP), Spatial Domain Backpropagation (SDBP), and No Temporal Domain (NoTD)—which systematically disrupt the temporal processing pathways within an SNN to elucidate their significance.
+The following illustration depicts the **Segregated Temporal Probe (STP)**, an analytical tool for assessing the effectiveness of neuromorphic benchmarks in evaluating the temporal processing capabilities of SNNs. The STP incorporates three algorithms—Spatio-Temporal Backpropagation (STBP), Spatial Domain Backpropagation (SDBP), and No Temporal Domain (NoTD)—which systematically disrupt the temporal processing pathways within an SNN to elucidate their significance.
 
 <p align="center">
-  <img src="./docs/_statics/overview.jpg" alt="STP overview" width="95%" />
+  <img src="./docs/_statics/overview.jpg" alt="STP overview" width="92%" />
 </p>
 
-The table below provides a detailed table outlining the key components of our framework. Each component is described with examples of instances and where they can be found within the repository. This information is intended to help users quickly understand the capabilities and structure of our system.
+The table below provides a comprehensive overview of the SNN methods that have been evaluated and compared. Each method is detailed with specific examples and their corresponding locations within the repository.
 
-<div align="center">
+<p align="center">
+<table border="1" style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th>Components</th>
+            <th>Description / Instances</th>
+            <th>Repository Location</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Neuron Model</td>
+            <td>LIF, ALIF, PLIF, GLIF, Normalization Layers, etc.</td>
+            <td>`framework/network/neuron`</td>
+        </tr>
+        <tr>
+            <td>Neural Architecture</td>
+            <td>DCLS-Delays, SpikingTCN, Gated Spiking Neuron, Spike-Driven Transformer, etc.</td>
+            <td>`framework/network/structure`</td>
+        </tr>
+        <tr>
+            <td>Dataset</td>
+            <td>Penn Treebank, Permuted Sequential MNIST, Binary Adding, etc.</td>
+            <td>`framework/utils/dataset`</td>
+        </tr>
+    </tbody>
+</table>
+</p>
 
-| Components          |                   Description / Instances                    |      Repository Location      |
-| ------------------- | :----------------------------------------------------------: | :---------------------------: |
-| Neuron Model        |      LIF, ALIF, PLIF, GLIF, Normalization Layers, etc.       |  `framework/network/neuron`   |
-| Neural Architecture | DCLS-Delays, SpikingTCN, Gated Spiking Neuron, Spike-Driven Transformer, etc. | `framework/network/structure` |
-| Dataset             | Penn Treebank, Permuted Sequential MNIST, Binary Adding, etc. |   `framework/utils/dataset`   |
+#### Main Results
 
-</div>
-
-### Main Results
+>
+>  The experimental results are subject to ongoing updates to reflect the latest advancements and findings in the field.
+>
 
 - Results for different **learning algorithms** across benchmark suites, "FF" and "Rec." refer to "feedforward" and "recurrent" architectures, respectively. "PPL" stands for "perplexity".
 
@@ -61,48 +82,48 @@ The table below provides a detailed table outlining the key components of our fr
     <tbody>
         <tr>
             <td>STBP</td>
-            <td style="text-align: center;">129.96</td>
-            <td style="text-align: center;">111.96</td>
-            <td style="text-align: center;">57.45</td>
-            <td style="text-align: center;">72.97</td>
-            <td style="text-align: center;">29.60</td>
-            <td style="text-align: center;">53.35</td>
+            <td>129.96</td>
+            <td>111.96</td>
+            <td>57.45</td>
+            <td>72.97</td>
+            <td>29.60</td>
+            <td>53.35</td>
         </tr>
         <tr>
             <td>T-STBP</td>
-            <td style="text-align: center;">137.8</td>
-            <td style="text-align: center;">120.58</td>
-            <td style="text-align: center;">53.00</td>
-            <td style="text-align: center;">71.03</td>
-            <td style="text-align: center;">23.00</td>
-            <td style="text-align: center;">51.50</td>
+            <td>137.8</td>
+            <td>120.58</td>
+            <td>53.00</td>
+            <td>71.03</td>
+            <td>23.00</td>
+            <td>51.50</td>
         </tr>
         <tr>
             <td>E-prop</td>
-            <td style="text-align: center;">-</td>
-            <td style="text-align: center;">125.54</td>
-            <td style="text-align: center;">-</td>
-            <td style="text-align: center;">52.88</td>
-            <td style="text-align: center;">-</td>
-            <td style="text-align: center;">50.85</td>
+            <td>-</td>
+            <td>125.54</td>
+            <td>-</td>
+            <td>52.88</td>
+            <td>-</td>
+            <td>50.85</td>
         </tr>
         <tr>
             <td>OTTT</td>
-            <td style="text-align: center;">141.77</td>
-            <td style="text-align: center;">-</td>
-            <td style="text-align: center;">44.61</td>
-            <td style="text-align: center;">-</td>
-            <td style="text-align: center;">17.20</td>
-            <td style="text-align: center;">-</td>
+            <td>141.77</td>
+            <td>-</td>
+            <td>44.61</td>
+            <td>-</td>
+            <td>17.20</td>
+            <td>-</td>
         </tr>
         <tr>
             <td>SLTT</td>
-            <td style="text-align: center;">149.86</td>
-            <td style="text-align: center;">-</td>
-            <td style="text-align: center;">40.53</td>
-            <td style="text-align: center;">-</td>
-            <td style="text-align: center;">15.50</td>
-            <td style="text-align: center;">-</td>
+            <td>149.86</td>
+            <td>-</td>
+            <td>40.53</td>
+            <td>-</td>
+            <td>15.50</td>
+            <td>-</td>
         </tr>
     </tbody>
 </table>
@@ -131,129 +152,129 @@ The table below provides a detailed table outlining the key components of our fr
     <tbody>
         <tr>
             <td><strong>#Params.</strong></td>
-            <td style="text-align: center;">~5M</td>
-            <td style="text-align: center;">~6M</td>
-            <td style="text-align: center;">~90K</td>
-            <td style="text-align: center;">~160K</td>
-            <td style="text-align: center;">~20K</td>
-            <td style="text-align: center;">~40K</td>
+            <td>~5M</td>
+            <td>~6M</td>
+            <td>~90K</td>
+            <td>~160K</td>
+            <td>~20K</td>
+            <td>~40K</td>
         </tr>
         <tr>
             <td>LIF</td>
-            <td style="text-align: center;">129.96</td>
-            <td style="text-align: center;">111.96</td>
-            <td style="text-align: center;">57.45</td>
-            <td style="text-align: center;">72.97</td>
-            <td style="text-align: center;">29.60</td>
-            <td style="text-align: center;">53.35</td>
+            <td>129.96</td>
+            <td>111.96</td>
+            <td>57.45</td>
+            <td>72.97</td>
+            <td>29.60</td>
+            <td>53.35</td>
         </tr>
         <tr>
             <td>PLIF</td>
-            <td style="text-align: center;">123.76</td>
-            <td style="text-align: center;">105.64</td>
-            <td style="text-align: center;">55.86</td>
-            <td style="text-align: center;">77.32</td>
-            <td style="text-align: center;">29.40</td>
-            <td style="text-align: center;">53.25</td>
+            <td>123.76</td>
+            <td>105.64</td>
+            <td>55.86</td>
+            <td>77.32</td>
+            <td>29.40</td>
+            <td>53.25</td>
         </tr>
         <tr>
             <td>ALIF</td>
-            <td style="text-align: center;">113.67</td>
-            <td style="text-align: center;">102.25</td>
-            <td style="text-align: center;">73.90</td>
-            <td style="text-align: center;">85.78</td>
-            <td style="text-align: center;">40.30</td>
-            <td style="text-align: center;">68.00</td>
+            <td>113.67</td>
+            <td>102.25</td>
+            <td>73.90</td>
+            <td>85.78</td>
+            <td>40.30</td>
+            <td>68.00</td>
         </tr>
         <tr>
             <td>adLIF</td>
-            <td style="text-align: center;">118.52</td>
-            <td style="text-align: center;"><strong>97.22</strong></td>
-            <td style="text-align: center;">85.93</td>
-            <td style="text-align: center;">89.53</td>
-            <td style="text-align: center;">42.00</td>
-            <td style="text-align: center;">99.05</td>
+            <td>118.52</td>
+            <td><strong>97.22</strong></td>
+            <td>85.93</td>
+            <td>89.53</td>
+            <td>42.00</td>
+            <td>99.05</td>
         </tr>
         <tr>
             <td>GLIF</td>
-            <td style="text-align: center;">111.58</td>
-            <td style="text-align: center;">103.07</td>
-            <td style="text-align: center;">95.42</td>
-            <td style="text-align: center;">95.04</td>
-            <td style="text-align: center;">90.15</td>
-            <td style="text-align: center;">63.60</td>
+            <td>111.58</td>
+            <td>103.07</td>
+            <td>95.42</td>
+            <td>95.04</td>
+            <td>90.15</td>
+            <td>63.60</td>
         </tr>
         <tr>
             <td>LTC</td>
-            <td style="text-align: center;"><strong>104.10</strong></td>
-            <td style="text-align: center;">99.09</td>
-            <td style="text-align: center;">86.33</td>
-            <td style="text-align: center;">90.94</td>
-            <td style="text-align: center;"><strong>100.00</strong></td>
-            <td style="text-align: center;"><strong>100.00</strong></td>
+            <td><strong>104.10</strong></td>
+            <td>99.09</td>
+            <td>86.33</td>
+            <td>90.94</td>
+            <td><strong>100.00</strong></td>
+            <td><strong>100.00</strong></td>
         </tr>
         <tr>
             <td>SPSN</td>
-            <td style="text-align: center;">120.43</td>
-            <td style="text-align: center;">-</td>
-            <td style="text-align: center;">83.88</td>
-            <td style="text-align: center;">-</td>
-            <td style="text-align: center;">45.70</td>
-            <td style="text-align: center;">-</td>
+            <td>120.43</td>
+            <td>-</td>
+            <td>83.88</td>
+            <td>-</td>
+            <td>45.70</td>
+            <td>-</td>
         </tr>
         <tr>
             <td>TCLIF</td>
-            <td style="text-align: center;">286.71</td>
-            <td style="text-align: center;">255.67</td>
-            <td style="text-align: center;">86.81</td>
-            <td style="text-align: center;">92.08</td>
-            <td style="text-align: center;">19.10</td>
-            <td style="text-align: center;">19.90</td>
+            <td>286.71</td>
+            <td>255.67</td>
+            <td>86.81</td>
+            <td>92.08</td>
+            <td>19.10</td>
+            <td>19.90</td>
         </tr>
         <tr>
             <td>LM-H</td>
-            <td style="text-align: center;">122.69</td>
-            <td style="text-align: center;">102.05</td>
-            <td style="text-align: center;">77.70</td>
-            <td style="text-align: center;">83.14</td>
-            <td style="text-align: center;">99.25</td>
-            <td style="text-align: center;">96.10</td>
+            <td>122.69</td>
+            <td>102.05</td>
+            <td>77.70</td>
+            <td>83.14</td>
+            <td>99.25</td>
+            <td>96.10</td>
         </tr>
         <tr>
             <td>CLIF</td>
-            <td style="text-align: center;">128.28</td>
-            <td style="text-align: center;">108.21</td>
-            <td style="text-align: center;">43.90</td>
-            <td style="text-align: center;">70.44</td>
-            <td style="text-align: center;">19.10</td>
-            <td style="text-align: center;">64.30</td>
+            <td>128.28</td>
+            <td>108.21</td>
+            <td>43.90</td>
+            <td>70.44</td>
+            <td>19.10</td>
+            <td>64.30</td>
         </tr>
         <tr>
             <td>DH-LIF</td>
-            <td style="text-align: center;">115.61</td>
-            <td style="text-align: center;">100.55</td>
-            <td style="text-align: center;">79.12</td>
-            <td style="text-align: center;">91.07</td>
-            <td style="text-align: center;">98.85</td>
-            <td style="text-align: center;">99.35</td>
+            <td>115.61</td>
+            <td>100.55</td>
+            <td>79.12</td>
+            <td>91.07</td>
+            <td>98.85</td>
+            <td>99.35</td>
         </tr>
         <tr>
             <td>CELIF</td>
-            <td style="text-align: center;">112.35</td>
-            <td style="text-align: center;">106.52</td>
-            <td style="text-align: center;"><strong>97.76</strong></td>
-            <td style="text-align: center;"><strong>97.66</strong></td>
-            <td style="text-align: center;">48.40</td>
-            <td style="text-align: center;"><strong>100.00</strong></td>
+            <td>112.35</td>
+            <td>106.52</td>
+            <td><strong>97.76</strong></td>
+            <td><strong>97.66</strong></td>
+            <td>48.40</td>
+            <td><strong>100.00</strong></td>
         </tr>
         <tr>
             <td>PMSN</td>
-            <td style="text-align: center;">113.24</td>
-            <td style="text-align: center;">-</td>
-            <td style="text-align: center;">96.28</td>
-            <td style="text-align: center;">-</td>
-            <td style="text-align: center;"><strong>100.00</strong></td>
-            <td style="text-align: center;">-</td>
+            <td>113.24</td>
+            <td>-</td>
+            <td>96.28</td>
+            <td>-</td>
+            <td><strong>100.00</strong></td>
+            <td>-</td>
         </tr>
     </tbody>
 </table>
@@ -286,74 +307,74 @@ The table below provides a detailed table outlining the key components of our fr
         </tr>
         <tr>
             <td>LIF</td>
-            <td style="text-align: center;">129.96</td>
-            <td style="text-align: center;">57.45</td>
-            <td style="text-align: center;">100</td>
-            <td style="text-align: center;">34.15</td>
+            <td>129.96</td>
+            <td>57.45</td>
+            <td>100</td>
+            <td>34.15</td>
         </tr>
         <tr>
             <td>LIF w/ DCLS-Delays</td>
-            <td style="text-align: center;">89.87</td>
-            <td style="text-align: center;">68.98</td>
-            <td style="text-align: center;">100</td>
-            <td style="text-align: center;">51.85</td>
+            <td>89.87</td>
+            <td>68.98</td>
+            <td>100</td>
+            <td>51.85</td>
         </tr>
         <tr>
             <td>TCN</td>
-            <td style="text-align: center;">102.20</td>
-            <td style="text-align: center;">95.10</td>
-            <td style="text-align: center;">1200</td>
-            <td style="text-align: center;">69.95</td>
+            <td>102.20</td>
+            <td>95.10</td>
+            <td>1200</td>
+            <td>69.95</td>
         </tr>
         <tr>
             <td>SpikingTCN</td>
-            <td style="text-align: center;">114.46</td>
-            <td style="text-align: center;">93.76</td>
-            <td style="text-align: center;">1200</td>
-            <td style="text-align: center;">61.95</td>
+            <td>114.46</td>
+            <td>93.76</td>
+            <td>1200</td>
+            <td>61.95</td>
         </tr>
         <tr>
             <td>LSTM</td>
-            <td style="text-align: center;">88.08</td>
-            <td style="text-align: center;">92.41</td>
-            <td style="text-align: center;">2400</td>
-            <td style="text-align: center;">100</td>
+            <td>88.08</td>
+            <td>92.41</td>
+            <td>2400</td>
+            <td>100</td>
         </tr>
         <tr>
             <td>Gated Spiking Neuron</td>
-            <td style="text-align: center;">99.98</td>
-            <td style="text-align: center;">80.13</td>
-            <td style="text-align: center;">1200</td>
-            <td style="text-align: center;">29.85</td>
+            <td>99.98</td>
+            <td>80.13</td>
+            <td>1200</td>
+            <td>29.85</td>
         </tr>
         <tr>
             <td>Transformer</td>
-            <td style="text-align: center;">112.43</td>
-            <td style="text-align: center;">97.64</td>
-            <td style="text-align: center;">2400</td>
-            <td style="text-align: center;">100</td>
+            <td>112.43</td>
+            <td>97.64</td>
+            <td>2400</td>
+            <td>100</td>
         </tr>
         <tr>
             <td>Spike-Driven Transformer ($T_\text{in}=4$)</td>
-            <td style="text-align: center;">152.41</td>
-            <td style="text-align: center;">96.21</td>
-            <td style="text-align: center;">2400</td>
-            <td style="text-align: center;">98.15</td>
+            <td>152.41</td>
+            <td>96.21</td>
+            <td>2400</td>
+            <td>98.15</td>
         </tr>
         <tr>
             <td>Spike-Driven Transformer ($T_\text{in}=1$)</td>
-            <td style="text-align: center;">327.82</td>
-            <td style="text-align: center;">95.01</td>
-            <td style="text-align: center;">2400</td>
-            <td style="text-align: center;">88.05</td>
+            <td>327.82</td>
+            <td>95.01</td>
+            <td>2400</td>
+            <td>88.05</td>
         </tr>
     </tbody>
 </table>
 
 
-### Steps to Reproduce Results
+#### Steps to Reproduce Results
 
-#### Dependencies
+##### Dependencies
 ```shell
 # Environment dependencies
 torch, torchvision, torchaudio
@@ -365,7 +386,7 @@ toml
 h5py, tqdm
 ```
 
-#### Experiments
+##### Experiments
 Each experiment in the paper has a corresponding `toml` configuration in a folder `src/benchmark/experiments/`. We also provide scripts for all experiments as follows:
 - `scripts/run_01_STP_on_benchmarks.sh`
 - `scripts/run_02_training_algo_on_benchmarks.sh`
@@ -391,7 +412,7 @@ python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_
 ```
 
 
-## Cite & Contact
+#### Cite & Contact
 
 Please cite it as follows if you have adopted or contributed to this work in your research:
 
