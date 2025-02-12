@@ -2,7 +2,7 @@
 
 The goal of Neuromorphic Sequential Benchmark is to enable consistent performance comparisons across different approaches to Spiking Neural Networks (SNNs) for temporal processing and to facilitate the tracking of advancements in the field.
 
-This repository currently contains the source code and implementation details for the evaluation results in the research paper titled ["Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects"](link). We are in the process of developing a comprehensive benchmark suite tailored for neuromorphic temporal processing. Guidelines will be provided to guarantee equitable evaluations of emerging SNN approaches using this benchmark suite.
+This repository currently contains the source code and implementation details for the evaluation results in the research paper titled ["Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects"](link). We are in the process of developing a comprehensive benchmark suite tailored for neuromorphic temporal processing. Guidelines will be provided to guarantee fair and consistent evaluations of emerging SNN approaches using this benchmark suite.
 
 ---
 
@@ -14,24 +14,23 @@ This repository currently contains the source code and implementation details fo
 
 ### Main Results
 
-- Performance results for different **learning algorithms** across benchmark suites, "FF" and "Rec." refer to "feedforward" and "recurrent" architectures, respectively. "PPL" stands for "perplexity".
+- Results for different **learning algorithms** across benchmark suites, "FF" and "Rec." refer to "feedforward" and "recurrent" architectures, respectively. "PPL" stands for "perplexity".
 
-<p align="center">
-<table border="1" style="width: 100%; border-collapse: collapse;">
+<table border="1" style="width: 100%; border-collapse: collapse;" align="center">
     <thead>
         <tr>
             <th>Dataset</th>
-            <th colspan="2" style="text-align: center;">PTB (T=70)</th>
-            <th colspan="2" style="text-align: center;">PS-MNIST (T=784)</th>
-            <th colspan="2" style="text-align: center;">Binary Adding (T=100)</th>
+            <th colspan="2" style="text-align: center;">PTB ($T=70$)</th>
+            <th colspan="2" style="text-align: center;">PS-MNIST ($T=784$)</th>
+            <th colspan="2" style="text-align: center;">Binary Adding ($T=100$)</th>
         </tr>
         <tr>
             <th>Metric</th>
-            <th style="text-align: center;">PPL ↓</th>
+            <th style="text-align: center;">PPL $\downarrow$</th>
             <th style="text-align: center;">Rec.</th>
-            <th style="text-align: center;">Acc. ↑</th>
+            <th style="text-align: center;">Acc. $\uparrow$</th>
             <th style="text-align: center;">Rec.</th>
-            <th style="text-align: center;">Acc. ↑</th>
+            <th style="text-align: center;">Acc. $\uparrow$</th>
             <th style="text-align: center;">Rec.</th>
         </tr>
     </thead>
@@ -83,20 +82,17 @@ This repository currently contains the source code and implementation details fo
         </tr>
     </tbody>
 </table>
-</p>
 
 
+- Results for different **neuron models** across benchmark suites.
 
-- Performance results for different **neuron models** across benchmark suites，The <strong>best</strong> model is highlighted in <strong>bold</strong>, the <u>second</u> best is <u>underlined</u>, and the <em>third</em> best is <em>italicized</em>.
-
-<p align="center">
-<table border="1">
+<table border="1" align="center">
     <thead>
         <tr>
             <th>Network</th>
-            <th colspan="2" style="text-align: center;">PTB (T=70)</th>
-            <th colspan="2" style="text-align: center;">PS-MNIST (T=784)</th>
-            <th colspan="2" style="text-align: center;">Binary Adding (T=100)</th>
+            <th colspan="2" style="text-align: center;">PTB ($T=70$)</th>
+            <th colspan="2" style="text-align: center;">PS-MNIST ($T=784$)</th>
+            <th colspan="2" style="text-align: center;">Binary Adding ($T=100$)</th>
         </tr>
         <tr>
             <th>Metric</th>
@@ -156,17 +152,17 @@ This repository currently contains the source code and implementation details fo
         </tr>
         <tr>
             <td>GLIF</td>
-            <td style="text-align: center;"><u>111.58</u></td>
+            <td style="text-align: center;">111.58</td>
             <td style="text-align: center;">103.07</td>
-            <td style="text-align: center;"><em>95.42</em></td>
-            <td style="text-align: center;"><u>95.04</u></td>
+            <td style="text-align: center;">95.42</td>
+            <td style="text-align: center;">95.04</td>
             <td style="text-align: center;">90.15</td>
             <td style="text-align: center;">63.60</td>
         </tr>
         <tr>
             <td>LTC</td>
             <td style="text-align: center;"><strong>104.10</strong></td>
-            <td style="text-align: center;"><u>99.09</u></td>
+            <td style="text-align: center;">99.09</td>
             <td style="text-align: center;">86.33</td>
             <td style="text-align: center;">90.94</td>
             <td style="text-align: center;"><strong>100.00</strong></td>
@@ -186,7 +182,7 @@ This repository currently contains the source code and implementation details fo
             <td style="text-align: center;">286.71</td>
             <td style="text-align: center;">255.67</td>
             <td style="text-align: center;">86.81</td>
-            <td style="text-align: center;"><em>92.08</em></td>
+            <td style="text-align: center;">92.08</td>
             <td style="text-align: center;">19.10</td>
             <td style="text-align: center;">19.90</td>
         </tr>
@@ -196,7 +192,7 @@ This repository currently contains the source code and implementation details fo
             <td style="text-align: center;">102.05</td>
             <td style="text-align: center;">77.70</td>
             <td style="text-align: center;">83.14</td>
-            <td style="text-align: center;"><em>99.25</em></td>
+            <td style="text-align: center;">99.25</td>
             <td style="text-align: center;">96.10</td>
         </tr>
         <tr>
@@ -211,15 +207,15 @@ This repository currently contains the source code and implementation details fo
         <tr>
             <td>DH-LIF</td>
             <td style="text-align: center;">115.61</td>
-            <td style="text-align: center;"><em>100.55</em></td>
+            <td style="text-align: center;">100.55</td>
             <td style="text-align: center;">79.12</td>
             <td style="text-align: center;">91.07</td>
             <td style="text-align: center;">98.85</td>
-            <td style="text-align: center;"><em>99.35</em></td>
+            <td style="text-align: center;">99.35</td>
         </tr>
         <tr>
             <td>CELIF</td>
-            <td style="text-align: center;"><em>112.35</em></td>
+            <td style="text-align: center;">112.35</td>
             <td style="text-align: center;">106.52</td>
             <td style="text-align: center;"><strong>97.76</strong></td>
             <td style="text-align: center;"><strong>97.66</strong></td>
@@ -230,111 +226,105 @@ This repository currently contains the source code and implementation details fo
             <td>PMSN</td>
             <td style="text-align: center;">113.24</td>
             <td style="text-align: center;">-</td>
-            <td style="text-align: center;"><u>96.28</u></td>
+            <td style="text-align: center;">96.28</td>
             <td style="text-align: center;">-</td>
             <td style="text-align: center;"><strong>100.00</strong></td>
             <td style="text-align: center;">-</td>
         </tr>
     </tbody>
 </table>
-</p>
 
 
+- Results for different **neural architectures** across benchmark suites
 
-
-- Performance results for different **neural architectures** across benchmark suites
-
-<p align="center">
-<table border="1" style="width: 100%; border-collapse: collapse;">
+<table border="1" style="width: 100%; border-collapse: collapse;" align="center">
     <thead>
         <tr>
             <th>Dataset</th>
-            <th colspan="2" style="text-align: center;">PTB (T=70)</th>
-            <th colspan="2" style="text-align: center;">PS-MNIST (T=784)</th>
+            <th style="text-align: center;">PTB ($T=70$)</th>
+            <th style="text-align: center;">PS-MNIST ($T=784$)</th>
             <th colspan="2" style="text-align: center;">Binary Adding</th>
         </tr>
         <tr>
             <th>Metric</th>
-            <th colspan="2" style="text-align: center;">PPL ↓</th>
-            <th colspan="2" style="text-align: center;">Acc. ↑</th>
-            <th style="text-align: center;">T ↑</th>
-            <th style="text-align: center;">Acc. ↑</th>
+            <th style="text-align: center;">PPL $\downarrow$</th>
+            <th style="text-align: center;">Acc. $\uparrow$</th>
+            <th style="text-align: center;">$T$ $\uparrow$</th>
+            <th style="text-align: center;">Acc. $\uparrow$</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td><strong>#Params.</strong></td>
-            <td colspan="2" style="text-align: center;">~5M</td>
-            <td colspan="2" style="text-align: center;">~90K</td>
-            <td colspan="2" style="text-align: center;">~40K</td>
+            <th><strong>#Params.</strong></th>
+            <td>~5M</td>
+            <td>~90K</td>
+            <td colspan="2">~40K</td>
         </tr>
         <tr>
             <td>LIF</td>
-            <td colspan="2" style="text-align: center;">129.96</td>
-            <td colspan="2" style="text-align: center;">57.45</td>
+            <td style="text-align: center;">129.96</td>
+            <td style="text-align: center;">57.45</td>
             <td style="text-align: center;">100</td>
             <td style="text-align: center;">34.15</td>
         </tr>
         <tr>
             <td>LIF w/ DCLS-Delays</td>
-            <td colspan="2" style="text-align: center;">89.87</td>
-            <td colspan="2" style="text-align: center;">68.98</td>
+            <td style="text-align: center;">89.87</td>
+            <td style="text-align: center;">68.98</td>
             <td style="text-align: center;">100</td>
             <td style="text-align: center;">51.85</td>
         </tr>
         <tr>
             <td>TCN</td>
-            <td colspan="2" style="text-align: center;">102.20</td>
-            <td colspan="2" style="text-align: center;">95.10</td>
+            <td style="text-align: center;">102.20</td>
+            <td style="text-align: center;">95.10</td>
             <td style="text-align: center;">1200</td>
             <td style="text-align: center;">69.95</td>
         </tr>
         <tr>
             <td>SpikingTCN</td>
-            <td colspan="2" style="text-align: center;">114.46</td>
-            <td colspan="2" style="text-align: center;">93.76</td>
+            <td style="text-align: center;">114.46</td>
+            <td style="text-align: center;">93.76</td>
             <td style="text-align: center;">1200</td>
             <td style="text-align: center;">61.95</td>
         </tr>
         <tr>
             <td>LSTM</td>
-            <td colspan="2" style="text-align: center;">88.08</td>
-            <td colspan="2" style="text-align: center;">92.41</td>
+            <td style="text-align: center;">88.08</td>
+            <td style="text-align: center;">92.41</td>
             <td style="text-align: center;">2400</td>
             <td style="text-align: center;">100</td>
         </tr>
         <tr>
             <td>Gated Spiking Neuron</td>
-            <td colspan="2" style="text-align: center;">99.98</td>
-            <td colspan="2" style="text-align: center;">80.13</td>
+            <td style="text-align: center;">99.98</td>
+            <td style="text-align: center;">80.13</td>
             <td style="text-align: center;">1200</td>
             <td style="text-align: center;">29.85</td>
         </tr>
         <tr>
             <td>Transformer</td>
-            <td colspan="2" style="text-align: center;">112.43</td>
-            <td colspan="2" style="text-align: center;">97.64</td>
+            <td style="text-align: center;">112.43</td>
+            <td style="text-align: center;">97.64</td>
             <td style="text-align: center;">2400</td>
             <td style="text-align: center;">100</td>
         </tr>
         <tr>
-            <td>Spike-Driven Transformer (T=4)</td>
-            <td colspan="2" style="text-align: center;">152.41</td>
-            <td colspan="2" style="text-align: center;">96.21</td>
+            <td>Spike-Driven Transformer ($T_\text{in}=4$)</td>
+            <td style="text-align: center;">152.41</td>
+            <td style="text-align: center;">96.21</td>
             <td style="text-align: center;">2400</td>
             <td style="text-align: center;">98.15</td>
         </tr>
         <tr>
-            <td>Spike-Driven Transformer (T=1)</td>
-            <td colspan="2" style="text-align: center;">327.82</td>
-            <td colspan="2" style="text-align: center;">95.01</td>
+            <td>Spike-Driven Transformer ($T_\text{in}=1$)</td>
+            <td style="text-align: center;">327.82</td>
+            <td style="text-align: center;">95.01</td>
             <td style="text-align: center;">2400</td>
             <td style="text-align: center;">88.05</td>
         </tr>
     </tbody>
 </table>
-</p>
-
 
 
 ### Steps to Reproduce Results
