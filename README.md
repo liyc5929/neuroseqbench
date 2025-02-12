@@ -56,7 +56,7 @@ The table below provides a comprehensive overview of the SNN methods that have b
 #### Main Results
 
 >
->  Results will be updated regularly to ensure they reflect the most current data.
+>  The experimental results will be continuously updated to reflect the latest advancements in the field.
 >
 
 - Results for different **learning algorithms** on temporal processing tasks. "FF" and "Rec." refer to "feedforward" and "recurrent" architectures, respectively. "PPL" stands for "perplexity".
