@@ -1,66 +1,392 @@
 # Neuromorphic Sequential Benchmark
 
+The goal of Neuromorphic Sequential Benchmark is to enable consistent performance comparisons across different approaches to Spiking Neural Networks (SNNs) for temporal processing and to facilitate the tracking of advancements in the field.
 
+This repository currently contains the source code and implementation details for the evaluation results in the research paper titled ["Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects"](link). We are in the process of developing a comprehensive benchmark suite tailored for neuromorphic temporal processing. Guidelines will be provided to guarantee fair and consistent evaluations of emerging SNN approaches using this benchmark suite.
+
+We warmly invite researchers and practitioners in the field of neuromorphic temporal processing to engage with us by providing feedback and contributing. By integrating more comprehensive temporal processing benchmarks and advanced SNN methods, your contributions can significantly advance this field. We value your insights and look forward to collaborating to drive innovation together.
+
+---
+
+<h3 align="center"> Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects </h3>
+
+---
+
+> **Abstract:** Temporal processing is fundamental for both biological and artificial intelligence systems, as it enables the comprehension of dynamic environments and facilitates timely responses. Spiking Neural Networks (SNNs) excel in handling such data with high efficiency, owing to their rich neuronal dynamics and sparse activity patterns. Given the recent surge in the development of SNNs, there is an urgent need for a comprehensive evaluation of their temporal processing capabilities. In this paper, we first conduct an in-depth assessment of commonly used neuromorphic benchmarks, revealing critical limitations in their ability to evaluate the temporal processing capabilities of SNNs. To bridge this gap, we further introduce a benchmark suite consisting of three temporal processing tasks characterized by rich temporal dynamics across multiple timescales. Utilizing this benchmark suite, we perform a thorough evaluation of recently introduced SNN approaches to elucidate the current status of SNNs in temporal processing. Our findings indicate significant advancements in recently developed spiking neuron models and neural architectures regarding their temporal processing capabilities, while also highlighting a performance gap in handling long-range dependencies when compared to state-of-the-art non-spiking models. Finally, we discuss the key challenges and outline potential avenues for future research.
+
+## Features
+
+The following illustration depicts the **Segregated Temporal Probe (STP)**, an analytical tool for assessing the effectiveness of neuromorphic benchmarks in evaluating the temporal processing capabilities of SNNs. The STP incorporates three algorithms—Spatio-Temporal Backpropagation (STBP), Spatial Domain Backpropagation (SDBP), and No Temporal Domain (NoTD)—which systematically disrupt the temporal processing pathways within an SNN to elucidate their significance.
 
 <p align="center">
-  <picture>
-    <img src="./docs/_statics/overview.png" alt="STP Structure" width="40%" />
-  </picture>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <picture>
-    <img src="./docs/_statics/benchmark_result.png" alt="STP Result" width="50%" />
-  </picture>
+  <img src="./docs/_statics/overview.jpg" alt="STP overview" width="92%" />
 </p>
 
+The table below provides a comprehensive overview of the SNN methods that have been evaluated and compared. Each method is detailed with specific examples and their corresponding locations within the repository.
 
-
-This open-source initiative is based on our research, which emphasizes the importance of a more comprehensive evaluation of temporal processing in Spiking Neural Networks (SNNs). To explore more possibilities with SNNs in handling **extended temporal sequences**, we introduce the **Segregated Temporal Probe (STP)**, a method developed to isolate the influence of temporal processing functions, enabling a more accurate assessment of the ability of SNNs to manage long-term temporal dependencies. 
-
-Notably, STP incorporates three learning algorithms: **Spatio-Temporal Backpropagation (STBP)**, **Spatial Domain Backpropagation (SDBP)**, and **No Temporal Domain (NoTD)**, enhancing the evaluation of SNNs in temporal processing. Additionally, three benchmark suites—**Penn Treebank (PTB)**, **Permuted-Sequential MNIST (PS-MNIST)**, and **Binary Adding**—have been adopted to validate the feasibility of these methods. Alongside these benchmarks, the initiative also provides a **brain-inspired modeling framework** that streamlines the definition and application of models, offering detailed examples to assist users effectively. (See <u>the full paper</u> for details.)
-
-To further the development of this initiative, we welcome contributors to share their expertise on **brain-inspired modules**, **datasets**, and **other related resources** that are instrumental for temporal processing.
-
-
+<p align="center">
+<table border="1" style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th>Components</th>
+            <th>Description / Instances</th>
+            <th>Repository Location</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Neuron Model</td>
+            <td>LIF, ALIF, PLIF, GLIF, Normalization Layers, etc.</td>
+            <td>`framework/network/neuron`</td>
+        </tr>
+        <tr>
+            <td>Neural Architecture</td>
+            <td>DCLS-Delays, SpikingTCN, Gated Spiking Neuron, Spike-Driven Transformer, etc.</td>
+            <td>`framework/network/structure`</td>
+        </tr>
+        <tr>
+            <td>Dataset</td>
+            <td>Penn Treebank, Permuted Sequential MNIST, Binary Adding, etc.</td>
+            <td>`framework/utils/dataset`</td>
+        </tr>
+    </tbody>
+</table>
+</p>
 
 ## Main Results
 
-- Performance results for different **neuron models** across benchmark suites
+>
+>  The experimental results will be continuously updated to reflect the latest advancements in the field.
+>
+
+- Results for different **learning algorithms** on temporal processing tasks. "FF" and "Rec." refer to "feedforward" and "recurrent" architectures, respectively. "PPL" stands for "perplexity".
+
+<table border="1" style="width: 100%; border-collapse: collapse;" align="center">
+    <thead>
+        <tr>
+            <td><strong>Dataset</strong></td>
+            <td colspan="2"><strong>PTB<br>($T=70$)</strong></td>
+            <td colspan="2"><strong>PS-MNIST<br>($T=784$)</strong></td>
+            <td colspan="2"><strong>Binary Adding<br>($T=100$)</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Metric</strong></td>
+            <td colspan="2" style="white-space: nowrap;"><strong>PPL $\downarrow$</strong></td>
+            <td colspan="2" style="white-space: nowrap;"><strong>Acc. $\uparrow$</strong></td>
+            <td colspan="2" style="white-space: nowrap;"><strong>Acc. $\uparrow$</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Method</strong></td>
+            <td><strong>FF</strong></td>
+            <td><strong>Rec.</strong></td>
+            <td><strong>FF</strong></td>
+            <td><strong>Rec.</strong></td>
+            <td><strong>FF</strong></td>
+            <td><strong>Rec.</strong></td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>STBP</td>
+            <td>129.96</td>
+            <td>111.96</td>
+            <td>57.45</td>
+            <td>72.97</td>
+            <td>29.60</td>
+            <td>53.35</td>
+        </tr>
+        <tr>
+            <td>T-STBP</td>
+            <td>137.8</td>
+            <td>120.58</td>
+            <td>53.00</td>
+            <td>71.03</td>
+            <td>23.00</td>
+            <td>51.50</td>
+        </tr>
+        <tr>
+            <td>E-prop</td>
+            <td>-</td>
+            <td>125.54</td>
+            <td>-</td>
+            <td>52.88</td>
+            <td>-</td>
+            <td>50.85</td>
+        </tr>
+        <tr>
+            <td>OTTT</td>
+            <td>141.77</td>
+            <td>-</td>
+            <td>44.61</td>
+            <td>-</td>
+            <td>17.20</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>SLTT</td>
+            <td>149.86</td>
+            <td>-</td>
+            <td>40.53</td>
+            <td>-</td>
+            <td>15.50</td>
+            <td>-</td>
+        </tr>
+    </tbody>
+</table>
 
 
-<p align="center">
-  <img src="./docs/_statics/image-20250211234801918.png" alt="Neuron Results" width="60%" />
-</p>
+- Results for different **neuron models** on temporal processing tasks
 
-- Performance results for different **neural architectures** across benchmark suites
+<table border="1" align="center">
+    <thead>
+        <tr>
+            <td><strong>Network</strong></td>
+            <td colspan="2"><strong>PTB<br>($T=70$)</strong></td>
+            <td colspan="2"><strong>PS-MNIST<br>($T=784$)</strong></td>
+            <td colspan="2"><strong>Binary Adding<br>($T=100$)</strong></td>
+        </tr>        
+        <tr>
+            <td><strong>Metric</strong></td>
+            <td colspan="2" style="white-space: nowrap;"><strong>PPL $\downarrow$</strong></td>
+            <td colspan="2" style="white-space: nowrap;"><strong>Acc. $\uparrow$</strong></td>
+            <td colspan="2" style="white-space: nowrap;"><strong>Acc. $\uparrow$</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Method</strong></td>
+            <td><strong>FF</strong></td>
+            <td><strong>Rec.</strong></td>
+            <td><strong>FF</strong></td>
+            <td><strong>Rec.</strong></td>
+            <td><strong>FF</strong></td>
+            <td><strong>Rec.</strong></td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>#Params.</strong></td>
+            <td>~5M</td>
+            <td>~6M</td>
+            <td>~90K</td>
+            <td>~160K</td>
+            <td>~20K</td>
+            <td>~40K</td>
+        </tr>
+        <tr>
+            <td>LIF</td>
+            <td>129.96</td>
+            <td>111.96</td>
+            <td>57.45</td>
+            <td>72.97</td>
+            <td>29.60</td>
+            <td>53.35</td>
+        </tr>
+        <tr>
+            <td>PLIF</td>
+            <td>123.76</td>
+            <td>105.64</td>
+            <td>55.86</td>
+            <td>77.32</td>
+            <td>29.40</td>
+            <td>53.25</td>
+        </tr>
+        <tr>
+            <td>ALIF</td>
+            <td>113.67</td>
+            <td>102.25</td>
+            <td>73.90</td>
+            <td>85.78</td>
+            <td>40.30</td>
+            <td>68.00</td>
+        </tr>
+        <tr>
+            <td>adLIF</td>
+            <td>118.52</td>
+            <td><strong>97.22</strong></td>
+            <td>85.93</td>
+            <td>89.53</td>
+            <td>42.00</td>
+            <td>99.05</td>
+        </tr>
+        <tr>
+            <td>GLIF</td>
+            <td>111.58</td>
+            <td>103.07</td>
+            <td>95.42</td>
+            <td>95.04</td>
+            <td>90.15</td>
+            <td>63.60</td>
+        </tr>
+        <tr>
+            <td>LTC</td>
+            <td><strong>104.10</strong></td>
+            <td>99.09</td>
+            <td>86.33</td>
+            <td>90.94</td>
+            <td><strong>100.00</strong></td>
+            <td><strong>100.00</strong></td>
+        </tr>
+        <tr>
+            <td>SPSN</td>
+            <td>120.43</td>
+            <td>-</td>
+            <td>83.88</td>
+            <td>-</td>
+            <td>45.70</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>TCLIF</td>
+            <td>286.71</td>
+            <td>255.67</td>
+            <td>86.81</td>
+            <td>92.08</td>
+            <td>19.10</td>
+            <td>19.90</td>
+        </tr>
+        <tr>
+            <td>LM-H</td>
+            <td>122.69</td>
+            <td>102.05</td>
+            <td>77.70</td>
+            <td>83.14</td>
+            <td>99.25</td>
+            <td>96.10</td>
+        </tr>
+        <tr>
+            <td>CLIF</td>
+            <td>128.28</td>
+            <td>108.21</td>
+            <td>43.90</td>
+            <td>70.44</td>
+            <td>19.10</td>
+            <td>64.30</td>
+        </tr>
+        <tr>
+            <td>DH-LIF</td>
+            <td>115.61</td>
+            <td>100.55</td>
+            <td>79.12</td>
+            <td>91.07</td>
+            <td>98.85</td>
+            <td>99.35</td>
+        </tr>
+        <tr>
+            <td>CELIF</td>
+            <td>112.35</td>
+            <td>106.52</td>
+            <td><strong>97.76</strong></td>
+            <td><strong>97.66</strong></td>
+            <td>48.40</td>
+            <td><strong>100.00</strong></td>
+        </tr>
+        <tr>
+            <td>PMSN</td>
+            <td>113.24</td>
+            <td>-</td>
+            <td>96.28</td>
+            <td>-</td>
+            <td><strong>100.00</strong></td>
+            <td>-</td>
+        </tr>
+    </tbody>
+</table>
 
 
-<p align="center">
-  <img src="./docs/_statics/image-20250211235113576.png" alt="Architecture Results" width="60%" />
-</p>
+- Results for different **neural architectures** on temporal processing tasks
 
-- Performance results for different **surrogate gradient functions** across benchmark suites
+<table border="1" style="width: 100%; border-collapse: collapse;" align="center">
+    <thead>
+        <tr>
+            <td><strong>Dataset</strong></td>
+            <td><strong>PTB<br>($T=70$)</strong></td>
+            <td><strong>PS-MNIST<br>($T=784$)</strong></td>
+            <td colspan="2"><strong>Binary Adding</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Metric</strong></td>
+            <td style="white-space: nowrap;"><strong>PPL $\downarrow$</strong></td>
+            <td style="white-space: nowrap;"><strong>Acc. $\uparrow$</strong></td>
+            <td style="white-space: nowrap;"><strong>$T \uparrow$</strong></td>
+            <td style="white-space: nowrap;"><strong>Acc. $\uparrow$</strong></td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>#Params.</strong></td>
+            <td>~5M</td>
+            <td>~90K</td>
+            <td colspan="2">~40K</td>
+        </tr>
+        <tr>
+            <td>LIF</td>
+            <td>129.96</td>
+            <td>57.45</td>
+            <td>100</td>
+            <td>34.15</td>
+        </tr>
+        <tr>
+            <td>LIF w/ DCLS-Delays</td>
+            <td>89.87</td>
+            <td>68.98</td>
+            <td>100</td>
+            <td>51.85</td>
+        </tr>
+        <tr>
+            <td>TCN</td>
+            <td>102.20</td>
+            <td>95.10</td>
+            <td>1200</td>
+            <td>69.95</td>
+        </tr>
+        <tr>
+            <td>SpikingTCN</td>
+            <td>114.46</td>
+            <td>93.76</td>
+            <td>1200</td>
+            <td>61.95</td>
+        </tr>
+        <tr>
+            <td>LSTM</td>
+            <td>88.08</td>
+            <td>92.41</td>
+            <td>2400</td>
+            <td>100</td>
+        </tr>
+        <tr>
+            <td>Gated Spiking Neuron</td>
+            <td>99.98</td>
+            <td>80.13</td>
+            <td>1200</td>
+            <td>29.85</td>
+        </tr>
+        <tr>
+            <td>Transformer</td>
+            <td>112.43</td>
+            <td>97.64</td>
+            <td>2400</td>
+            <td>100</td>
+        </tr>
+        <tr>
+            <td>Spike-Driven Transformer ($T_\text{in}=4$)</td>
+            <td>152.41</td>
+            <td>96.21</td>
+            <td>2400</td>
+            <td>98.15</td>
+        </tr>
+        <tr>
+            <td>Spike-Driven Transformer ($T_\text{in}=1$)</td>
+            <td>327.82</td>
+            <td>95.01</td>
+            <td>2400</td>
+            <td>88.05</td>
+        </tr>
+    </tbody>
+</table>
 
-<p align="center">
-  <img src=".\docs\_statics\image-20250211235319579.png" alt="Surro. Func. Results" width="60%" />
-</p>
 
-- Performance results for different **learning algorithms** across benchmark suites
+## Steps to Reproduce Results
 
-<p align="center">
-  <img src=".\docs\_statics\image-20250211235503328.png" alt="Learning Algo. Results" width="60%" />
-</p>
-
-
-## Getting Started
-
-Clone this repository by running the following command:
-
-```shell
-git clone https://github.com/liyc5929/neuroseqbench.git
-```
-
-After cloning, navigate to the repository's directory and install the requirements listed below:
-
+### Dependencies
 ```shell
 # Environment dependencies
 torch, torchvision, torchaudio
@@ -72,14 +398,8 @@ toml
 h5py, tqdm
 ```
 
-After completing the configuration of requirements as outlined above, please see the **Examples** section to run existing experiments, or refer to the **Contributing Guide** for information on how to contribute.
-
-
-
-## Examples
-
-The Linux commands for all experiments are contained in the following files:
-
+### Experiments
+Each experiment in the paper has a corresponding `toml` configuration in a folder `src/benchmark/experiments/`. We also provide scripts for all experiments as follows:
 - `scripts/run_01_STP_on_benchmarks.sh`
 - `scripts/run_02_training_algo_on_benchmarks.sh`
 - `scripts/run_03_surro_grad_on_benchmarks.sh`
@@ -87,7 +407,7 @@ The Linux commands for all experiments are contained in the following files:
 - `scripts/run_05_spiking_neuron_on_benchmarks.sh`
 - `scripts/run_06_neuron_arch_on_benchmarks.sh`
 
-As an example, to conduct baseline experiments on datasets PennTreebank, PS-MNIST, and Binary Adding using the `run_05_spiking_neuron_on_benchmarks.sh`, execute the following commands:
+Here is an example to reproduce the experiments of spiking neuron models by executing the file `scripts/run_05_spiking_neuron_on_benchmarks.sh`,  which contains the following commands:
 
 ```shell
 # PennTreebank
@@ -104,53 +424,9 @@ python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_
 ```
 
 
-
-## Contributing Guide
-
-The file structure of the repository is outlined below. The `network` and `utils` components serve as the primary interfaces for contributors wishing to add their own features:
-
-```
-/src/benchmark/
-├── framework/
-│   ├── kernel/
-│   │   ├── accelerationkernel.so   # To run on Linux
-│   │   └── accelerationkernel.pyd  # To run on Windows
-│   ├── network/
-│   │   ├── neuron
-│   │   ├── structure
-│   │   └── trainer
-│   └── utils/
-│       ├── dataset
-│       └── tools
-└── experiments/
-    ├── 01_STP_on_benchmarks/
-    │   ├── logs/
-    │   │   ├── log1.txt
-    │   │   └── log2.txt
-    │   ├── config.toml
-    │   └── main.py
-    ├── 02_training_algo_on_benchmarks/
-    ├── 03_surro_grad_on_benchmarks/
-    ├── 04_normalization_on_benchmarks/
-    ├── 05_spiking_neuron_on_benchmarks/
-    └── 06_neuron_arch_on_benchmarks/
-```
-
-The table below lists several components along with their instances. These examples illustrate the roles these components play within the `framework`.
-
-<div align="center">
-
-| Components      |                   Description / Instances                    |
-| --------------- | :----------------------------------------------------------: |
-| network/neuron  |      LIF, ALIF, PLIF, GLIF, Normalization Layers, etc.       |
-| network/trainer |              Surrogate Gradient Functions, etc.              |
-| utils/dataset   | Penn Treebank, Permuted Sequential MNIST, Binary Adding, etc. |
-
-</div>
-
 ## Cite & Contact
 
-Please cite it as follows if you have adopted or contributed to this work in your research:
+If you find this repository helpful for your work, please cite it as follows:
 
 ```latex
 @article{
