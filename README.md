@@ -65,17 +65,23 @@ The table below provides a comprehensive overview of the SNN methods that have b
     <thead>
         <tr>
             <td><strong>Dataset</strong></td>
-            <td colspan="2"><strong>PTB ($T=70$)</strong></td>
-            <td colspan="2"><strong>PS-MNIST ($T=784$)</strong></td>
-            <td colspan="2"><strong>Binary Adding ($T=100$)</strong></td>
+            <td colspan="2"><strong>PTB<br>($T=70$)</strong></td>
+            <td colspan="2"><strong>PS-MNIST<br>($T=784$)</strong></td>
+            <td colspan="2"><strong>Binary Adding<br>($T=100$)</strong></td>
         </tr>
         <tr>
             <td><strong>Metric</strong></td>
-            <td><strong>PPL $\downarrow$</strong></td>
+            <td colspan="2" style="white-space: nowrap;"><strong>PPL $\downarrow$</strong></td>
+            <td colspan="2" style="white-space: nowrap;"><strong>Acc. $\uparrow$</strong></td>
+            <td colspan="2" style="white-space: nowrap;"><strong>Acc. $\uparrow$</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Method</strong></td>
+            <td><strong>FF</strong></td>
             <td><strong>Rec.</strong></td>
-            <td><strong>Acc. $\uparrow$</strong></td>
+            <td><strong>FF</strong></td>
             <td><strong>Rec.</strong></td>
-            <td><strong>Acc. $\uparrow$</strong></td>
+            <td><strong>FF</strong></td>
             <td><strong>Rec.</strong></td>
         </tr>
     </thead>
@@ -135,12 +141,18 @@ The table below provides a comprehensive overview of the SNN methods that have b
     <thead>
         <tr>
             <td><strong>Network</strong></td>
-            <td colspan="2"><strong>PTB ($T=70$)</strong></td>
-            <td colspan="2"><strong>PS-MNIST ($T=784$)</strong></td>
-            <td colspan="2"><strong>Binary Adding ($T=100$)</strong></td>
-        </tr>
+            <td colspan="2"><strong>PTB<br>($T=70$)</strong></td>
+            <td colspan="2"><strong>PS-MNIST<br>($T=784$)</strong></td>
+            <td colspan="2"><strong>Binary Adding<br>($T=100$)</strong></td>
+        </tr>        
         <tr>
             <td><strong>Metric</strong></td>
+            <td colspan="2" style="white-space: nowrap;"><strong>PPL $\downarrow$</strong></td>
+            <td colspan="2" style="white-space: nowrap;"><strong>Acc. $\uparrow$</strong></td>
+            <td colspan="2" style="white-space: nowrap;"><strong>Acc. $\uparrow$</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Method</strong></td>
             <td><strong>FF</strong></td>
             <td><strong>Rec.</strong></td>
             <td><strong>FF</strong></td>
@@ -286,16 +298,16 @@ The table below provides a comprehensive overview of the SNN methods that have b
     <thead>
         <tr>
             <td><strong>Dataset</strong></td>
-            <td><strong>PTB ($T=70$)</strong></td>
-            <td><strong>PS-MNIST ($T=784$)</strong></td>
+            <td><strong>PTB<br>($T=70$)</strong></td>
+            <td><strong>PS-MNIST<br>($T=784$)</strong></td>
             <td colspan="2"><strong>Binary Adding</strong></td>
         </tr>
         <tr>
             <td><strong>Metric</strong></td>
-            <td><strong>PPL $\downarrow$</strong></td>
-            <td><strong>Acc. $\uparrow$</strong></td>
-            <td><strong>$T \uparrow$</strong></td>
-            <td><strong>Acc. $\uparrow$</strong></td>
+            <td style="white-space: nowrap;"><strong>PPL $\downarrow$</strong></td>
+            <td style="white-space: nowrap;"><strong>Acc. $\uparrow$</strong></td>
+            <td style="white-space: nowrap;"><strong>$T \uparrow$</strong></td>
+            <td style="white-space: nowrap;"><strong>Acc. $\uparrow$</strong></td>
         </tr>
     </thead>
     <tbody>
