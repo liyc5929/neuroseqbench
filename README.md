@@ -14,7 +14,7 @@ We warmly invite researchers and practitioners in the field of neuromorphic temp
 
 > **Abstract:** Temporal processing is fundamental for both biological and artificial intelligence systems, as it enables the comprehension of dynamic environments and facilitates timely responses. Spiking Neural Networks (SNNs) excel in handling such data with high efficiency, owing to their rich neuronal dynamics and sparse activity patterns. Given the recent surge in the development of SNNs, there is an urgent need for a comprehensive evaluation of their temporal processing capabilities. In this paper, we first conduct an in-depth assessment of commonly used neuromorphic benchmarks, revealing critical limitations in their ability to evaluate the temporal processing capabilities of SNNs. To bridge this gap, we further introduce a benchmark suite consisting of three temporal processing tasks characterized by rich temporal dynamics across multiple timescales. Utilizing this benchmark suite, we perform a thorough evaluation of recently introduced SNN approaches to elucidate the current status of SNNs in temporal processing. Our findings indicate significant advancements in recently developed spiking neuron models and neural architectures regarding their temporal processing capabilities, while also highlighting a performance gap in handling long-range dependencies when compared to state-of-the-art non-spiking models. Finally, we discuss the key challenges and outline potential avenues for future research.
 
-#### Features
+## Features
 
 The following illustration depicts the **Segregated Temporal Probe (STP)**, an analytical tool for assessing the effectiveness of neuromorphic benchmarks in evaluating the temporal processing capabilities of SNNs. The STP incorporates three algorithms—Spatio-Temporal Backpropagation (STBP), Spatial Domain Backpropagation (SDBP), and No Temporal Domain (NoTD)—which systematically disrupt the temporal processing pathways within an SNN to elucidate their significance.
 
@@ -53,7 +53,7 @@ The table below provides a comprehensive overview of the SNN methods that have b
 </table>
 </p>
 
-#### Main Results
+## Main Results
 
 >
 >  The experimental results will be continuously updated to reflect the latest advancements in the field.
@@ -372,9 +372,9 @@ The table below provides a comprehensive overview of the SNN methods that have b
 </table>
 
 
-#### Steps to Reproduce Results
+## Steps to Reproduce Results
 
-##### Dependencies
+### Dependencies
 ```shell
 # Environment dependencies
 torch, torchvision, torchaudio
@@ -386,7 +386,7 @@ toml
 h5py, tqdm
 ```
 
-##### Experiments
+### Experiments
 Each experiment in the paper has a corresponding `toml` configuration in a folder `src/benchmark/experiments/`. We also provide scripts for all experiments as follows:
 - `scripts/run_01_STP_on_benchmarks.sh`
 - `scripts/run_02_training_algo_on_benchmarks.sh`
@@ -412,9 +412,9 @@ python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_
 ```
 
 
-#### Cite & Contact
+## Cite & Contact
 
-Please cite it as follows if you have adopted or contributed to this work in your research:
+If you find this repository helpful for your work, please cite it as follows:
 
 ```latex
 @article{
