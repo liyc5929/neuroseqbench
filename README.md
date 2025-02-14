@@ -397,7 +397,7 @@ toml
 # Data processing
 h5py, tqdm
 
-# Delay Learning Model
+# Delay learning model
 dcls
 ```
 
