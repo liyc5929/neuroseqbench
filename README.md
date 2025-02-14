@@ -19,7 +19,7 @@ We warmly invite researchers and practitioners in the field of neuromorphic temp
 The following illustration depicts the **Segregated Temporal Probe (STP)**, an analytical tool for assessing the effectiveness of neuromorphic benchmarks in evaluating the temporal processing capabilities of SNNs. The STP incorporates three algorithms—Spatio-Temporal Backpropagation (STBP), Spatial Domain Backpropagation (SDBP), and No Temporal Domain (NoTD)—which systematically disrupt the temporal processing pathways within an SNN to elucidate their significance.
 
 <p align="center">
-  <img src="./docs/_statics/overview.jpg" alt="STP overview" width="92%" />
+  <img src="./docs/_statics/overview.jpg" alt="STP overview" width="98%" />
 </p>
 
 The table below provides a comprehensive overview of the SNN methods that have been evaluated and compared. Each method is detailed with specific examples and their corresponding locations within the repository.
