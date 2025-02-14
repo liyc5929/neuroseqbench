@@ -2,7 +2,7 @@
 
 The goal of Neuromorphic Sequential Benchmark is to enable consistent performance comparisons across different approaches to Spiking Neural Networks (SNNs) for temporal processing and to facilitate the tracking of advancements in the field.
 
-This repository currently contains the source code and implementation details for the evaluation results in the research paper titled ["Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects"](link). We are in the process of developing a comprehensive benchmark suite tailored for neuromorphic temporal processing. Guidelines will be provided to guarantee fair and consistent evaluations of emerging SNN approaches using this benchmark suite.
+This repository currently contains the source code and implementation details for the evaluation results in the research paper titled ["Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects"](https://arxiv.org/abs/2502.09449). We are in the process of developing a comprehensive benchmark suite tailored for neuromorphic temporal processing. Guidelines will be provided to guarantee fair and consistent evaluations of emerging SNN approaches using this benchmark suite.
 
 We warmly invite researchers and practitioners in the field of neuromorphic temporal processing to engage with us by providing feedback and contributing. By integrating more comprehensive temporal processing benchmarks and advanced SNN methods, your contributions can significantly advance this field. We value your insights and look forward to collaborating to drive innovation together.
 
@@ -429,8 +429,13 @@ python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_
 If you find this repository helpful for your work, please cite it as follows:
 
 ```latex
-@article{
-
+@article{segregatedtemporalprobe,
+    title = {Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects}, 
+    author = {Chenxiang Ma and Xinyi Chen and Yanchen Li and Qu Yang and Yujie Wu and Guoqi Li and Gang Pan and Huajin Tang and Kay Chen Tan and Jibin Wu},
+    year = {2025},
+    volume = {abs/2502.09449},
+    eprinttype = {arXiv},
+    eprint = {2502.09449},
 }
 ```
 
