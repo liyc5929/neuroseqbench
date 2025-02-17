@@ -24,12 +24,12 @@ class TemporalBlock(nn.Module):
         self.chomp1 = Chomp1d(padding)
         self.relu1 = nn.ReLU() if spiking_neuron is None else spiking_neuron()
         self.dropout1 = nn.Dropout(dropout)
-
         self.conv2 = weight_norm(nn.Conv1d(n_outputs, n_outputs, kernel_size, stride=stride, padding=padding, dilation=dilation))
         self.chomp2 = Chomp1d(padding)
         self.relu2 = nn.ReLU() if spiking_neuron is None else spiking_neuron()
         self.dropout2 = nn.Dropout(dropout)
         self.downsample = nn.Conv1d(n_inputs, n_outputs, 1) if n_inputs != n_outputs else None
+        self.spiking_neuron = spiking_neuron
 
         self.relu = nn.ReLU() if spiking_neuron is None else nn.Identity()
         self.init_weights()
@@ -43,7 +43,7 @@ class TemporalBlock(nn.Module):
             self.downsample.weight.data.normal_(0, 0.01)
 
     def forward(self, x): 
-        if x.dim() == 3: # for non-spiking neuron, input shape [B, N, T]
+        if self.spiking_neuron is None: # input shape [B, N, T]
             out = self.conv1(x)
             out = self.chomp1(out)
             out = self.relu1(out)
@@ -53,8 +53,8 @@ class TemporalBlock(nn.Module):
             out = self.relu2(out)
             out = self.dropout2(out)
             res = x if self.downsample is None else self.downsample(x)
-        elif x.dim() == 4: # for spiking neuron, input shape [T_in, B, N, T]
-            inner_time_step = x.size(0) # T_in
+        else: # input shape [T_in, B, N, T]
+            inner_time_step = x.size(0) # fetch `T_in`
             x = MergeDimension()(x)
             out = self.conv1(x)
             out = self.chomp1(out)
@@ -67,12 +67,11 @@ class TemporalBlock(nn.Module):
             out = SplitDimension(inner_time_step)(out)
             if self.downsample:
                 res = self.downsample(x)
-                res = SplitDimension(inner_time_step)(res)
+                # res = SplitDimension(inner_time_step)(res)
                 res = self.downsample_neuron(res)
+                res = SplitDimension(inner_time_step)(res) ###
             else:
                 res = SplitDimension(inner_time_step)(x)
-        else:
-            raise NotImplementedError
         return self.relu(out + res)
 
 
@@ -229,6 +228,10 @@ class LMTCN(nn.Module):
         nn.init.uniform_(self.decoder.weight, -initrange, initrange)
 
     def forward(self, inputs, state):
+        def reset_states(model):
+            for _, module in model.named_modules():
+                if hasattr(module, "reset"):
+                    module.reset()
 
         # Embedding forward
         embedded = embedded_dropout(self.embeddings, inputs, dropout=self.dropout_words if self.training else 0)
@@ -240,7 +243,8 @@ class LMTCN(nn.Module):
         """Input ought to have dimension (N, C_in, L_in), where L_in is the seq_len; here the input is (N, L, C)"""
         hiddens = hiddens.permute(1, 2, 0).contiguous()  # [T, B, N] - >[B, N, T]
         if self.spiking:
-            hiddens = (hiddens.unsqueeze(0)).repeat(self.time_window, 1, 1, 1)
+            reset_states(self)
+            hiddens = hiddens.unsqueeze(0).repeat(self.time_window, 1, 1, 1)  # [B, N, T] -> [T_in, B, N, T]
             hiddens = self.tcn(hiddens).mean(0)
         else:
             hiddens = self.tcn(hiddens)
