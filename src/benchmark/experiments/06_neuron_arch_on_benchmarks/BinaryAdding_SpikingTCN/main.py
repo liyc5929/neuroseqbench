@@ -16,9 +16,10 @@ if current_directory not in sys.path:
 
 from src.benchmark.framework.utils.tools import setup_logging, save_checkpoint, AverageMeter, ProgressMeter, accuracy, count_parameters
 from src.benchmark.framework.utils.dataset import AddingProblem
-from src.benchmark.framework.network.neuron import SLIF
+from src.benchmark.framework.network.neuron import LIF
 from src.benchmark.framework.network.structure import TCN
-from src.benchmark.framework.network.trainer.surrogate import TriangleSurroGrad
+from src.benchmark.framework.network.trainer import SurrogateGradient
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -85,7 +86,7 @@ def main():
         np.random.seed(args.seed)
         torch.manual_seed(args.seed)
         torch.backends.cudnn.enabled = True
-        torch.backends.cudnn.deterministic = False ####
+        torch.backends.cudnn.deterministic = True
         torch.cuda.manual_seed_all(args.seed)
     torch.backends.cudnn.benchmark = False
 
@@ -125,11 +126,11 @@ def main():
         shuffle    = False
     )
 
-    spiking_neuron = partial(SLIF,
-        neuron_decay  = args.neuron_decay,
-        neuron_thresh = args.neuron_thresh,
-        surro_func    = TriangleSurroGrad.apply,
-        hard_reset    = True,
+    surro_grad = SurrogateGradient(func_name="triangle", a=1.0)
+    spiking_neuron = partial(LIF,
+        decay      = args.neuron_decay,
+        threshold  = args.neuron_thresh,
+        surro_grad = surro_grad,
     )
     args.multi_step = False
 
