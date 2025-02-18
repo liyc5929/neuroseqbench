@@ -128,7 +128,6 @@ def main():
         threshold  = args.neuron_thresh,
         surro_grad = surro_grad,
     )
-    args.multi_step = False
 
     channel_sizes = [args.hidden_size] * args.hidden_layers
     model = TCN(1, num_classes, channel_sizes, kernel_size=args.ksize, dropout=0.0, spiking_neuron=spiking_neuron, output_last_step=False)
@@ -206,7 +205,7 @@ def train_one_epoch(train_loader, model, criterion, optimizer, epoch, device, ar
 
         images = images.transpose(0, 1).contiguous() # [T, B, N]
         optimizer.zero_grad()
-        output = model(images, multi_step=args.multi_step) # [T, B, N]
+        output = model(images)
         output = output.mean(0)
         loss = criterion(output, target)
         loss.backward()
@@ -250,7 +249,7 @@ def validate_one_epoch(val_loader, model, criterion, device, args):
 
             images = images.transpose(0, 1).contiguous() # [T, B, N]
 
-            output = model(images, multi_step=args.multi_step)
+            output = model(images)
             output = output.mean(0)
             loss = criterion(output, target)
 
