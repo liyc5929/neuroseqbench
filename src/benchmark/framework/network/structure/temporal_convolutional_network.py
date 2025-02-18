@@ -5,7 +5,8 @@
 import torch
 import torch.nn as nn
 from torch.nn.utils import weight_norm
-from src.benchmark.framework.network.structure import MergeDimension, SplitDimension
+
+from . import MergeDimension, SplitDimension
 
 
 class Chomp1d(nn.Module):
