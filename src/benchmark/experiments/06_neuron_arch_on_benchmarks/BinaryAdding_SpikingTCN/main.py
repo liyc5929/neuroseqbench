@@ -16,9 +16,10 @@ if current_directory not in sys.path:
 
 from src.benchmark.framework.utils.tools import setup_logging, save_checkpoint, AverageMeter, ProgressMeter, accuracy, count_parameters
 from src.benchmark.framework.utils.dataset import AddingProblem
-from src.benchmark.framework.network.neuron import SLIF
+from src.benchmark.framework.network.neuron import LIF
 from src.benchmark.framework.network.structure import TCN
-from src.benchmark.framework.network.trainer.surrogate import TriangleSurroGrad
+from src.benchmark.framework.network.trainer import SurrogateGradient
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -85,7 +86,7 @@ def main():
         np.random.seed(args.seed)
         torch.manual_seed(args.seed)
         torch.backends.cudnn.enabled = True
-        torch.backends.cudnn.deterministic = False ####
+        torch.backends.cudnn.deterministic = True
         torch.cuda.manual_seed_all(args.seed)
     torch.backends.cudnn.benchmark = False
 
@@ -125,13 +126,12 @@ def main():
         shuffle    = False
     )
 
-    spiking_neuron = partial(SLIF,
-        neuron_decay  = args.neuron_decay,
-        neuron_thresh = args.neuron_thresh,
-        surro_func    = TriangleSurroGrad.apply,
-        hard_reset    = True,
+    surro_grad = SurrogateGradient(func_name="triangle", a=1.0)
+    spiking_neuron = partial(LIF,
+        decay      = args.neuron_decay,
+        threshold  = args.neuron_thresh,
+        surro_grad = surro_grad,
     )
-    args.multi_step = False
 
     channel_sizes = [args.hidden_size] * args.hidden_layers
     model = TCN(2, num_classes, channel_sizes, kernel_size=args.k_size, dropout=0.0, spiking_neuron=spiking_neuron, output_last_step=False)
@@ -209,7 +209,7 @@ def train_one_epoch(train_loader, model, criterion, optimizer, epoch, device, ar
 
         images = images.transpose(0, 1).contiguous() # [T, B, N]
         optimizer.zero_grad()
-        output = model(images, multi_step=args.multi_step) # [T, B, N]
+        output = model(images)
         output = output[-1]
         loss = criterion(output, target)
         loss.backward()
@@ -253,7 +253,7 @@ def validate_one_epoch(val_loader, model, criterion, device, args):
 
             images = images.transpose(0, 1).contiguous() # [T, B, N]
 
-            output = model(images, multi_step=args.multi_step)
+            output = model(images)
             output = output[-1]
             loss = criterion(output, target)
 

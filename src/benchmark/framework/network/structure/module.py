@@ -6,7 +6,7 @@ class MergeDimension(Module):
         super(MergeDimension, self).__init__()
 
     def forward(self, x):
-        if x.dim() == 5 or x.dim() == 3:
+        if x.dim() > 2:
             return x.reshape(-1, *x.shape[2:])
         return x
 
@@ -17,9 +17,7 @@ class SplitDimension(Module):
         self.time_step = time_step
 
     def forward(self, x):
-        if x.dim() == 4 or x.dim() == 2:
-            return x.reshape(self.time_step, x.shape[0] // self.time_step, *x.shape[1:])
-        return x
+        return x.reshape(self.time_step, x.shape[0] // self.time_step, *x.shape[1:])
 
 
 class ANNSequential(Sequential):

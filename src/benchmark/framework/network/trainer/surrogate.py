@@ -56,12 +56,12 @@ def _atan_function(v, threshold, a, *_, **__):
     return grad_v
 
 __func_config__ = {
-    "rectangle": _rectangular_function,
-    "triangle" : _triangle_function,
-    "multigauss" : _multigaussian_function,
-    "sigmoid"  : _sigmoid_function,
-    "atan"     : _atan_function,
-    "others"   : None, # Add more surrogate funcions
+    "rectangle" : _rectangular_function,
+    "triangle"  : _triangle_function,
+    "multigauss": _multigaussian_function,
+    "sigmoid"   : _sigmoid_function,
+    "atan"      : _atan_function,
+    "others"    : None, # Add more surrogate funcions
 }
 
 

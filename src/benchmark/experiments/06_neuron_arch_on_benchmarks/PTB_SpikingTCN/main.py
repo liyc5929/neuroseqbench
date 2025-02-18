@@ -18,10 +18,10 @@ import torch
 from datetime import datetime
 
 from src.benchmark.framework.utils.tools import setup_logging, save_checkpoint, AverageMeter, ProgressMeter
-from src.benchmark.framework.network.neuron import SLIF
-from src.benchmark.framework.network.structure import LMTCN
-from src.benchmark.framework.network.trainer.surrogate import TriangleSurroGrad
 from src.benchmark.framework.utils.dataset import PennTreebank
+from src.benchmark.framework.network.neuron import LIF
+from src.benchmark.framework.network.structure import LMTCN
+from src.benchmark.framework.network.trainer import SurrogateGradient
 
 
 def parse_args():
@@ -109,13 +109,12 @@ def main():
     test_dataset  = PennTreebank(root=os.path.join(args.data_root, "PennTreebank"), subset="test",  time_step=T, chunk_num=1, device=device)
     vocab_size = 10000
 
-    spiking_neuron = partial(SLIF,
-        neuron_decay  = args.neuron_decay,
-        neuron_thresh = args.neuron_thresh,
-        surro_func    = TriangleSurroGrad.apply,
-        hard_reset    = True,
+    surro_grad = SurrogateGradient(func_name="triangle", a=1.0)
+    spiking_neuron = partial(LIF,
+        decay      = args.neuron_decay,
+        threshold  = args.neuron_thresh,
+        surro_grad = surro_grad,
     )
-    args.multi_step = False
 
     num_channels = [args.hidden_dim] * (args.num_layers - 1) + [args.embedding_dim]
     model = LMTCN(

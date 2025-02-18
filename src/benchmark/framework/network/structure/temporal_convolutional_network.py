@@ -1,10 +1,12 @@
 """
-According to: Shaojie Bai \emph{et al.}, An Empirical Evaluation of Generic Convolutional and Recurrent Networks for Sequence Modeling, 2018.
+    According to: Shaojie Bai \emph{et al.}, An Empirical Evaluation of Generic Convolutional and Recurrent Networks for Sequence Modeling, 2018.
 """
 
 import torch
 import torch.nn as nn
 from torch.nn.utils import weight_norm
+
+from . import MergeDimension, SplitDimension
 
 
 class Chomp1d(nn.Module):
@@ -21,24 +23,19 @@ class TemporalBlock(nn.Module):
         super(TemporalBlock, self).__init__()
         self.conv1 = weight_norm(nn.Conv1d(n_inputs, n_outputs, kernel_size, stride=stride, padding=padding, dilation=dilation))
         self.chomp1 = Chomp1d(padding)
-        self.relu1 = nn.ReLU() if spiking_neuron is None else spiking_neuron()
+        self.act1 = nn.ReLU() if spiking_neuron is None else spiking_neuron()
         self.dropout1 = nn.Dropout(dropout)
-
         self.conv2 = weight_norm(nn.Conv1d(n_outputs, n_outputs, kernel_size, stride=stride, padding=padding, dilation=dilation))
         self.chomp2 = Chomp1d(padding)
-        self.relu2 = nn.ReLU() if spiking_neuron is None else spiking_neuron()
+        self.act2 = nn.ReLU() if spiking_neuron is None else spiking_neuron()
         self.dropout2 = nn.Dropout(dropout)
-
-        self.net = nn.Sequential(
-            self.conv1, self.chomp1, self.relu1, self.dropout1,
-            self.conv2, self.chomp2, self.relu2, self.dropout2
-        )
         self.downsample = nn.Conv1d(n_inputs, n_outputs, 1) if n_inputs != n_outputs else None
+        self.spiking_neuron = spiking_neuron
 
         self.relu = nn.ReLU() if spiking_neuron is None else nn.Identity()
         self.init_weights()
         if spiking_neuron is not None and self.downsample is not None:
-            self.downsample = nn.Sequential(self.downsample, spiking_neuron())
+            self.downsample_neuron = spiking_neuron()
 
     def init_weights(self):
         self.conv1.weight.data.normal_(0, 0.01)
@@ -46,16 +43,43 @@ class TemporalBlock(nn.Module):
         if self.downsample is not None:
             self.downsample.weight.data.normal_(0, 0.01)
 
-    def forward(self, x): # [B, N, T]
-        out = self.conv1(x)
-        out = self.chomp1(out)
-        out = self.relu1(out)
-        out = self.dropout1(out)
-        out = self.conv2(out)
-        out = self.chomp2(out)
-        out = self.relu2(out)
-        out = self.dropout2(out)
-        res = x if self.downsample is None else self.downsample(x)
+    def forward(self, x): 
+        if self.spiking_neuron is None: # input shape [B, N, T]
+            out = self.conv1(x)
+            out = self.chomp1(out)
+            out = self.act1(out)
+            out = self.dropout1(out)
+            out = self.conv2(out)
+            out = self.chomp2(out)
+            out = self.act2(out)
+            out = self.dropout2(out)
+            res = x if self.downsample is None else self.downsample(x)
+        else: # input shape [T_in, B, N, T]
+            inner_time_step = x.size(0) # fetch `T_in`
+            out = MergeDimension()(x)
+            out = self.conv1(out)
+            out = self.chomp1(out)
+            out = SplitDimension(inner_time_step)(out)
+            out = self.act1(out)
+
+            out = MergeDimension()(out)
+            out = self.dropout1(out)
+            out = self.conv2(out)
+            out = self.chomp2(out)
+            out = SplitDimension(inner_time_step)(out)
+            out = self.act2(out)
+
+            out = MergeDimension()(out)
+            out = self.dropout2(out)
+            out = SplitDimension(inner_time_step)(out)
+
+            if self.downsample:
+                x = MergeDimension()(x)
+                res = self.downsample(x)
+                res = SplitDimension(inner_time_step)(res)
+                res = self.downsample_neuron(res)
+            else:
+                res = x
         return self.relu(out + res)
 
 
@@ -66,9 +90,12 @@ class TemporalConvNet(nn.Module):
         num_levels = len(num_channels)
         for i in range(num_levels):
             dilation_size = 2 ** i
-            in_channels = num_inputs if i == 0 else num_channels[i-1]
+            in_channels = num_inputs if i == 0 else num_channels[i - 1]
             out_channels = num_channels[i]
-            layers += [TemporalBlock(in_channels, out_channels, kernel_size, stride=1, dilation=dilation_size, padding=(kernel_size-1) * dilation_size, dropout=dropout, spiking_neuron=spiking_neuron)]
+            layers += [TemporalBlock(
+                in_channels, out_channels, kernel_size, stride=1, dilation=dilation_size, 
+                padding=(kernel_size-1)*dilation_size, dropout=dropout, spiking_neuron=spiking_neuron,
+            )]
 
         self.network = nn.Sequential(*layers)
 
@@ -76,14 +103,19 @@ class TemporalConvNet(nn.Module):
         return self.network(x)
 
 
-def reset_states(model):
-    for _, module in model.named_modules():
-        if hasattr(module, "reset"):
-            module.reset()
-
-
 class TCN(nn.Module):
-    def __init__(self, input_size, output_size, num_channels, kernel_size, dropout=0., spiking_neuron=None, output_last_step=False,):
+    """
+        input size: [B, N, T] (non-spiking) | [T_in, B, N, T] (spiking)
+    """
+    def __init__(self, 
+        input_size, 
+        output_size, 
+        num_channels, 
+        kernel_size, 
+        dropout = 0.0, 
+        spiking_neuron = None, 
+        output_last_step = False,
+    ):
         super(TCN, self).__init__()
 
         self.tcn = TemporalConvNet(input_size, num_channels, kernel_size=kernel_size, dropout=dropout, spiking_neuron=spiking_neuron)
@@ -91,29 +123,21 @@ class TCN(nn.Module):
         self.init_weights()
         self.spiking = spiking_neuron is not None
         self.output_last_step = output_last_step
+        self.time_window = 1
 
     def init_weights(self):
         self.linear.weight.data.normal_(0, 0.01)
 
     def forward(self, x, **kwargs):
-        x = x.permute(1, 2, 0).contiguous()  # [T, B, N] -> B, N, T
+        x = x.permute(1, 2, 0).contiguous()  # [T, B, N] -> [B, N, T]
         if self.spiking:
-            reset_states(self)
-            T = 4
-            for t in range(T):
-                y1 = self.tcn(x)
-                if self.output_last_step:
-                    if t == 0:
-                        output = self.linear(y1[:, :, -1]).unsqueeze(0)
-                    else:
-                        output = output + self.linear(y1[:, :, -1]).unsqueeze(0)
-                else:
-                    y1 = y1.permute(2, 0, 1).contiguous()
-                    if t == 0:
-                        output = self.linear(y1)
-                    else:
-                        output = output + self.linear(y1)
-            output = output / T
+            x = x.unsqueeze(0).repeat(self.time_window, 1, 1, 1) # [B, N, T] -> [T_in, B, N, T]
+            y1 = self.tcn(x).mean(0)
+            if self.output_last_step:
+                output = self.linear(y1[:, :, -1]).unsqueeze(0)
+            else:
+                y1 = y1.permute(2, 0, 1).contiguous()
+                output = self.linear(y1)
         else:
             y1 = self.tcn(x)
             if self.output_last_step:
@@ -122,9 +146,6 @@ class TCN(nn.Module):
                 y1 = y1.permute(2, 0, 1).contiguous()
                 output = self.linear(y1)
         return output
-
-
-###
 
 
 class LockedDropout(nn.Module):
@@ -171,21 +192,21 @@ class LMTCN(nn.Module):
         dropout,
         num_channels,
         kernel_size,
-        spiking_neuron=None,
+        spiking_neuron = None,
     ):
         super(LMTCN, self).__init__()
 
-        # language model specifics
+        # Language model specifics
         self.emb_dim = emb_dim
         self.vocab_size = vocab_size
 
-        # dropout initializations
+        # Set dropout initializations
         self.dropout_words = dropout_words
         self.dropout_embedding = dropout_embedding
         self.dropout_forward = dropout_forward
         self.dropout = dropout
 
-        # input and output layers
+        # Set input and output layers
         self.locked_dropout = LockedDropout()
         self.embeddings = nn.Embedding(vocab_size, emb_dim)
         self.decoder = nn.Linear(emb_dim, vocab_size)
@@ -200,6 +221,7 @@ class LMTCN(nn.Module):
         assert num_channels[-1] == emb_dim
 
         self.spiking = spiking_neuron is not None
+        self.time_window = 1
 
     def init_hidden(self, batch_size):
         weight = next(self.parameters())
@@ -214,31 +236,22 @@ class LMTCN(nn.Module):
         nn.init.uniform_(self.decoder.weight, -initrange, initrange)
 
     def forward(self, inputs, state):
-
-        # embedding forward
+        # Embedding forward
         embedded = embedded_dropout(self.embeddings, inputs, dropout=self.dropout_words if self.training else 0)
-
         embedded = self.locked_dropout(embedded, dropout=self.dropout_embedding)
 
-        # rnn forward
+        # RNN forward
         hiddens = embedded
         # TCN here
         """Input ought to have dimension (N, C_in, L_in), where L_in is the seq_len; here the input is (N, L, C)"""
         hiddens = hiddens.permute(1, 2, 0).contiguous()  # [T, B, N] - >[B, N, T]
         if self.spiking:
-            reset_states(self)
-            T = 4
-            for t in range(T):
-                if t == 0:
-                    output = self.tcn(hiddens)
-                else:
-                    output = output + self.tcn(hiddens)
-            hiddens = output / T
+            hiddens = hiddens.unsqueeze(0).repeat(self.time_window, 1, 1, 1)  # [B, N, T] -> [T_in, B, N, T]
+            hiddens = self.tcn(hiddens).mean(0)
         else:
             hiddens = self.tcn(hiddens)
         hiddens = hiddens.permute(2, 0, 1).contiguous()
-        # decoder forward
+        # Decoder forward
         hiddens = self.locked_dropout(hiddens, self.dropout)
-
         decoded = self.decoder(hiddens)
         return decoded, state
