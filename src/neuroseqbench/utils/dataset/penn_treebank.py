@@ -91,7 +91,7 @@ class PennTreebank(Dataset):
             corpus_data = corpus.data[subset]
         else:
             print(f"The `scratch_data_root` exists, data preloading of `{self.__class__.__name__}` from path `{scratch_data_root}` start.")
-            corpus_data = torch.load(os.path.join(scratch_data_root, f"{subset}.pt"))
+            corpus_data = torch.load(os.path.join(scratch_data_root, f"{subset}.pt"), weights_only=True)
 
         chunk_len      = corpus_data.size(0) // chunk_num
         corpus_data    = corpus_data[: chunk_len * chunk_num].view(chunk_num, chunk_len).t().contiguous()

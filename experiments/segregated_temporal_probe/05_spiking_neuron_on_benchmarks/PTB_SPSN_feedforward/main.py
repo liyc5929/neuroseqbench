@@ -1,7 +1,6 @@
 import argparse
 import json
 import os
-import sys
 import logging
 import math
 import time
@@ -11,15 +10,10 @@ import toml
 from functools import partial
 from datetime import datetime
 
-# Check and add current working directory
-current_directory = os.getcwd()
-if current_directory not in sys.path:
-    sys.path.append(current_directory)
-
-from src.benchmark.framework.utils.tools import setup_logging, save_checkpoint, AverageMeter, ProgressMeter
-from src.benchmark.framework.network.trainer import SurrogateGradient
-from src.benchmark.framework.network.neuron import SPSN
-from src.benchmark.framework.utils.dataset import PennTreebank
+from neuroseqbench.utils.tools import setup_logging, save_checkpoint, AverageMeter, ProgressMeter
+from neuroseqbench.network.trainer import SurrogateGradient
+from neuroseqbench.network.neuron import SPSN
+from neuroseqbench.utils.dataset import PennTreebank
 
 
 class LMSNN(nn.Module):

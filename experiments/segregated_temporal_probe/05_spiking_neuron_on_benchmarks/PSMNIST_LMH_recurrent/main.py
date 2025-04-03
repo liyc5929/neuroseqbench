@@ -1,7 +1,6 @@
 import argparse
 import json
 import os
-import sys
 import logging
 import time
 from functools import partial
@@ -11,18 +10,13 @@ import torch
 import torch.nn as nn
 from datetime import datetime
 
-# Check and add current working directory
-current_directory = os.getcwd()
-if current_directory not in sys.path:
-    sys.path.append(current_directory)
-
-from src.benchmark.framework.utils.tools import (
+from neuroseqbench.utils.tools import (
     setup_logging, save_checkpoint, AverageMeter, ProgressMeter, accuracy, count_parameters, dump_json
 )
-from src.benchmark.framework.network.trainer import SurrogateGradient
-from src.benchmark.framework.network.neuron import LMH
-from src.benchmark.framework.network.structure import MergeDimension, SplitDimension
-from src.benchmark.framework.utils.dataset import PSMNIST
+from neuroseqbench.network.trainer import SurrogateGradient
+from neuroseqbench.network.neuron import LMH
+from neuroseqbench.network.structure import MergeDimension, SplitDimension
+from neuroseqbench.utils.dataset import PSMNIST
 
 
 class FFSNN(nn.Module):
