@@ -1,7 +1,6 @@
 import argparse
 import json
 import os
-import sys
 import logging
 import toml
 import time
@@ -9,16 +8,11 @@ from datetime import datetime
 from functools import partial
 import torch
 
-# Check and add current working directory
-current_directory = os.getcwd()
-if current_directory not in sys.path:
-    sys.path.append(current_directory)
-
-from src.benchmark.framework.utils.tools import setup_logging, save_checkpoint, AverageMeter, ProgressMeter, accuracy, count_parameters
-from src.benchmark.framework.network.neuron import SLIF
-from src.benchmark.framework.network.structure import LSTMNet
-from src.benchmark.framework.network.trainer.surrogate import TriangleSurroGrad
-from src.benchmark.framework.utils.dataset import PSMNIST
+from neuroseqbench.utils.tools import setup_logging, save_checkpoint, AverageMeter, ProgressMeter, accuracy, count_parameters
+from neuroseqbench.network.neuron import SLIF
+from neuroseqbench.network.structure import LSTMNet
+from neuroseqbench.network.trainer.surrogate import TriangleSurroGrad
+from neuroseqbench.utils.dataset import PSMNIST
 
 
 def parse_args():

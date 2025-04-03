@@ -1,5 +1,4 @@
 import os
-import sys
 import time
 import argparse
 import toml
@@ -7,15 +6,10 @@ import torch
 from torch.nn import Module, Sequential, CrossEntropyLoss, Linear, Dropout, BatchNorm1d
 from torch.utils.data import DataLoader
 
-# Check and add current working directory
-current_directory = os.getcwd()
-if current_directory not in sys.path:
-    sys.path.append(current_directory) 
-
-from src.benchmark.framework.network.neuron import LIF
-from src.benchmark.framework.network.structure import MergeDimension, SplitDimension
-from src.benchmark.framework.network.trainer import SurrogateGradient
-from src.benchmark.framework.utils.dataset import TIMIT
+from neuroseqbench.network.neuron import LIF
+from neuroseqbench.network.structure import MergeDimension, SplitDimension
+from neuroseqbench.network.trainer import SurrogateGradient
+from neuroseqbench.utils.dataset import TIMIT
 
 
 class TIMIT_MLP(Module):

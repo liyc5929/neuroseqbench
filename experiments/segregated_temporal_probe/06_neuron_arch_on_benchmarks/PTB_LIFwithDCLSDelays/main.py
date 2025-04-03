@@ -4,25 +4,17 @@ import os
 import logging
 import math
 import time
-import sys
 import toml
 import torch
 from datetime import datetime
 
-# Check and add current working directory
-current_directory = os.getcwd()
-if current_directory not in sys.path:
-    sys.path.append(current_directory)
-
-from src.benchmark.framework.utils.tools import setup_logging, save_checkpoint, AverageMeter, ProgressMeter
-from src.benchmark.framework.utils.dataset import PennTreebank
-from src.benchmark.framework.network.trainer import SurrogateGradient
-from src.benchmark.framework.network.neuron import LIF, NonSpikingLIF
-
-
 from torch.nn import Module, Sequential, Embedding, ConstantPad1d, BatchNorm1d
 from DCLS.construct.modules import Dcls1d
-from src.benchmark.framework.network.structure import Permute, ANNSequential
+from neuroseqbench.utils.tools import setup_logging, save_checkpoint, AverageMeter, ProgressMeter
+from neuroseqbench.utils.dataset import PennTreebank
+from neuroseqbench.network.trainer import SurrogateGradient
+from neuroseqbench.network.neuron import LIF, NonSpikingLIF
+from neuroseqbench.network.structure import Permute, ANNSequential
 
 
 class PTB_SNNDelay(Module):
@@ -237,7 +229,7 @@ def main():
         logging.info("Exiting from training early")
 
     # Evaluate the best model on the test dataset
-    best_model_checkpoint = torch.load(os.path.join(save_path, "model_best.pth.tar"))
+    best_model_checkpoint = torch.load(os.path.join(save_path, "model_best.pth.tar"), weights_only=True)
     model.load_state_dict(best_model_checkpoint["state_dict"])
     test_ppl = validate_one_epoch(test_dataset, model, criterion, vocab_size, device)
     logging.info("=" * 89)

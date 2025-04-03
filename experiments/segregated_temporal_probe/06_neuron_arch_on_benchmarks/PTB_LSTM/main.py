@@ -5,20 +5,13 @@ import logging
 import math
 import time
 import os
-import sys
 import toml
-
-# Check and add current working directory
-current_directory = os.getcwd()
-if current_directory not in sys.path:
-    sys.path.append(current_directory)
-
 import torch
 from datetime import datetime
 
-from src.benchmark.framework.utils.tools import setup_logging, save_checkpoint, AverageMeter, ProgressMeter
-from src.benchmark.framework.network.structure import LMLSTM
-from src.benchmark.framework.utils.dataset import PennTreebank
+from neuroseqbench.utils.tools import setup_logging, save_checkpoint, AverageMeter, ProgressMeter
+from neuroseqbench.network.structure import LMLSTM
+from neuroseqbench.utils.dataset import PennTreebank
 
 
 def parse_args():
@@ -136,7 +129,7 @@ def main():
         logging.info("-" * 89)
         logging.info("Exiting from training early")
     # Evaluate the best model on the test dataset
-    best_model_checkpoint = torch.load(os.path.join(save_path, "model_best.pth.tar"))
+    best_model_checkpoint = torch.load(os.path.join(save_path, "model_best.pth.tar"), weights_only=True)
     model.load_state_dict(best_model_checkpoint["state_dict"])
     test_ppl = validate_one_epoch(test_dataset, model, criterion, vocab_size, 1, device, args)
     logging.info("=" * 89)

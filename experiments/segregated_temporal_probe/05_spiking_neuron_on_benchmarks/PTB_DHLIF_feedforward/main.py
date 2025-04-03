@@ -408,7 +408,7 @@ def main():
     except KeyboardInterrupt:
         logging.info("-" * 89)
         logging.info("Exiting from training early")
-    best_model_checkpoint = torch.load(os.path.join(save_path, "model_best.pth.tar"))
+    best_model_checkpoint = torch.load(os.path.join(save_path, "model_best.pth.tar"), weights_only=True)
     model.load_state_dict(best_model_checkpoint["state_dict"])
     test_ppl = validate_one_epoch(test_dataset, model, criterion, vocab_size, 1, device)
     logging.info("=" * 89)

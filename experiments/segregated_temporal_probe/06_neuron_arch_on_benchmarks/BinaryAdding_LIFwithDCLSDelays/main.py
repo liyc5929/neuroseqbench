@@ -1,22 +1,15 @@
 import os
 import time
-import sys
 import toml
 import argparse
 import torch
 
 from torch.utils.data import DataLoader
 from torch.nn import CrossEntropyLoss
-
-# Check and add current working directory
-current_directory = os.getcwd()
-if current_directory not in sys.path:
-    sys.path.append(current_directory)
-
-from src.benchmark.framework.utils.dataset import AddingProblem
-from src.benchmark.framework.network.neuron import LIF
-from src.benchmark.framework.network.structure import DCLS_Delays 
-from src.benchmark.framework.network.trainer import SurrogateGradient
+from neuroseqbench.utils.dataset import AddingProblem
+from neuroseqbench.network.neuron import LIF
+from neuroseqbench.network.structure import DCLS_Delays 
+from neuroseqbench.network.trainer import SurrogateGradient
 
 
 def parse_args():
@@ -206,7 +199,7 @@ def main():
 
         # Testing
         if test_loader is not None:
-            # model.load_state_dict(torch.load(os.path.join(WEIGHT_PATH, weight_name), map_location=device), strict=False)
+            # model.load_state_dict(torch.load(os.path.join(WEIGHT_PATH, weight_name), map_location=device), strict=False, weights_only=True)
             test_total   = 0
             test_correct = 0
             model.eval()
