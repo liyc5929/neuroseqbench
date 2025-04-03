@@ -1,5 +1,5 @@
 __pycache__/
-experiment_logs
+experiments/logs/
 *.egg-info
 
 .venv

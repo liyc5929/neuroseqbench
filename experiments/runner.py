@@ -5,14 +5,15 @@ import subprocess
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--experiment_root", type=str, default="src/benchmark/experiments", help="Experiment code root")
+    parser.add_argument("--experiment_root", type=str, default="./experiments", help="Experiment code root")
+    parser.add_argument("--paper_name",      type=str, default="segregated_temporal_probe", help="Paper name")
     parser.add_argument("--experiment_name", type=str, default="01_STP_on_benchmarks", help="Experiment name")
     parser.add_argument("--experiment_item", type=str, default="SHD_STBP", help="Item for an experiment")
     parser.add_argument("--data_root",       type=str, default="/benchmark_data", help="Dataset root")
     parser.add_argument("--device",          type=str, default="0")
     args = parser.parse_args()
     
-    experiment_path = os.path.join(args.experiment_root, args.experiment_name, args.experiment_item)
+    experiment_path = os.path.join(args.experiment_root, args.paper_name, args.experiment_name, args.experiment_item)
     py_file         = os.path.join(experiment_path, "main.py")
     config_file     = os.path.join(experiment_path, "config.toml")
 
@@ -23,9 +24,10 @@ if __name__ == "__main__":
         "--data_root", args.data_root,
     ]
     os.environ["PYTHONUNBUFFERED"] = "1"
-    log_root = "./experiment_logs"
-    os.makedirs(log_root, exist_ok=True)
-    log_file = os.path.join(log_root, f"log__{args.experiment_name}__{args.experiment_item}.txt")
+    log_root = "./experiments/logs"
+    log_path = os.path.join(log_root, args.paper_name, args.experiment_name)
+    os.makedirs(log_path, exist_ok=True)
+    log_file = os.path.join(log_path, f"log_{args.experiment_item}.txt")
     print(f"The experiment is about to run. Check log at `{log_file}` for details.")
     with open(log_file, "w") as log_fp:
         process = subprocess.run(

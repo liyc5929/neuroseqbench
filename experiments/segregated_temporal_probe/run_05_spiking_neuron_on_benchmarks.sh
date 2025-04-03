@@ -1,3 +1,8 @@
+#!/bin/bash
+
+# Navigate to the project root directory
+cd "$(dirname "$0")/../.."
+
 # PennTreeBank
 python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PTB_LIF_feedforward --data_root /benchmark_data --device 0
 python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PTB_LIF_recurrent --data_root /benchmark_data --device 0
@@ -77,8 +82,8 @@ python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_
 
 
 # Binary Adding
-python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item BinaryAdding_LIF_feedforward --data_root /benchmark_data --device 0
-python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item BinaryAdding_LIF_recurrent --data_root /benchmark_data --device 0
+python ./experiments/runner.py --paper_name segregated_temporal_probe --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item BinaryAdding_LIF_feedforward --data_root /benchmark_data --device 0
+python ./experiments/runner.py --paper_name segregated_temporal_probe --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item BinaryAdding_LIF_recurrent --data_root /benchmark_data --device 0
 
 python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item BinaryAdding_PLIF_feedforward --data_root /benchmark_data --device 0
 python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item BinaryAdding_PLIF_recurrent --data_root /benchmark_data --device 0

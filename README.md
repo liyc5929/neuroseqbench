@@ -37,17 +37,17 @@ The table below provides a comprehensive overview of the SNN methods that have b
         <tr>
             <td>Neuron Model</td>
             <td>LIF, ALIF, PLIF, GLIF, Normalization Layers, etc.</td>
-            <td>`framework/network/neuron`</td>
+            <td>`neuroseqbench/network/neuron`</td>
         </tr>
         <tr>
             <td>Neural Architecture</td>
             <td>DCLS-Delays, SpikingTCN, Gated Spiking Neuron, Spike-Driven Transformer, etc.</td>
-            <td>`framework/network/structure`</td>
+            <td>`neuroseqbench/network/structure`</td>
         </tr>
         <tr>
             <td>Dataset</td>
             <td>Penn Treebank, Permuted Sequential MNIST, Binary Adding, etc.</td>
-            <td>`framework/utils/dataset`</td>
+            <td>`neuroseqbench/utils/dataset`</td>
         </tr>
     </tbody>
 </table>
@@ -395,10 +395,17 @@ torch, torchvision, torchaudio
 toml
 
 # Data processing
-h5py, tqdm
+datasets, h5py, tqdm
 
 # Delay learning model
 dcls
+```
+
+To incorporate the `neuroseqbench` module into your experimental code, please follow these steps:
+
+```shell
+git clone https://github.com/liyc5929/neuroseqbench.git
+pip install -e .
 ```
 
 ### Experiments
