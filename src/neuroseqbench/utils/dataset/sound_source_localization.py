@@ -1,5 +1,5 @@
 """
-According to: Xinyuan Qian \emph{et al.}, SLoClas: A Database for Joint Sound Localization and Classification, 2021.
+According to: Xinyuan Qian~\emph{et al.}, SLoClas: A Database for Joint Sound Localization and Classification, 2021.
 """
 import numpy as np
 import torch
