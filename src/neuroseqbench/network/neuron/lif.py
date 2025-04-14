@@ -292,6 +292,7 @@ class Recurrent_LIF(BaseNeuron):
         time_step: int = None,
         surro_grad: SG = None, 
         exec_mode: str = "serial",
+        cut_grad: bool = False,
         recurrent: bool = False,
     ):
         super(Recurrent_LIF, self).__init__(exec_mode=exec_mode)
@@ -303,6 +304,7 @@ class Recurrent_LIF(BaseNeuron):
         self.surro_grad = surro_grad
         self.recurrent = recurrent
         self.return_mem = False
+        self.cut_grad = cut_grad
         if self.recurrent:
             self.recurrent_weight = nn.Linear(self.neuron_num, self.neuron_num)
 
@@ -333,7 +335,10 @@ class Recurrent_LIF(BaseNeuron):
         for x in tx:
             if self.recurrent:
                 x = x + self.recurrent_weight(y)
-            v = self.decay * v * (1.0 - y) + self.rest * y + x
+            if self.cut_grad:
+                v = self.decay * v.detach() * (1.0 - y.detach()) + self.rest * y.detach() + x
+            else:
+                v = self.decay * v * (1.0 - y) + self.rest * y + x
             y = LIFAct.apply(v, self.rest, self.decay, self.threshold, self.time_step, self.surro_grad)
             ty.append(y)
         if return_state:
