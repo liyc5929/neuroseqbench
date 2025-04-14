@@ -8,7 +8,7 @@ optimizer     = "AdamW"
 use_cos_lr    = false
 grad_clip     = 0.0
 
-hidden_dim    = [128, 256, 256]
+hidden_dim    = [128, 176, 176]
 
 neuron_decay  = 0.1
 neuron_thresh = 0.5
