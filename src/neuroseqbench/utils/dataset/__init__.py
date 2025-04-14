@@ -7,3 +7,4 @@ from .spiking_heidelberg_digits import SpikingHeidelbergDigits
 from .spiking_speech_commands import SpikingSpeechCommands
 from .timit import TIMIT
 from .autonomous_localization import AL
+from .human_activities_recognition import WISDM

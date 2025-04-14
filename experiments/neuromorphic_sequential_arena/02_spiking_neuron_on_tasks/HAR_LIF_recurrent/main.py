@@ -4,18 +4,19 @@ import os
 import logging
 import time
 from functools import partial
-
 import toml
+
 import torch
 import torch.nn as nn
 from datetime import datetime
+from sklearn.model_selection import train_test_split
 from neuroseqbench.utils.tools import (
     setup_logging, save_checkpoint, AverageMeter, ProgressMeter, accuracy, count_parameters, dump_json
 )
 from neuroseqbench.network.trainer import SurrogateGradient
 from neuroseqbench.network.neuron import Recurrent_LIF, CELIF, SPSN, LTC
 from neuroseqbench.network.structure import MergeDimension, SplitDimension
-from neuroseqbench.utils.dataset import AL
+from neuroseqbench.utils.dataset import WISDM
 
 
 class FFSNN(nn.Module):
@@ -117,7 +118,7 @@ def parse_args():
     # Hyperparameter setting
     args.max_epoch     = config.get("max_epoch", 100)
     args.batch_size    = config.get("batch_size", 256)
-    args.time_step     = config.get("time_step", 400)
+    args.time_step     = config.get("time_step", 200)
     args.learning_rate = config.get("learning_rate", 0.1)
     args.weight_decay  = config.get("weight_decay", 0.0)
     args.momentum      = config.get("momentum", 0.9)
@@ -169,25 +170,37 @@ def main():
 
     logging.info("args:" + str(args))
 
-    # Check if synthetic data exists; if so, load it directly,
-    # otherwise, generate the data, save it, and then load it
-    capacity = 20
-    train_dataset = AL(
-        root = args.data_root,
-        subset = "train",
-        num_data = 50000,
-        seq_length = args.time_step,
-        capacity = capacity,
-    )
-    val_dataset  =  AL(
-        root = args.data_root,
-        subset = "test",
-        num_data = 5000,
-        seq_length = args.time_step,
-        capacity = capacity,
-    )
-    num_classes = 2
+    # Load dataset
+    data_path = args.data_root + "/WISDM"
+    x_train_path = os.path.join(data_path, "x_train.npy")
+    y_train_path = os.path.join(data_path, "y_train.npy")
+    x_test_path = os.path.join(data_path, "x_test.npy")
+    y_test_path = os.path.join(data_path, "y_test.npy")
+
+    # Check if preprocessed data exists; if so, load it directly;
+    # Otherwise, download the preprocessed `.mat` data
+    if not (os.path.exists(x_train_path) and os.path.exists(y_train_path) and
+            os.path.exists(x_test_path) and os.path.exists(y_test_path)):
+        data = WISDM(data_path)
+        data = data.dataloading(200, 100)
+        X_ = data[..., 3:6] # sensor data
+        Y_ = data[:, 0, 1] # label
+        X_train, X_test, Y_train, Y_test = train_test_split(X_, Y_, test_size=0.2, random_state=42)
+        np.save(x_train_path, X_train.numpy())
+        np.save(y_train_path, Y_train.numpy())
+        np.save(x_test_path, X_test.numpy())
+        np.save(y_test_path, Y_test.numpy())
+    else:
+        X_train = np.load(x_train_path)
+        Y_train = np.load(y_train_path)
+        X_test = np.load(x_test_path)
+        Y_test = np.load(y_test_path)
+
+    train_dataset = torch.utils.data.TensorDataset(torch.tensor(X_train), torch.tensor(Y_train, dtype=torch.long))
+    val_dataset = torch.utils.data.TensorDataset(torch.tensor(X_test), torch.tensor(Y_test, dtype=torch.long))
+
     input_channels = 3
+    num_classes = 18
 
     train_pin_memory = True
     test_pin_memory = True
@@ -223,7 +236,7 @@ def main():
             cut_grad = True if learning_rule == "SDBP" else False,
         )
     elif args.neuron == "ltc":
-        spiking_neuron = partial(LTC,
+        spiking_neuron  =  partial(LTC,
             decay = args.neuron_decay,
             threshold = args.neuron_thresh,
             time_step = args.time_step,
@@ -231,8 +244,9 @@ def main():
             exec_mode = exec_mode,
             recurrent = args.recurrent,
         )
+
     elif args.neuron == "celif":
-        beta = 0.02
+        beta = 0.1
         spiking_neuron = partial(CELIF,
             decay = args.neuron_decay,
             threshold = args.neuron_thresh,
@@ -255,7 +269,7 @@ def main():
     else:
         raise NotImplementedError
 
-    model = FFSNN(input_size=input_channels, hidden_size=args.hidden_dim, output_size=num_classes, num_hidden_layers=len(args.hidden_dim), spiking_neuron=spiking_neuron, dataset="AL", neuron_type=args.neuron)
+    model = FFSNN(input_size=input_channels, hidden_size=args.hidden_dim, output_size=num_classes, num_hidden_layers=len(args.hidden_dim), spiking_neuron=spiking_neuron, dataset="HAR", neuron_type=args.neuron)
     logging.info(str(model))
     para = count_parameters(model)
     logging.info(f"Parameter number: {para}")
@@ -312,12 +326,13 @@ def train_one_epoch(train_loader, model, criterion, optimizer, epoch, device, ar
     data_time = AverageMeter("Data", ":6.3f")
     losses = AverageMeter("Loss", ":.4e")
     top1 = AverageMeter("Acc@1", ":6.2f")
-    top2 = AverageMeter("Acc@2", ":6.2f")
+    top5 = AverageMeter("Acc@5", ":6.2f")
 
     progress = ProgressMeter(
         len(train_loader),
-        [batch_time, data_time, losses, top1, top2],
-        prefix="Epoch: [{}]".format(epoch))
+        [batch_time, data_time, losses, top1, top5],
+        prefix="Epoch: [{}]".format(epoch),
+    )
 
     model.train()
     end = time.time()
@@ -330,7 +345,7 @@ def train_one_epoch(train_loader, model, criterion, optimizer, epoch, device, ar
         target = labels.to(device, non_blocking=True)
         optimizer.zero_grad()
         output = model(images) # [T, B, N]
-        # average across time
+        # Average across time
         output_mean = output.mean(0)
         loss = criterion(output_mean, target)
         loss.backward()
@@ -339,9 +354,9 @@ def train_one_epoch(train_loader, model, criterion, optimizer, epoch, device, ar
             torch.nn.utils.clip_grad_norm_(model.parameters(), args.grad_clip)
         optimizer.step()
         # Measure accuracy and record loss
-        acc1, acc5 = accuracy(output_mean, target, topk=(1, 2))
+        acc1, acc5 = accuracy(output_mean, target, topk=(1, 5))
         top1.update(acc1[0], target.size(0))
-        top2.update(acc5[0], target.size(0))
+        top5.update(acc5[0], target.size(0))
 
         losses.update(loss.item(), target.size(0))
         loss_train_record.append(loss.item())
@@ -360,11 +375,11 @@ def validate_one_epoch(val_loader, model, criterion, device, args):
     batch_time = AverageMeter("Time", ":6.3f")
     losses = AverageMeter("Loss", ":.4e")
     top1 = AverageMeter("Acc@1", ":6.2f")
-    top2 = AverageMeter("Acc@2", ":6.2f")
+    top5 = AverageMeter("Acc@5", ":6.2f")
     progress = ProgressMeter(
         len(val_loader),
-        [batch_time, losses, top1, top2],
-        prefix = "Test: ",
+        [batch_time, losses, top1, top5],
+        prefix="Test: ",
     )
 
     model.eval()
@@ -381,9 +396,9 @@ def validate_one_epoch(val_loader, model, criterion, device, args):
             loss = criterion(output, target)
 
             # Measure accuracy and record loss
-            acc1, acc5 = accuracy(output, target, topk=(1, 2))
+            acc1, acc5 = accuracy(output, target, topk=(1, 5))
             top1.update(acc1[0], target.size(0))
-            top2.update(acc5[0], target.size(0))
+            top5.update(acc5[0], target.size(0))
             losses.update(loss.item(), target.size(0))
 
             # Measure elapsed time

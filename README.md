@@ -399,6 +399,9 @@ datasets, h5py, tqdm
 
 # Delay learning model
 dcls
+
+# WISDM dataset
+scikit-learn
 ```
 
 To incorporate the `neuroseqbench` module into your experimental code, please follow these steps:

@@ -163,7 +163,6 @@ def main():
         torch.backends.cudnn.deterministic = False
         torch.cuda.manual_seed_all(args.seed)
     torch.backends.cudnn.benchmark = False
-    args.gpu = "cuda"
 
     with open(save_path + "/args.json", "w") as fid:
         json.dump(args.__dict__, fid, indent=2)
