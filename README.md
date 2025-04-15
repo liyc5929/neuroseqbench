@@ -395,10 +395,13 @@ torch, torchvision, torchaudio
 toml
 
 # Data processing
-datasets, h5py, tqdm
+datasets, h5py, tqdm, scipy
 
 # Delay learning model
 dcls
+
+# S4D model
+einops
 
 # WISDM dataset
 scikit-learn

@@ -14,3 +14,4 @@ from .liquid_time_constant_neuron import LTC
 from .dendritic_heterogeneity_lif import DHSNN
 from .threshold_dependent_batch_norm import ThresholdDependentBatchNorm1d
 from .temporal_effect_batch_norm import TemporalEffectiveBatchNorm1d
+from .s4d import S4D

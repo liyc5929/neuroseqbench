@@ -36,7 +36,7 @@ class AL(Dataset):
             probabilities = [0.5-(capacity/seq_length), 0.5-(capacity/seq_length), capacity/seq_length, capacity/seq_length]
             distribution = torch.multinomial(torch.tensor(probabilities), num_data * seq_length, replacement=True)
             action = distribution.view(num_data, seq_length)
-            X = F.one_hot(action, num_classes=4)[...,1:].float()
+            X = F.one_hot(action, num_classes=4)[..., 1:].float()
             Y = self.compute(action)
             Y = Y.view(-1)
 
