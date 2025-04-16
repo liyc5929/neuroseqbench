@@ -12,7 +12,7 @@ import torch.nn as nn
 from datetime import datetime
 
 from neuroseqbench.utils.tools import setup_logging, save_checkpoint, AverageMeter, ProgressMeter, accuracy, count_parameters
-from neuroseqbench.utils.dataloader import build_dataset
+from neuroseqbench.utils.dataset import DVSLip
 from neuroseqbench.network.trainer import SurrogateGradient
 from neuroseqbench.network.neuron import LIFNode, RLIF, CELIF, SPSN, LTC
 from neuroseqbench.network.structure import MergeDimension, SplitDimension
@@ -379,13 +379,15 @@ def main():
 
     logging.info('args:' + str(args))
 
-    train_dataset, val_dataset, input_channels, num_classes, collate_fn = build_dataset(dataset=args.dataset,
-                                                                                        data_path=args.data_path,
-                                                                                        seq_length=args.time_window,
-                                                                                        data_cache=args.data_cache,
-                                                                                        min_length=args.min_length,
-                                                                                        num_bins=args.num_bins,
-                                                                                        )
+    data_path = '/datasets/dvslip/extract/DVS-Lip'
+    # data_path = '/datasets/dvsgesture'
+    seq_length = args.time_window
+    train_dataset = DVSLip(data_root=data_path, train=True, augment_spatial=True, T=seq_length)
+    val_dataset = DVSLip(data_root=data_path, train=False, augment_spatial=False, T=seq_length)
+    input_channels = 2
+    num_classes = 100
+    collate_fn = None
+
     print(f"train dataset: {len(train_dataset)}")
     print(f"val dataset: {len(val_dataset)}")
     if args.dataset == 'dvsgesture' and args.time_window >= 500:

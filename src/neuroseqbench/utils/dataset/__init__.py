@@ -10,3 +10,4 @@ from .autonomous_localization import AL
 from .human_activities_recognition import WISDM
 from .sound_source_localization import SLoClas 
 from .electroencephalogram_motor_imagery import OpenBMI
+from .dvs_lip import DVSLip
