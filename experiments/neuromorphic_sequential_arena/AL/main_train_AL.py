@@ -8,11 +8,12 @@ from functools import partial
 import torch
 import torch.nn as nn
 from datetime import datetime
-from neuroseqbench.utils.tools import set_random_seed, setup_logging, save_checkpoint, \
-    AverageMeter, ProgressMeter, accuracy, count_parameters, dump_json
+from neuroseqbench.utils.tools import (
+    setup_logging, save_checkpoint, AverageMeter, ProgressMeter, accuracy, count_parameters, dump_json
+)
 from neuroseqbench.network.trainer import SurrogateGradient
 from neuroseqbench.network.neuron import Recurrent_LIF, CELIF, SPSN, LTC, S4D
-from neuroseqbench.network.neuron import setup_optimizer
+from neuroseqbench.network.neuron.s4d import setup_optimizer
 from neuroseqbench.network.structure import MergeDimension, SplitDimension
 from neuroseqbench.network.structure import SSM, TCN, LSTMNet, SpkTransformerNet
 from neuroseqbench.utils.dataset import AL
@@ -29,24 +30,19 @@ class FFSNN(nn.Module):
         if self.pool:
             self.max_pool = nn.MaxPool2d(4, 4)
         for hidden_layer_i in range(num_hidden_layers):
-            if self.neuron == 'dhsnn':
-                if dataset in ['psmnist','biadd','AL','HAR','EEG','SSL'] and hidden_layer_i == (num_hidden_layers - 1):
+            if self.neuron == "dhsnn":
+                if dataset in ["psmnist","biadd","AL","HAR","EEG","SSL"] and hidden_layer_i == (num_hidden_layers - 1):
                     exec("self.spk" + str(
                         hidden_layer_i) + " = spiking_neuron(input_features=input_size, neuron_num=hidden_size[{0}], recurrent=False)".format
                          (hidden_layer_i))
                 else:
                     exec("self.spk" + str(hidden_layer_i) + " = spiking_neuron(input_features=input_size, neuron_num=hidden_size[{0}])".format
                     (hidden_layer_i))
-            elif self.neuron in ['ssm','binaryssm','gsu']:
-                exec("self.spk" + str(
-                    hidden_layer_i) + " = spiking_neuron(neuron_num=hidden_size[{0}])".format(hidden_layer_i))
-                if hidden_layer_i == 0:
-                    exec("self.fc" + str(hidden_layer_i) + " = nn.Linear(in_features=input_size, out_features=hidden_size[{0}])".format(hidden_layer_i))
             else:
                 exec("self.fc" + str(
                     hidden_layer_i) + " = nn.Linear(in_features=input_size, out_features=hidden_size[{0}])".format(
                     hidden_layer_i))
-                if dataset in ['psmnist','biadd','AL','HAR','EEG','SSL'] and hidden_layer_i == (num_hidden_layers - 1):
+                if dataset in ["psmnist","biadd","AL","HAR","EEG","SSL"] and hidden_layer_i == (num_hidden_layers - 1):
                     exec("self.spk" + str(
                         hidden_layer_i) + " = spiking_neuron(neuron_num=hidden_size[{0}], recurrent=False)".format(
                         hidden_layer_i))
@@ -55,36 +51,17 @@ class FFSNN(nn.Module):
                         hidden_layer_i))
             input_size = hidden_size[hidden_layer_i]
         self.classifier = nn.Linear(in_features=input_size, out_features=output_size)
-        if self.neuron == 'celif':
+        if self.neuron == "celif":
             self.TE = nn.Parameter(torch.zeros(max(hidden_size),self.spk0.time_step))
             nn.init.normal_(self.TE, 0.01, 0.01)
             for hidden_layer_i in range(num_hidden_layers):
                 exec("self.spk" + str(hidden_layer_i) + " .TE = self.TE".format(hidden_layer_i))
 
-
-    def single_step_forward(self, x):
-        if self.pool:
-            x = self.max_pool(x)
-        x = self.flatten(x)
-        for hidden_layer_i in range(self.num_hidden_layers):
-            x = eval("self.fc" + str(hidden_layer_i))(x)
-            x = eval("self.spk" + str(hidden_layer_i))(x)
-        x = self.classifier(x)
-        return x
-
-    def forward(self, x, time_step=None, multi_step=False):
+    def forward(self, x, time_step=None):
         if time_step is None:
             time_step = x.size(0)
-        if multi_step:
-            output = self.multi_step_forward(x, time_step)
-        else:
-            reset_states(self)
-            output = []
-            for t in range(time_step):
-                single_step_output = self.single_step_forward(x[t])
-                output.append(single_step_output)
-            output = torch.stack(output)
-        if self.dataset in ['add', 'biadd', 'EEG']: # laststep decision
+        output = self.multi_step_forward(x, time_step)
+        if self.dataset in ["add", "biadd", "EEG"]: # last-step decision
             output=output[-1, ...].unsqueeze(0)
         return output
 
@@ -95,15 +72,8 @@ class FFSNN(nn.Module):
         x = self.flatten(x)
         x = SplitDimension(time_step)(x)
         for hidden_layer_i in range(self.num_hidden_layers):
-            if self.neuron == 'dhsnn':
+            if self.neuron == "dhsnn":
                 x = x
-            elif self.neuron in ['ssm','binaryssm','gsu']:
-                if hidden_layer_i == 0:
-                    x = MergeDimension()(x)
-                    x = eval("self.fc" + str(hidden_layer_i))(x)
-                    x = SplitDimension(time_step)(x)
-                else:
-                    x = x
             else:
                 x = MergeDimension()(x)
                 x = eval("self.fc" + str(hidden_layer_i))(x)
@@ -146,8 +116,6 @@ parser.add_argument("-b", "--batch-size", default=256, type=int,
 parser.add_argument("-p", "--print-freq", default=50, type=int,
                     metavar="N", help="print frequency (default: 10)")
 parser.add_argument("--save-ckpt",default=True, action="store_true", help="")
-parser.add_argument("--resume", default="", type=str, metavar="PATH",
-                    help="path to latest checkpoint (default: none)")
 
 # args of optimizer
 parser.add_argument("--optim", default="adam", type=str, help="optimizer (default: adam)")
@@ -208,7 +176,15 @@ def main():
     is_cuda = torch.cuda.is_available()
     assert is_cuda, "CPU is not supported!"
     device = torch.device("cuda" if is_cuda else "cpu")
-    set_random_seed(seed=args.seed, is_ddp=False)
+    if args.seed is not None:
+        import random
+        import numpy as np
+        random.seed(args.seed)
+        np.random.seed(args.seed)
+        torch.manual_seed(args.seed)
+        torch.backends.cudnn.enabled = True
+        torch.backends.cudnn.deterministic = False
+        torch.cuda.manual_seed_all(args.seed)
     torch.backends.cudnn.benchmark = False
     args.gpu = "cuda"
 
@@ -299,7 +275,6 @@ def main():
                                  )
     else:
         raise NotImplementedError
-    args.multi_step = True
     if args.net == "ffsnn":
         model = FFSNN(input_size=input_channels, hidden_size=args.hidden_dim, output_size=num_classes,
                         num_hidden_layers=len(args.hidden_dim), spiking_neuron=spiking_neuron, dataset=args.dataset, neuron_type=args.neuron)
@@ -360,36 +335,6 @@ def main():
         gamma = 0.8
         scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=gamma)
 
-    # optionally resume from a checkpoint
-    if args.resume:
-        if os.path.isfile(args.resume):
-            print("=> loading checkpoint "{}"".format(args.resume))
-            # Map model to be loaded to specified single gpu.
-            loc = "cuda:{}".format(device)
-            checkpoint = torch.load(args.resume, map_location="cpu")
-            logging.info(f"best cri: {checkpoint["best_cri"]}")
-            args.start_epoch = checkpoint["epoch"]
-            best_cri = checkpoint["best_cri"]
-
-            state_dict = checkpoint["state_dict"]
-            for (key, value) in list(state_dict.items()):
-                if key.startswith("module."):
-                    state_dict[key.replace("module.", "")] = value
-                del state_dict[key]
-
-            msg = model.load_state_dict(state_dict, strict=False)
-            logging.info(msg)
-            logging.info("=> loading optimizer of checkpoint)")
-            optimizer.load_state_dict(checkpoint["optimizer"])
-            for k, v in optimizer.state.items():  # key is Parameter, val is a dict {key="momentum_buffer":tensor(...)}
-                if "momentum_buffer" not in v:
-                    continue
-                optimizer.state[k]["momentum_buffer"] = optimizer.state[k]["momentum_buffer"].cuda(args.gpu)
-            logging.info("=> loaded checkpoint "{}" (epoch {})"
-                         .format(args.resume, checkpoint["epoch"]))
-        else:
-            print("=> no checkpoint found at "{}"".format(args.resume))
-
     model = model.to(device)
     standard_train(train_loader, val_loader, model, criterion, optimizer, scheduler, save_path, best_cri, device, args)
 
@@ -444,7 +389,7 @@ def train_one_epoch(train_loader, model, criterion, optimizer, epoch, device, ar
         images = images.transpose(0, 1).contiguous() # [T, B, C]
         target = labels.to(device, non_blocking=True)
         optimizer.zero_grad()
-        output = model(images, multi_step=args.multi_step) # [T, B, N]
+        output = model(images) # [T, B, N]
         # average across time
         output_mean = output.mean(0)
         loss = criterion(output_mean, target)
@@ -492,7 +437,7 @@ def validate_one_epoch(val_loader, model, criterion, device, args):
             target = target.to(device, non_blocking=True)
 
             # compute output
-            output = model(images, multi_step=args.multi_step) # [T, B, N]
+            output = model(images) # [T, B, N]
             output = output.mean(0)
             loss = criterion(output, target)
 
