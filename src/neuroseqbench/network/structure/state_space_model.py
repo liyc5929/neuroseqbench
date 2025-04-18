@@ -45,6 +45,6 @@ class SSM(nn.Module):
         x = MergeDimension()(x)
         x = self.classifier(x)
         output = SplitDimension(time_step)(x)
-        if self.dataset in ['add', 'biadd', 'EEG']: # laststep decision
+        if self.dataset in ["add", "biadd", "EEG"]: # laststep decision
             output=output[-1, ...].unsqueeze(0)
         return output
