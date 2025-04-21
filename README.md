@@ -10,11 +10,9 @@ We warmly invite researchers and practitioners in the field of neuromorphic temp
 1. [Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects](#spiking-neural-networks-for-temporal-processing-status-quo-and-future-prospects)
 2. [Neuromorphic Sequential Arena: A Benchmark for Neuromorphic Temporal Processing](#neuromorphic-sequential-arena-a-benchmark-for-neuromorphic-temporal-processing)
 
-<a name="spiking-neural-networks-for-temporal-processing-status-quo-and-future-prospects"></a>
-
 ---
 
-<h3 align="center"> Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects </h3>
+<a name="spiking-neural-networks-for-temporal-processing-status-quo-and-future-prospects"><h3 align="center"> Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects </h3></a>
 
 ---
 
