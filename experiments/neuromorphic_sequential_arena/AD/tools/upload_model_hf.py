@@ -18,7 +18,7 @@ def get_repo_id(model_folder_path):
 
 def main(args):
     # Login to HuggingFace Hub
-    login(token="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")
+    login()
 
     # Get HuggingFace API
     api = HfApi()
