@@ -60,7 +60,7 @@ Biometrics Dataset Dataset](https://archive.ics.uci.edu/ml/machine-learning-data
     ```
     - **Preprocessing:**
   
-      Our dataloader will automatically handle preprocessing and automatically convert it into the required `.npy` format:
+      Our dataloader will automatically handle preprocessing and convert it into the required `.npy` format:
       ```sh
       python main_HAR.py --data_path data
       ```
@@ -82,7 +82,7 @@ Biometrics Dataset Dataset](https://archive.ics.uci.edu/ml/machine-learning-data
     Alternatively, users can download all files ending with `_MI.mat` from the **OpenBMI** [official source](https://gigadb.org/dataset/view/id/100542/File_page/5/Files_page/23) and place them under `data/EEG/eeg_data`. 
     - **Preprocessing:**  
       1. Use our provided **MATLAB preprocessing script** to convert them into `data_*.mat` and `label_*.mat` files (108 in total).  
-      2. Our dataloader will automatically read and processed all `.mat` files into the required `.npy` format:  
+      2. Our dataloader will automatically read and process all `.mat` files into the required `.npy` format:  
       ```sh
       python main_EEG.py --data_path data
       ```
@@ -99,9 +99,9 @@ Biometrics Dataset Dataset](https://archive.ics.uci.edu/ml/machine-learning-data
     ```
   
   - **Option 2: Download Raw SLoClas Dataset and Perform Preprocessing Yourself**  
-    Alternatively, users can download the raw **SLoClas dataset** (`.wav` files) from the [official source](https://zenodo.org/records/5211296) and place it under `data/SSL/`.
+    Alternatively, users can download the raw **SLoClas dataset** (`.wav` files) from the [official source](https://zenodo.org/records/5211296) and unzip it.
     ```sh
-    unzip data/SSL/ssl_data/SoClas_database.zip -d data/SSL/
+    unzip data/SSL/ssl_data/SoClas_database.zip
     ```
     - **Preprocessing:**  
       1. Use our provided **MATLAB preprocessing script** to segment samples and add noise. This will generate two files: `training_raw_noise.mat` and `testing_raw_noise.mat`, which represent the preprocessed training and testing sets, respectively.
