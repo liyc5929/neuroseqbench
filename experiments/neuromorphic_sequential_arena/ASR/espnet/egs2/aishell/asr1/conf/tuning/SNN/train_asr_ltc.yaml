@@ -1,0 +1,63 @@
+# network architecture
+# encoder related
+encoder: vgg_rnn
+encoder_conf:
+    rnn_type: ltc
+    bidirectional: False
+    use_projection: False
+    num_layers: 3
+    hidden_size: 512
+    output_size: 256
+    dropout: 0.0
+    in_channel: 1
+    use_recurrent: False
+    surrogate: triangle
+    alpha: 1.0
+    decay: 0.95
+    threshold: 0.8
+    time_window: 512
+    beta: 0.1
+
+# decoder related
+decoder: transformer
+decoder_conf:
+    attention_heads: 4
+    linear_units: 2048
+    num_blocks: 6
+    dropout_rate: 0.1
+    positional_dropout_rate: 0.1
+    self_attention_dropout_rate: 0.0
+    src_attention_dropout_rate: 0.0
+
+# hybrid CTC/attention
+model_conf:
+    ctc_weight: 0.5
+    lsm_weight: 0.0     # label smoothing option
+
+# minibatch related
+batch_type: folded
+batch_size: 360 # 90 
+
+# optimization related
+init: chainer
+max_epoch: 20
+optim: adadelta
+optim_conf:
+    lr: 2.0 # 1.0
+    rho: 0.95
+    eps: 1.0e-08
+    weight_decay: 0
+patience: 3
+val_scheduler_criterion:
+    - valid
+    - acc
+best_model_criterion:
+-   - valid
+    - acc
+    - max
+keep_nbest_models: 1
+scheduler: reducelronplateau
+scheduler_conf:
+    mode: max
+    factor: 0.5
+    patience: 1

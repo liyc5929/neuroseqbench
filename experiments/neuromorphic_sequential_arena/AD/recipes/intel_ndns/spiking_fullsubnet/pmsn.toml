@@ -1,0 +1,109 @@
+[[validate_dataset]]
+path = "dataloader.DNSAudio"
+
+[validate_dataset.args]
+root = "/datasets/datasets_fullband/validation_set/"
+train = false
+[validate_dataset.dataloader]
+batch_size = 16
+num_workers = 8
+
+[meta]
+save_dir = "exp"
+description = "Train a model using Generative Adversarial Networks (GANs)"
+seed = 20220815
+exp_id = "pmsn_thresh05"
+config_path = "/home/chenxiangma/projects/spiking-fullsubnet/recipes/intel_ndns/spiking_fullsubnet/pmsn_thresh05.toml"
+
+[trainer]
+path = "trainer.Trainer"
+
+[loss_function]
+path = "torch.nn.MSELoss"
+
+[optimizer]
+path = "torch.optim.AdamW"
+
+[model]
+path = "audiozen.models.spiking_fullsubnet.modeling_spiking_fullsubnet.SpikingFullSubNet"
+
+[acoustics]
+n_fft = 512
+hop_length = 128
+win_length = 512
+sr = 16000
+
+[train_dataset]
+path = "dataloader.DNSAudio"
+
+[test_dataset]
+path = "dataloader.DNSAudio"
+
+[trainer.args]
+debug = false
+max_steps = 0
+max_epochs = 50
+max_grad_norm = 10
+save_max_score = true
+save_ckpt_interval = 1
+max_patience = 10
+plot_norm = true
+validation_interval = 10
+max_num_checkpoints = 2
+scheduler_name = "constant_schedule_with_warmup"
+warmup_steps = 0
+warmup_ratio = 0.0
+gradient_accumulation_steps = 1
+
+[loss_function.args]
+
+[optimizer.args]
+lr = 0.001
+
+[model.args]
+n_fft = 512
+hop_length = 128
+win_length = 512
+fdrc = 0.5
+fb_input_size = 64
+fb_hidden_size = 320
+fb_num_layers = 2
+fb_proj_size = 64
+fb_output_activate_function = false
+sb_hidden_size = 224
+sb_num_layers = 2
+freq_cutoffs = [ 0, 32, 128, 256,]
+df_orders = [ 5, 3, 1,]
+center_freq_sizes = [ 4, 32, 64,]
+neighbor_freq_sizes = [ 15, 15, 15,]
+use_pre_layer_norm_fb = true
+use_pre_layer_norm_sb = true
+bn = false
+shared_weights = true
+sequence_model = "pmsn"
+recurrent = false
+surrogate = "triangle"
+alpha = 1.0
+decay_factor = 0.5
+threshold = 0.5
+num_spks = 1
+learning_rule = "stbp"
+
+[train_dataset.args]
+root = "/datasets/datasets_fullband/training_set/"
+limit = false
+offset = 0
+
+[train_dataset.dataloader]
+batch_size = 64
+num_workers = 8
+drop_last = true
+pin_memory = true
+
+[test_dataset.args]
+root = "/datasets/IntelNeuromorphicDNSChallenge-latest/data/MicrosoftDNS_4_ICASSP/test_set_1/"
+train = false
+
+[test_dataset.dataloader]
+batch_size = 24
+num_workers = 8
