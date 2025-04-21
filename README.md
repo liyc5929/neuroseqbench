@@ -437,11 +437,9 @@ python ./experiments/runner.py --paper_name segregated_temporal_probe --experime
 python ./experiments/runner.py --paper_name segregated_temporal_probe --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item BinaryAdding_LIF_recurrent --data_root /benchmark_data --device 0
 ```
 
-<a name="neuromorphic-sequential-arena-a-benchmark-for-neuromorphic-temporal-processing"></a>
-
 ---
 
-<h3 align="center"> Neuromorphic Sequential Arena: A Benchmark for Neuromorphic Temporal Processing </h3>
+<h3 align="center"><a name="neuromorphic-sequential-arena-a-benchmark-for-neuromorphic-temporal-processing"> Neuromorphic Sequential Arena: A Benchmark for Neuromorphic Temporal Processing </a></h3>
 
 ---
 
