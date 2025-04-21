@@ -11,6 +11,7 @@ We warmly invite researchers and practitioners in the field of neuromorphic temp
 2. [Neuromorphic Sequential Arena: A Benchmark for Neuromorphic Temporal Processing](#neuromorphic-sequential-arena-a-benchmark-for-neuromorphic-temporal-processing)
 
 <a name="spiking-neural-networks-for-temporal-processing-status-quo-and-future-prospects"></a>
+
 ---
 
 <h3 align="center"> Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects </h3>
@@ -439,6 +440,7 @@ python ./experiments/runner.py --paper_name segregated_temporal_probe --experime
 ```
 
 <a name="neuromorphic-sequential-arena-a-benchmark-for-neuromorphic-temporal-processing"></a>
+
 ---
 
 <h3 align="center"> Neuromorphic Sequential Arena: A Benchmark for Neuromorphic Temporal Processing </h3>
