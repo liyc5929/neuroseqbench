@@ -12,7 +12,7 @@ We warmly invite researchers and practitioners in the field of neuromorphic temp
 
 ---
 
-<a name="spiking-neural-networks-for-temporal-processing-status-quo-and-future-prospects"><h3 align="center"> Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects </h3></a>
+<h3 align="center"><a name="spiking-neural-networks-for-temporal-processing-status-quo-and-future-prospects"> Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects </a></h3>
 
 ---
 
