@@ -24,10 +24,12 @@ Each task requires specific datasets, which can be downloaded and processed usin
 - **Dataset:** AL dataset (Synthetic)
 - **Dataset Access:**  
   - 🔹 **Option 1： Download Pre-Generated Dataset (Recommended)**  
-    Users can directly download the pre-generated dataset and place it in the designated data directory for immediate use.  
+    Users can directly download the pre-generated dataset and place it in the designated data directory for immediate use.
+
+    Download the dataset (`AL.zip`) from [our Hugging Face repository](https://huggingface.co/datasets/liyc5929/neuroseqbench/tree/main/neuromorphic_sequential_arena/AL), then extract it with the following command:
+
     ```sh
-    wget [cloud_drive_link] -O data/AL.zip
-    unzip data/AL.zip -d data/AL/
+    unzip ./AL.zip -d data/AL/
     ```
 
   - **Option 2: Automatic Dataset Generation**  
@@ -44,9 +46,9 @@ Biometrics Dataset Dataset](https://archive.ics.uci.edu/ml/machine-learning-data
   - **🔹 Option 1: Download Pre-Processed Dataset (Recommended)**
   
     Users can directly download the pre-processed dataset, which includes four `.npy` files corresponding to the training/testing data and labels. 
+    Download the dataset (`WISDM.zip`) from [our Hugging Face repository](https://huggingface.co/datasets/liyc5929/neuroseqbench/tree/main/neuromorphic_sequential_arena/WISDM), then extract it with the following command:
     ```sh
-    wget [cloud_drive_link] -O data/HAR.zip
-    unzip data/HAR.zip -d data/HAR/
+    unzip ./WISDM.zip -d data/HAR/
     ```
   
   - **Option 2: Download Raw WISDM Dataset and Perform Preprocessing Yourself**
@@ -69,10 +71,10 @@ Biometrics Dataset Dataset](https://archive.ics.uci.edu/ml/machine-learning-data
 - **Dataset Access:**  
   - **🔹 Option 1: Download Pre-Processed Dataset (Recommended)**
   
-    Users can directly download the pre-processed dataset, which includes four `.npy` files corresponding to the training/testing data and labels.  
+    Users can directly download the pre-processed dataset, which includes four `.npy` files corresponding to the training/testing data and labels.
+    Download the dataset (`OpenBMI.zip`) from [our Hugging Face repository](https://huggingface.co/datasets/liyc5929/neuroseqbench/tree/main/neuromorphic_sequential_arena/OpenBMI), then extract it with the following command:
     ```sh
-    wget [cloud_drive_link] -O data/EEG.zip
-    unzip data/EEG.zip -d data/EEG/
+    unzip ./OpenBMI.zip -d data/EEG/
     ```
   
   - **Option 2: Download Raw OpenBMI Dataset and Perform Preprocessing Yourself**
@@ -91,9 +93,9 @@ Biometrics Dataset Dataset](https://archive.ics.uci.edu/ml/machine-learning-data
 - **Dataset Access:**  
   - **Option 1: Download Pre-Processed Dataset (Recommended)**  
     Users can directly download the pre-processed dataset, which includes  `training_raw_noise.mat` and `testing_raw_noise.mat`.
+    Download the dataset (`SLoClas.zip`) from [our Hugging Face repository](https://huggingface.co/datasets/liyc5929/neuroseqbench/tree/main/neuromorphic_sequential_arena/SLoClas), then extract it with the following command:
     ```sh
-    wget [cloud_drive_link] -O data/SSL.zip
-    unzip data/SSL.zip -d data/SSL/
+    unzip data/SLoClas.zip -d data/SSL/
     ```
   
   - **Option 2: Download Raw SLoClas Dataset and Perform Preprocessing Yourself**  
@@ -125,10 +127,9 @@ Biometrics Dataset Dataset](https://archive.ics.uci.edu/ml/machine-learning-data
 - **Source:** [The Intel neuromorphic DNS challenge](https://iopscience.iop.org/article/10.1088/2634-4386/ace737)
 - **Dataset Access:**
   - **Option 1: Download Pre-Processed Dataset (Recommended)**  
-      Users can directly download the N-DNS dataset by the following steps:
+      Download the dataset (`N-DNS.zip`) from [our Hugging Face repository](https://huggingface.co/datasets/liyc5929/neuroseqbench/tree/main/neuromorphic_sequential_arena/N-DNS), then extract it with the following command:
       ```sh
-      wget -- -O data/AD.zip
-      unzip data/AD.zip -d data/AD/
+      unzip ./N-DNS.zip -d data/AD/
       ```
   - **Option 2: Please refer to [Intel Neuromorphic DNS Challenge Datasets](https://github.com/IntelLabs/IntelNeuromorphicDNSChallenge#dataset) for preparing the dataset**
 
