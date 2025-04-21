@@ -16,10 +16,30 @@ from neuroseqbench.utils.tools import (
 )
 from neuroseqbench.utils.dataset import DVSLip
 from neuroseqbench.network.trainer import SurrogateGradient
-from neuroseqbench.network.neuron import LIFNode, RLIF, CELIF, SPSN, LTC
+from neuroseqbench.network.neuron import LIF, RLIF, CELIF, SPSN, LTC
 from neuroseqbench.network.structure import MergeDimension, SplitDimension
 from neuroseqbench.network.structure import TCN, LSTMNet, TransformerNet, SpkTransformerNet
-from neuroseqbench.network.trainer import TriangleSurroGrad
+
+
+def embedded_dropout(embed, words, dropout=0.1, scale=None):
+    if dropout:
+        mask = embed.weight.data.new().resize_((embed.weight.size(0), 1)).bernoulli_(1 - dropout).expand_as(embed.weight) / (1 - dropout)
+        masked_embed_weight = mask * embed.weight
+    else:
+        masked_embed_weight = embed.weight
+    if scale:
+        masked_embed_weight = scale.expand_as(masked_embed_weight) * masked_embed_weight
+
+    padding_idx = embed.padding_idx
+    if padding_idx is None:
+        padding_idx = -1
+
+    X = torch.nn.functional.embedding(
+        words, masked_embed_weight,
+        padding_idx, embed.max_norm, embed.norm_type,
+        embed.scale_grad_by_freq, embed.sparse,
+    )
+    return X
 
 
 class SpikingNet(nn.Module):
@@ -42,7 +62,7 @@ class SpikingNet(nn.Module):
             self.embedding = None
 
         if bn == "bn":
-            self.bns = nn.ModuleList([BatchNorm1d(hidden_size[l]) for l in range(num_hidden_layers)])
+            self.bns = nn.ModuleList([nn.BatchNorm1d(hidden_size[l]) for l in range(num_hidden_layers)])
         elif bn is None:
             self.bns = None
         else:
@@ -77,20 +97,11 @@ class SpikingNet(nn.Module):
         x = self.classifier(x)
         return x
 
-    def forward(self, x, time_step=None, multi_step=True):
+    def forward(self, x, time_step=None):
         if time_step is None:
             time_step = x.size(0)
         x = x.view(x.size(0), x.size(1), -1)
-        if multi_step:
-            reset_states(self)
-            output = self.multi_step_forward(x, time_step)
-        else:
-            reset_states(self)
-            output = []
-            for t in range(time_step):
-                single_step_output = self.single_step_forward(x[t])
-                output.append(single_step_output)
-            output = torch.stack(output)
+        output = self.multi_step_forward(x, time_step)
         return output
 
     def multi_step_forward(self, x, time_step):
@@ -131,8 +142,7 @@ class SSMNet(nn.Module):
             input_size = hidden_size
         self.classifier = nn.Linear(in_features=input_size, out_features=output_size)
 
-    def forward(self, x, time_step=None, multi_step=True):
-        assert multi_step
+    def forward(self, x, time_step=None):
         x = x.view(x.size(0), x.size(1), -1)
         for hidden_layer_i in range(self.num_hidden_layers):
             if hidden_layer_i == 0:
@@ -157,7 +167,7 @@ class DvsGestureSNN(nn.Module):
             last_layer = False
 
         if bn == "bn":
-            bns = [BatchNorm1d(hidden_size) for l in range(num_hidden_layers)]
+            bns = [nn.BatchNorm1d(hidden_size) for l in range(num_hidden_layers)]
         elif bn is None:
             bns = [None for _ in range(num_hidden_layers)]
         else:
@@ -183,18 +193,10 @@ class DvsGestureSNN(nn.Module):
         x = self.classifier(x)
         return x
 
-    def forward(self, x, time_step=None, multi_step=False):
+    def forward(self, x, time_step=None):
         if time_step is None:
             time_step = x.size(0)
-        if multi_step:
-            output = self.multi_step_forward(x, time_step)
-        else:
-            reset_states(self)
-            output = []
-            for t in range(time_step):
-                single_step_output = self.single_step_forward(x[t])
-                output.append(single_step_output)
-            output = torch.stack(output)
+        output = self.multi_step_forward(x, time_step)
         return output
 
     def multi_step_forward(self, x, time_step):
@@ -412,7 +414,6 @@ def main():
                                  learning_rule=args.learning_rule,
                                  truncated_t=args.truncated_t,
                                  )
-        args.multi_step = True
     elif args.neuron == "ltc":
         surro_grad = SurrogateGradient(func_name=args.surrogate, a=args.alpha)
         exec_mode = "serial"
@@ -426,7 +427,6 @@ def main():
                                  recurrent=args.recurrent,
                                  b_j0=b_j0
                                  )
-        args.multi_step = True
     elif args.neuron == "celif":
         surro_grad = SurrogateGradient(func_name=args.surrogate, a=args.alpha)
         exec_mode = "serial"
@@ -440,7 +440,6 @@ def main():
                                  recurrent=args.recurrent,
                                  beta=beta
                                  )
-        args.multi_step = True
     elif args.neuron == "spsn":
         surro_grad = SurrogateGradient(func_name=args.surrogate, a=args.alpha)
         exec_mode = "serial"
@@ -452,20 +451,13 @@ def main():
                                  exec_mode=exec_mode,
                                  recurrent=args.recurrent
                                  )
-        args.multi_step = True
     elif args.neuron == "lifnode":
-        spiking_neuron = partial(LIFNode,
-                                 decay_factor=args.decay,
-                                 threshold=args.threshold,
-                                 surrogate_function=TriangleSurroGrad.apply,
-                                 hard_reset=True,
-                                 detach_reset=args.detach_reset,
-                                 detach_mem=args.detach_mem,
-                                 )
-        args.multi_step = False
-    elif args.neuron == "ann":
-        spiking_neuron = None
-        args.multi_step = False
+        surro_grad = SurrogateGradient(func_name="triangle", a=1.0)
+        spiking_neuron = partial(LIF,
+            decay      = args.neuron_decay,
+            threshold  = args.neuron_thresh,
+            surro_grad = surro_grad,
+        )
     else:
         raise NotImplementedError
 
@@ -722,7 +714,7 @@ def train_one_epoch(train_loader, model, criterion, optimizer, epoch, scaler, ar
         optimizer.zero_grad()
         if args.amp:
             with amp.autocast():
-                output = model(images, multi_step=args.multi_step)  # [T, B, N]
+                output = model(images)  # [T, B, N]
                 if args.final_step_cls:
                     output = output[-1]
                 else:
@@ -736,7 +728,7 @@ def train_one_epoch(train_loader, model, criterion, optimizer, epoch, scaler, ar
                 scaler.step(optimizer)
                 scaler.update()
         else:
-            output = model(images, multi_step=args.multi_step)  # [T, B, N]
+            output = model(images)  # [T, B, N]
             if args.final_step_cls:
                 output = output[-1]
             else:
@@ -790,7 +782,7 @@ def validate_one_epoch(val_loader, model, criterion, args):
                 images = images.transpose(0, 1).contiguous()  # [T, B, N]
 
             # compute output
-            output = model(images, multi_step=args.multi_step)
+            output = model(images)
 
             if args.final_step_cls:
                 output = output[-1]
