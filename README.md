@@ -6,6 +6,10 @@ This repository currently contains the source code and implementation details fo
 
 We warmly invite researchers and practitioners in the field of neuromorphic temporal processing to engage with us by providing feedback and contributing. By integrating more comprehensive temporal processing benchmarks and advanced SNN methods, your contributions can significantly advance this field. We value your insights and look forward to collaborating to drive innovation together.
 
+## Table of Contents
+1. [Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects](#spiking-neural-networks-for-temporal-processing-status-quo-and-future-prospects)
+2. [Neuromorphic Sequential Arena: A Benchmark for Neuromorphic Temporal Processing](#neuromorphic-sequential-arena-a-benchmark-for-neuromorphic-temporal-processing)
+
 ---
 
 <h3 align="center"> Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects </h3>
@@ -19,7 +23,7 @@ We warmly invite researchers and practitioners in the field of neuromorphic temp
 The following illustration depicts the **Segregated Temporal Probe (STP)**, an analytical tool for assessing the effectiveness of neuromorphic benchmarks in evaluating the temporal processing capabilities of SNNs. The STP incorporates three algorithms—Spatio-Temporal Backpropagation (STBP), Spatial Domain Backpropagation (SDBP), and No Temporal Domain (NoTD)—which systematically disrupt the temporal processing pathways within an SNN to elucidate their significance.
 
 <p align="center">
-  <img src="./docs/_statics/overview.jpg" alt="STP overview" width="98%" />
+  <img src="./docs/source/_static/overview.jpg" alt="STP overview" width="98%" />
 </p>
 
 The table below provides a comprehensive overview of the SNN methods that have been evaluated and compared. Each method is detailed with specific examples and their corresponding locations within the repository.
@@ -395,6 +399,63 @@ torch, torchvision, torchaudio
 toml
 
 # Data processing
+datasets, h5py, tqdm
+
+# Delay learning model
+dcls
+```
+
+To incorporate the `neuroseqbench` module into your experimental code, please follow these steps:
+
+```shell
+git clone https://github.com/liyc5929/neuroseqbench.git
+pip install -e .
+```
+
+### Experiments
+Each experiment in the paper has a corresponding `toml` configuration in a folder `experiments/segregated_temproral_probe/`. We also provide scripts for all experiments as follows:
+- `run_01_STP_on_benchmarks.sh`
+- `run_02_training_algo_on_benchmarks.sh`
+- `run_03_surro_grad_on_benchmarks.sh`
+- `run_04_normalization_on_benchmarks.sh`
+- `run_05_spiking_neuron_on_benchmarks.sh`
+- `run_06_neuron_arch_on_benchmarks.sh`
+
+Here is an example to reproduce the experiments of spiking neuron models by executing the file `run_05_spiking_neuron_on_benchmarks.sh`,  which contains the following commands:
+
+```shell
+# PennTreebank
+python ./experiments/runner.py --paper_name segregated_temporal_probe --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PTB_LIF_feedforward --data_root /benchmark_data --device 0
+python ./experiments/runner.py --paper_name segregated_temporal_probe --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PTB_LIF_recurrent --data_root /benchmark_data --device 0
+
+# PS-MNIST
+python ./experiments/runner.py --paper_name segregated_temporal_probe --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PSMNIST_LIF_feedforward --data_root /benchmark_data --device 0
+python ./experiments/runner.py --paper_name segregated_temporal_probe --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PSMNIST_LIF_recurrent --data_root /benchmark_data --device 0
+
+# Binary Adding
+python ./experiments/runner.py --paper_name segregated_temporal_probe --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item BinaryAdding_LIF_feedforward --data_root /benchmark_data --device 0
+python ./experiments/runner.py --paper_name segregated_temporal_probe --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item BinaryAdding_LIF_recurrent --data_root /benchmark_data --device 0
+```
+
+---
+
+<h3 align="center"> Neuromorphic Sequential Arena: A Benchmark for Neuromorphic Temporal Processing </h3>
+
+---
+
+> **Abstract:** Temporal processing is vital for extracting meaningful information from time-varying signals. Recent advancements in Spiking Neural Networks (SNNs) have shown immense promise in efficiently processing these signals. However, progress in this field has been impeded by the lack of effective and standardized benchmarks, which complicates the consistent measurement of technological advancements and limits the practical applicability of SNNs. To bridge this gap, we introduce the Neuromorphic Sequential Arena (NSA), a comprehensive benchmark that offers an effective, versatile, and application-oriented evaluation framework for neuromorphic temporal processing. The NSA includes seven real-world temporal processing tasks from a diverse range of application scenarios, each capturing rich temporal dynamics across multiple timescales. Utilizing NSA, we conduct extensive comparisons of recently introduced spiking neuron models and neural architectures, presenting comprehensive baselines in terms of task performance, training speed, memory usage, and energy efficiency. Our findings emphasize an urgent need for efficient SNN designs that can consistently deliver high performance across tasks with varying temporal complexities while maintaining low computational costs. NSA enables systematic tracking of advancements in neuromorphic algorithm research and paves the way for the development of effective and efficient neuromorphic temporal processing systems.
+
+## Steps to Reproduce Results
+
+### Dependencies
+```shell
+# Environment dependencies
+torch, torchvision, torchaudio
+
+# Configuration management
+toml
+
+# Data processing
 datasets, h5py, tqdm, scipy
 
 # Delay learning model
@@ -415,29 +476,18 @@ pip install -e .
 ```
 
 ### Experiments
-Each experiment in the paper has a corresponding `toml` configuration in a folder `src/benchmark/experiments/`. We also provide scripts for all experiments as follows:
-- `scripts/run_01_STP_on_benchmarks.sh`
-- `scripts/run_02_training_algo_on_benchmarks.sh`
-- `scripts/run_03_surro_grad_on_benchmarks.sh`
-- `scripts/run_04_normalization_on_benchmarks.sh`
-- `scripts/run_05_spiking_neuron_on_benchmarks.sh`
-- `scripts/run_06_neuron_arch_on_benchmarks.sh`
+Each experiment in the paper  is organized by task and placed under `experiments/neuromorphic_sequential_arena/`. We provide the following scripts to run all experiments for each task:
+- `AL/run_all.sh`
+- `HAR/run_all.sh`
+- `EEG-MI/run_all.sh`
+- `SSL/run_all.sh`
+- `ALR/run_all.sh`
+- `AD/run_all.sh`
+- `ASR/run_all.sh`
 
-Here is an example to reproduce the experiments of spiking neuron models by executing the file `scripts/run_05_spiking_neuron_on_benchmarks.sh`,  which contains the following commands:
+Before running any experiments, please refer to [`experiments/neuromorphic_sequential_arena/README.md`](./experiments/neuromorphic_sequential_arena/README.md) for installation instructions and dataset download guidelines specific to each task.
 
-```shell
-# PennTreebank
-python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PTB_LIF_feedforward --data_root <path_to_dataset> --device 0
-python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PTB_LIF_recurrent --data_root <path_to_dataset> --device 0
-
-# PS-MNIST
-python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PSMNIST_LIF_feedforward --data_root <path_to_dataset> --device 0
-python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PSMNIST_LIF_recurrent --data_root <path_to_dataset> --device 0
-
-# Binary Adding
-python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item BinaryAdding_LIF_feedforward --data_root <path_to_dataset> --device 0
-python runner.py --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item BinaryAdding_LIF_recurrent --data_root <path_to_dataset> --device 0
-```
+All datasets used in these experiments are also available on [`Hugging Face`](https://huggingface.co/datasets/liyc5929/neuroseqbench/tree/main/neuromorphic_sequential_arena) for easy access and reproducibility.
 
 
 ## Cite & Contact
