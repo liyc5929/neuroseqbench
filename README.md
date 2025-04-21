@@ -12,6 +12,7 @@ We warmly invite researchers and practitioners in the field of neuromorphic temp
 
 ---
 
+<a name="spiking-neural-networks-for-temporal-processing-status-quo-and-future-prospects"></a>
 <h3 align="center"> Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects </h3>
 
 ---
@@ -439,6 +440,7 @@ python ./experiments/runner.py --paper_name segregated_temporal_probe --experime
 
 ---
 
+<a name="neuromorphic-sequential-arena-a-benchmark-for-neuromorphic-temporal-processing"></a>
 <h3 align="center"> Neuromorphic Sequential Arena: A Benchmark for Neuromorphic Temporal Processing </h3>
 
 ---
@@ -485,9 +487,9 @@ Each experiment in the paper  is organized by task and placed under `experiments
 - `AD/run_all.sh`
 - `ASR/run_all.sh`
 
-Before running any experiments, please refer to [`experiments/neuromorphic_sequential_arena/README.md`](./experiments/neuromorphic_sequential_arena/README.md) for installation instructions and dataset download guidelines specific to each task.
+Before running any experiments, please refer to the [`experiments/neuromorphic_sequential_arena/README.md`](./experiments/neuromorphic_sequential_arena/README.md) for detailed installation instructions and dataset download procedures specific to each task.
 
-All datasets used in these experiments are also available on [`Hugging Face`](https://huggingface.co/datasets/liyc5929/neuroseqbench/tree/main/neuromorphic_sequential_arena) for easy access and reproducibility.
+All datasets used in these experiments are also hosted on [`our Hugging Face repository`](https://huggingface.co/datasets/liyc5929/neuroseqbench/tree/main/neuromorphic_sequential_arena) to facilitate easy access and ensure reproducibility.
 
 
 ## Cite & Contact
