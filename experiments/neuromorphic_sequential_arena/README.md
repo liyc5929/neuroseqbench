@@ -81,7 +81,7 @@ Biometrics Dataset Dataset](https://archive.ics.uci.edu/ml/machine-learning-data
   
     Alternatively, users can download all files ending with `_MI.mat` from the **OpenBMI** [official source](https://gigadb.org/dataset/view/id/100542/File_page/5/Files_page/23) and place them under `data/EEG/eeg_data`. 
     - **Preprocessing:**  
-      1. Use our provides [**MATLAB preprocessing scripts**](./EEG-MI/preprocess_matlab/) to convert them into `data_*.mat` and `label_*.mat` files (108 in total).  
+      1. Use our provided [**MATLAB preprocessing scripts**](./EEG-MI/preprocess_matlab/) to convert them into `data_*.mat` and `label_*.mat` files (108 in total).  
       2. Our dataloader will automatically read and process all `.mat` files into the required `.npy` format:  
       ```sh
       python main_train_EEG.py --data_path data
