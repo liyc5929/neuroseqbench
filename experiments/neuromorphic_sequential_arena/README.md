@@ -35,7 +35,7 @@ Each task requires specific datasets, which can be downloaded and processed usin
   - **Option 2: Automatic Dataset Generation**  
     If the dataset is not found in the directory, our **dataloader will automatically generate a new one**. However, this process may take a significant amount of time. Additionally, due to variations in the generated data, there may be **differences in reproducibility**. Users who wish to ensure consistency should download the pre-generated dataset instead.  
     ```sh
-    python main_AL.py --data_path data
+    python main_train_AL.py --data_path data
     ```
 
 ### 2. Human Activities Recognition (HAR)
@@ -62,7 +62,7 @@ Biometrics Dataset Dataset](https://archive.ics.uci.edu/ml/machine-learning-data
   
       Our dataloader will automatically handle preprocessing and convert it into the required `.npy` format:
       ```sh
-      python main_HAR.py --data_path data
+      python main_train_HAR.py --data_path data
       ```
 
 ### 3. Electroencephalogram Motor Imagery (EEG-MI)
@@ -81,10 +81,10 @@ Biometrics Dataset Dataset](https://archive.ics.uci.edu/ml/machine-learning-data
   
     Alternatively, users can download all files ending with `_MI.mat` from the **OpenBMI** [official source](https://gigadb.org/dataset/view/id/100542/File_page/5/Files_page/23) and place them under `data/EEG/eeg_data`. 
     - **Preprocessing:**  
-      1. Use our provided **MATLAB preprocessing script** to convert them into `data_*.mat` and `label_*.mat` files (108 in total).  
+      1. Use our provides [**MATLAB preprocessing scripts**](./EEG-MI/preprocess_matlab/) to convert them into `data_*.mat` and `label_*.mat` files (108 in total).  
       2. Our dataloader will automatically read and process all `.mat` files into the required `.npy` format:  
       ```sh
-      python main_EEG.py --data_path data
+      python main_train_EEG.py --data_path data
       ```
 
 ### 4. Sound Source Localization (SSL)
@@ -104,11 +104,11 @@ Biometrics Dataset Dataset](https://archive.ics.uci.edu/ml/machine-learning-data
     unzip data/SSL/ssl_data/SoClas_database.zip
     ```
     - **Preprocessing:**  
-      1. Use our provided **MATLAB preprocessing script** to segment samples and add noise. This will generate two files: `training_raw_noise.mat` and `testing_raw_noise.mat`, which represent the preprocessed training and testing sets, respectively.
+      1. Use our provided [**MATLAB preprocessing scripts**](./SSL/preprocess_matlab) to segment samples and add noise. This will generate two files: `training_raw_noise.mat` and `testing_raw_noise.mat`, which represent the preprocessed training and testing sets, respectively.
       2. Place both `.mat` files in the `data/SSL/` directory.
       3. Our dataloader will then automatically load these preprocessed `.mat` files for model training.
           ```sh
-          python main_SSL.py --data_path data
+          python main_train_SSL.py --data_path data
           ```
 
 ### 5. Automatic Lip-Reading (ALR)
