@@ -151,82 +151,6 @@ class SSMNet(nn.Module):
         x = self.classifier(x)
 
         return x
-
-
-class DvsGestureSNN(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size, num_hidden_layers=1, spiking_neuron=None, bn=None,
-                 final_step_cls=False, args=None):
-        super(DvsGestureSNN, self).__init__()
-        self.num_hidden_layers = num_hidden_layers
-        self.args = args
-        self.flatten = nn.Flatten()
-        self.max_pool = nn.MaxPool2d(4, 4)
-        if final_step_cls:
-            last_layer = True
-        else:
-            last_layer = False
-
-        if bn == "bn":
-            bns = [nn.BatchNorm1d(hidden_size) for l in range(num_hidden_layers)]
-        elif bn is None:
-            bns = [None for _ in range(num_hidden_layers)]
-        else:
-            raise NotImplementedError
-
-        for hidden_layer_i in range(num_hidden_layers):
-            exec("self.fc" + str(hidden_layer_i) + " = nn.Linear(in_features=input_size, out_features=hidden_size)")
-            if hidden_layer_i + 1 == num_hidden_layers:
-                exec("self.spk" + str(
-                    hidden_layer_i) + " = spiking_neuron(neuron_num=hidden_size, bn=bns[hidden_layer_i], last_layer=last_layer)")
-            else:
-                exec("self.spk" + str(
-                    hidden_layer_i) + " = spiking_neuron(neuron_num=hidden_size, bn=bns[hidden_layer_i])")
-            input_size = hidden_size
-        self.classifier = nn.Linear(in_features=input_size, out_features=output_size)
-
-    def single_step_forward(self, x):
-        x = self.max_pool(x)
-        x = self.flatten(x)
-        for hidden_layer_i in range(self.num_hidden_layers):
-            x = eval("self.fc" + str(hidden_layer_i))(x)
-            x = eval("self.spk" + str(hidden_layer_i))(x)
-        x = self.classifier(x)
-        return x
-
-    def forward(self, x, time_step=None):
-        if time_step is None:
-            time_step = x.size(0)
-        output = self.multi_step_forward(x, time_step)
-        return output
-
-    def multi_step_forward(self, x, time_step):
-        x = MergeDimension()(x)
-
-        x = self.max_pool(x)
-        x = self.flatten(x)
-        x = SplitDimension(time_step)(x)
-        for hidden_layer_i in range(self.num_hidden_layers):
-            # x = MergeDimension()(x)
-            if self.training and (self.args.learning_rule == "eprop"):
-                t_trace = []
-                trace = torch.zeros_like(x[0].detach())
-                for each_step_x in x:
-                    trace = self.args.decay * trace.detach() + each_step_x
-                    t_trace.append(trace)
-                t_trace = torch.stack(t_trace)
-                t_trace_output = eval("self.fc" + str(hidden_layer_i))(t_trace)
-                x = eval("self.fc" + str(hidden_layer_i))(
-                    x.detach()).detach() + t_trace_output - t_trace_output.detach()
-            else:
-                x = eval("self.fc" + str(hidden_layer_i))(x)
-            # x = SplitDimension(time_step)(x)
-            x = eval("self.spk" + str(hidden_layer_i))(x)
-
-        # x = MergeDimension()(x)
-        x = self.classifier(x)
-        # x = SplitDimension(time_step)(x)
-
-        return x
     
 
 def dump_json(obj, fdir, name):
@@ -241,8 +165,8 @@ def dump_json(obj, fdir, name):
 
 parser = argparse.ArgumentParser(description="PyTorch Training")
 # args of datasets
-parser.add_argument("--dataset", default="add", type=str,
-                    help="dataset: [seqcifar10|dvsgesture|add|psmnist]")
+parser.add_argument("--dataset", default="dvslip", type=str,
+                    help="dataset")
 parser.add_argument("--data-path", default="/datasets/MNIST",
                     help="path to dataset,")
 parser.add_argument("-j", "--workers", default=4, type=int, metavar="N",
@@ -462,111 +386,22 @@ def main():
         raise NotImplementedError
 
     if args.net == "ffsnn":
-        if args.dataset in ["dvsgesture", "dvsslr"]:
-            if args.dataset == "dvsgesture":
-                input_size = 2048
-            elif args.dataset == "dvsslr":
-                input_size = 11180
-            model = DvsGestureSNN(input_size=input_size, hidden_size=args.hidden_size, output_size=num_classes, num_hidden_layers=args.hidden_layers,
-                                  spiking_neuron=spiking_neuron, bn=args.bn, final_step_cls=args.final_step_cls, args=args)
-        elif args.dataset == "add":
-            model = SpikingNet(input_size=2, hidden_size=args.hidden_size, output_size=1,
-                               num_hidden_layers=args.hidden_layers,
-                               spiking_neuron=spiking_neuron, bn=args.bn, recurrent=args.recurrent, args=args)
-        elif args.dataset == "binadd":
-            model = SpikingNet(input_size=2, hidden_size=args.hidden_size, output_size=num_classes,
-                               num_hidden_layers=args.hidden_layers,
-                               spiking_neuron=spiking_neuron, bn=args.bn, recurrent=args.recurrent, args=args)
-        elif args.dataset in ["gsc", "ssc", "ssc2", "ecg"]:
-            model = SpikingNet(input_size=input_channels, hidden_size=args.hidden_size, output_size=num_classes,
-                               num_hidden_layers=args.hidden_layers,
-                               spiking_neuron=spiking_neuron, bn=args.bn, recurrent=args.recurrent, args=args, dropout=args.dropout)
-        elif args.dataset in ["psmnist", "smnist"]:
-            model = SpikingNet(input_size=1, hidden_size=[64, 256, 256], output_size=num_classes, num_hidden_layers=3,
-                               spiking_neuron=spiking_neuron, bn=args.bn, recurrent=args.recurrent, args=args)
-        elif args.dataset == "dvslip":
-            input_size = 88 * 88 * 2
-            model = SpikingNet(input_size=input_size, hidden_size=args.hidden_size, output_size=num_classes,
-                               num_hidden_layers=args.hidden_layers,
-                               spiking_neuron=spiking_neuron, bn=args.bn, recurrent=args.recurrent, args=args,
-                              )
+        input_size = 88 * 88 * 2
+        model = SpikingNet(input_size=input_size, hidden_size=args.hidden_size, output_size=num_classes,
+                            num_hidden_layers=args.hidden_layers,
+                            spiking_neuron=spiking_neuron, bn=args.bn, recurrent=args.recurrent, args=args,
+                            )
     elif args.net == "tcn":
-        if args.dataset in ["add", "binadd"]:
-            channel_sizes = [args.hidden_size] * args.hidden_layers
-            model = TCN(2, num_classes, channel_sizes, kernel_size=args.ksize, dropout=0.0, spiking_neuron=spiking_neuron,
-                        output_last_step=False, t_internal=args.t_internal)
-        elif args.dataset == "psmnist":
-            channel_sizes = [args.hidden_size] * args.hidden_layers
-            model = TCN(1, num_classes, channel_sizes, kernel_size=args.ksize, dropout=0.0,
-                        spiking_neuron=spiking_neuron, output_last_step=False, t_internal=args.t_internal)
-        elif args.dataset == "dvslip":
-            channel_sizes = [args.hidden_size] * args.hidden_layers
-            model = TCN(88 * 88 * 2, num_classes, channel_sizes, kernel_size=args.ksize, dropout=0.0,
-                        spiking_neuron=spiking_neuron, output_last_step=False, use_flatten=True)
-        elif args.dataset == "dvsgesture":
-            channel_sizes = [args.hidden_size] * args.hidden_layers
-            model = TCN(2048, num_classes, channel_sizes, kernel_size=args.ksize, dropout=0.0,
-                        spiking_neuron=spiking_neuron, output_last_step=False, use_pool=True)
-    elif args.net == "lstm":
-        if args.dataset == "dvsgesture":
-            model = LSTMNet(input_size=2048, hidden_size=args.hidden_size, output_size=num_classes, rnn_type=args.rnn_type,
-                            num_hidden_layers=args.hidden_layers, spiking_neuron=spiking_neuron, spiking=False, dvs_pooling=True)
-        elif args.dataset == "add":
-            model = LSTMNet(input_size=2, hidden_size=args.hidden_size, output_size=1, rnn_type=args.rnn_type,
-                            num_hidden_layers=args.hidden_layers, spiking_neuron=spiking_neuron, spiking=False)
-        elif args.dataset == "binadd":
-            model = LSTMNet(input_size=2, hidden_size=args.hidden_size, output_size=num_classes, rnn_type=args.rnn_type,
-                            num_hidden_layers=args.hidden_layers, spiking_neuron=spiking_neuron, spiking=False)
-        elif args.dataset == "psmnist":
-            model = LSTMNet(input_size=1, hidden_size=[64, 64, args.hidden_size], output_size=num_classes, rnn_type=args.rnn_type,
-                            num_hidden_layers=args.hidden_layers, spiking_neuron=spiking_neuron, spiking=False)
+        channel_sizes = [args.hidden_size] * args.hidden_layers
+        model = TCN(88 * 88 * 2, num_classes, channel_sizes, kernel_size=args.ksize, dropout=0.0,
+                    spiking_neuron=spiking_neuron, output_last_step=False, use_flatten=True)
     elif args.net == "spklstm":
-        if args.dataset == "add":
-            model = LSTMNet(input_size=2, hidden_size=args.hidden_size, output_size=1, rnn_type=args.rnn_type,
-                            num_hidden_layers=args.hidden_layers, spiking_neuron=spiking_neuron, spiking=True)
-        elif args.dataset == "binadd":
-            model = LSTMNet(input_size=2, hidden_size=args.hidden_size, output_size=num_classes, rnn_type=args.rnn_type,
-                            num_hidden_layers=args.hidden_layers, spiking_neuron=spiking_neuron, spiking=True)
-        elif args.dataset == "psmnist":
-            model = LSTMNet(input_size=1, hidden_size=args.hidden_size, output_size=num_classes, rnn_type=args.rnn_type,
-                            num_hidden_layers=args.hidden_layers, spiking_neuron=spiking_neuron, spiking=True)
-        elif args.dataset == "dvslip":
-            input_size = 88 * 88 * 2
-            model = LSTMNet(input_size=input_size, hidden_size=args.hidden_size, output_size=num_classes, rnn_type=args.rnn_type,
-                            num_hidden_layers=args.hidden_layers, spiking_neuron=spiking_neuron, spiking=True, use_flatten=True)
-        elif args.dataset == "dvsgesture":
-            model = LSTMNet(input_size=2048, hidden_size=args.hidden_size, output_size=num_classes, rnn_type=args.rnn_type,
-                            num_hidden_layers=args.hidden_layers, spiking_neuron=spiking_neuron, spiking=True, dvs_pooling=True)
-    elif args.net == "transformer":
-        if args.dataset == "psmnist":
-            model = TransformerNet(input_size=1, hidden_size=args.hidden_size, output_size=num_classes,
-                                   nhead=args.nhead, num_hidden_layers=args.hidden_layers, dropout=0.0)
-        elif args.dataset == "binadd":
-            model = TransformerNet(input_size=2, hidden_size=args.hidden_size, output_size=num_classes, nhead=args.nhead,
-                                   num_hidden_layers=args.hidden_layers, dropout=0.)
-        elif args.dataset == "add":
-            model = TransformerNet(input_size=2, hidden_size=args.hidden_size, output_size=1, nhead=args.nhead,
-                                   num_hidden_layers=args.hidden_layers, dropout=0.)
-        if args.dataset in ["dvsgesture", "cifar10dvs" ]:
-            model = TransformerNet(input_size=2048, hidden_size=args.hidden_size, output_size=num_classes, nhead=args.nhead,
-                                   num_hidden_layers=args.hidden_layers, dropout=0., use_pool=True)
+        input_size = 88 * 88 * 2
+        model = LSTMNet(input_size=input_size, hidden_size=args.hidden_size, output_size=num_classes, rnn_type=args.rnn_type,
+                        num_hidden_layers=args.hidden_layers, spiking_neuron=spiking_neuron, spiking=True, use_flatten=True)
     elif args.net == "spktransformer":
-        if args.dataset == "add":
-            model = SpkTransformerNet(input_size=2, hidden_size=args.hidden_size, output_size=1, nhead=args.nhead,
-                                   num_hidden_layers=args.hidden_layers, dropout=0., spiking_neuron=spiking_neuron)
-        elif args.dataset == "binadd":
-            model = SpkTransformerNet(input_size=2, hidden_size=args.hidden_size, output_size=num_classes, nhead=args.nhead,
-                                   num_hidden_layers=args.hidden_layers, dropout=0., spiking_neuron=spiking_neuron, T=args.t_internal)
-        elif args.dataset == "psmnist":
-            model = SpkTransformerNet(input_size=1, hidden_size=args.hidden_size, output_size=num_classes, nhead=args.nhead,
-                                   num_hidden_layers=args.hidden_layers, dropout=0., spiking_neuron=spiking_neuron, T=args.t_internal)
-        elif args.dataset == "dvslip":
-            model = SpkTransformerNet(input_size=88 * 88 * 2, hidden_size=args.hidden_size, output_size=num_classes, nhead=args.nhead,
+        model = SpkTransformerNet(input_size=88 * 88 * 2, hidden_size=args.hidden_size, output_size=num_classes, nhead=args.nhead,
                                    num_hidden_layers=args.hidden_layers, dropout=0., spiking_neuron=spiking_neuron, T=1, use_flatten=True)
-        elif args.dataset in ["dvsgesture", "cifar10dvs"]:
-            model = SpkTransformerNet(input_size=2048, hidden_size=args.hidden_size, output_size=num_classes,
-                                      nhead=args.nhead,
-                                      num_hidden_layers=args.hidden_layers, dropout=0., spiking_neuron=spiking_neuron, use_pool=True)
     elif args.net == "binaryssm":
         from neuroseqbench.network.neuron import S4D
         surro_grad = SurrogateGradient(func_name=args.surrogate, a=args.alpha)
@@ -578,10 +413,7 @@ def main():
                                  time_step=args.time_window,
                                  surro_grad=surro_grad
                                  )
-        if args.dataset == "dvslip":
-            input_size = 88 * 88 * 2
-        else:
-            raise NotImplementedError
+        input_size = 88 * 88 * 2
         model = SSMNet(input_size=input_size, hidden_size=args.hidden_size, output_size=num_classes,
                       num_hidden_layers=args.hidden_layers,
                       spiking_neuron=spiking_neuron)
@@ -593,10 +425,7 @@ def main():
                                  lr=min(0.001, args.lr),
                                  binary="GSU"
                                  )
-        if args.dataset == "dvslip":
-            input_size = 88 * 88 * 2
-        else:
-            raise NotImplementedError
+        input_size = 88 * 88 * 2
         model = SSMNet(input_size=input_size, hidden_size=args.hidden_size, output_size=num_classes,
                       num_hidden_layers=args.hidden_layers,
                       spiking_neuron=spiking_neuron)
@@ -621,22 +450,13 @@ def main():
             model, lr=args.lr, weight_decay=args.weight_decay, epochs=args.epochs, optim=args.optim)
     # define loss function (criterion) and optimizer
 
-    if args.dataset == "add":
-        criterion = torch.nn.MSELoss()
-        best_acc1 = float("inf")
-    elif args.dataset == "binadd":
-        criterion = torch.nn.CrossEntropyLoss(label_smoothing=0.2)
-        best_acc1 = 0
-    else:
-        criterion = torch.nn.CrossEntropyLoss()
-        best_acc1 = 0
+
+    criterion = torch.nn.CrossEntropyLoss()
+    best_acc1 = 0
     if args.cos_lr:
         scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, eta_min=0, T_max=args.epochs)
     elif args.step_lr:
-        if args.dataset == "add":
-            gamma = 0.9
-        else:
-            gamma = 0.8
+        gamma = 0.8
         scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=args.step_size, gamma=gamma)
     else:
         scheduler = None
