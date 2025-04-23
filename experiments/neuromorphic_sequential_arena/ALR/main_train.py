@@ -293,11 +293,9 @@ def main():
     logging.info("args:" + str(args))
 
     data_path = "/datasets/dvslip/extract/DVS-Lip"
-    # data_path = "/datasets/dvsgesture"
     seq_length = args.time_window
     train_dataset = DVSLip(data_root=data_path, train=True, augment_spatial=True, T=seq_length)
     val_dataset = DVSLip(data_root=data_path, train=False, augment_spatial=False, T=seq_length)
-    input_channels = 2
     num_classes = 100
     collate_fn = None
 
