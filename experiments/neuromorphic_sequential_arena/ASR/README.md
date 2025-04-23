@@ -1,3 +1,7 @@
+**Quick Start**
+
+This code is developed based on the [ESPnet toolkit](https://github.com/espnet/espnet). Before running the experiments, please make sure to download the required dependencies.
+
 ```shell
 conda env create -f=./espnet_env.yaml -p ~/env_espnet
 
