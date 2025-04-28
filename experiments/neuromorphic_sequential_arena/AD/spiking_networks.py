@@ -6,48 +6,13 @@ import torch.nn.functional as F
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence, PackedSequence
 
 
-from snn.framework.network.trainer import SurrogateGradient
-from snn.framework.network.neuron import LIF, LIFNode, RLIF, CELIF, SPSN, PMSN, LTC, S4D
-from snn.framework.network.architecture.tcn import TemporalConvNet
-from snn.framework.network.architecture.rnn import script_lstm
+from neuroseqbench.network.trainer import SurrogateGradient
+from neuroseqbench.network.neuron import LIF, RLIF, CELIF, SPSN, LTC, S4D
+from neuroseqbench.network.structure.lstm import script_lstm
 import math
 import torch.nn as nn
 from torch.nn import Parameter
 from functools import partial
-
-
-
-class TriangleSurroGrad(torch.autograd.Function):
-    """Altered from code of Temporal Efficient Training, ICLR 2022 (https://openreview.net/forum?id=_XNtisL32jv)
-    max(0, 1 - |ui[t] - θ|)
-
-    FIXME: A function that can be directly merged.
-    """
-
-    @staticmethod
-    def forward(ctx, input, gamma=1.0):
-        out = input.ge(0.)
-        L = torch.tensor([gamma])
-        ctx.save_for_backward(input, L)
-        return out.float()
-
-    @staticmethod
-    def backward(ctx, grad_output):
-        (input, others) = ctx.saved_tensors
-        gamma = others[0].item()
-        grad_input = grad_output.clone()
-        tmp = (1 / gamma) * (1 / gamma) * ((gamma - input.abs()).clamp(min=0))
-        grad_input = grad_input * tmp
-        return grad_input, None
-
-
-def reset_states(model):
-    for name, m in model.named_modules():
-        if hasattr(m, 'reset'):
-            # print(f'before {name}:  {m.v}')
-            # if not isinstance(m, MemoryModule):
-            #     print(f'Trying to call `reset()` of {m}, which is not base.MemoryModule')
-            m.reset()
 
 
 class SpikingNet(nn.Module):
@@ -121,18 +86,6 @@ class SpikingNet(nn.Module):
                                      recurrent=recurrent,
                                      k=k
                                      )
-
-        elif spiking_neuron_name == 'pmsn':
-            surro_grad = SurrogateGradient(func_name=surrogate, a=alpha)
-            exec_mode = "serial"
-            spiking_neuron = partial(PMSN,
-                                     decay=decay,
-                                     threshold=threshold,
-                                     time_step=time_window,
-                                     surro_grad=surro_grad,
-                                     exec_mode=exec_mode,
-                                     recurrent=recurrent
-                                     )
         else:
             print(f"{spiking_neuron_name}")
             raise NotImplementedError
@@ -157,7 +110,6 @@ class SpikingNet(nn.Module):
 
     def forward(self, x, state=None):
         seq_len, batch_size, _ = x.size()
-        reset_states(self)
         all_layer_output = []
         output_states = []
         for hidden_layer_i in range(0, self.num_layers):
@@ -221,7 +173,6 @@ class SSMNet(nn.Module):
 
     def forward(self, x, state=None):
         seq_len, batch_size, _ = x.size()
-        reset_states(self)
         all_layer_output = []
         output_states = []
         for hidden_layer_i in range(0, self.num_layers):
@@ -230,54 +181,6 @@ class SSMNet(nn.Module):
             x = eval("self.spk" + str(hidden_layer_i))(x)
 
         output = x
-
-        return output, output_states, all_layer_output
-
-
-class TCN(nn.Module):
-    def __init__(self, input_size,
-                 hidden_size,
-                 num_layers,
-                 batch_first=False,
-                 dropout=0.0,
-                 spiking_neuron_name=None,
-                 recurrent=False,
-                 surrogate='triangle',
-                 alpha=1.0,
-                 decay=0.5,
-                 threshold=0.5,
-                 time_window=512,
-                 ksize=7):
-        super(TCN, self).__init__()
-        self.input_size = input_size
-        self.hidden_size = hidden_size
-        self.num_layers = num_layers
-        num_channels = [hidden_size] * num_layers
-
-        spiking_neuron = partial(LIFNode,
-                                 decay_factor=decay,
-                                 threshold=threshold,
-                                 surrogate_function=TriangleSurroGrad.apply,
-                                 hard_reset=True,
-                                 detach_reset=False,
-                                 detach_mem=False,
-                                 )
-        self.tcn = TemporalConvNet(input_size, num_channels, kernel_size=ksize, dropout=dropout,
-                                   spiking_neuron=spiking_neuron)
-
-    def forward(self, x, state=None):
-        seq_len, batch_size, _ = x.size()
-        x = x.permute(1, 2, 0).contiguous()
-        reset_states(self)
-        all_layer_output = []
-        output_states = []
-        T = 1
-        for t in range(T):
-            y1 = self.tcn(x)
-            y1 = y1.permute(2, 0, 1).contiguous()
-
-        output = y1
-
 
         return output, output_states, all_layer_output
 
@@ -960,7 +863,6 @@ class SpkTransformerNet(nn.Module):
         self.pos_encoder = PositionalEncoding(hidden_size, dropout=0.)
 
     def forward(self, x, state=None):
-        reset_states(self)
         output_states = []
         all_layer_output = []
         if self.use_flatten:

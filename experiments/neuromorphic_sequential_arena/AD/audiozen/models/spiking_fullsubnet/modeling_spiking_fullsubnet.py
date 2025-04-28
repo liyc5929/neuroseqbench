@@ -6,8 +6,7 @@ from einops import rearrange, repeat
 from torch.nn import functional as F
 
 from audiozen.acoustics.audio_feature import istft, stft
-from recipes.intel_ndns.spiking_fullsubnet.efficient_spiking_neuron import MemoryState, efficient_spiking_neuron
-from recipes.intel_ndns.spiking_fullsubnet.spiking_networks import SpikingNet, SSMNet, TCN, GSUNet,SpkTransformerNet
+from spiking_networks import SpikingNet, SSMNet, GSUNet,SpkTransformerNet
 
 
 class SequenceModel(nn.Module):
@@ -66,19 +65,6 @@ class SequenceModel(nn.Module):
                                          threshold=threshold,
                                          time_window=time_window,
                                          lr=0.1)
-        elif sequence_model == 'tcn':
-            self.sequence_model = TCN(input_size=input_size,
-                                         hidden_size=hidden_size,
-                                         num_layers=num_layers,
-                                         batch_first=False,
-                                         spiking_neuron_name=sequence_model,
-                                         recurrent=recurrent,
-                                         surrogate=surrogate,
-                                         alpha=alpha,
-                                         decay=decay_factor,
-                                         threshold=threshold,
-                                         time_window=time_window,
-                                         ksize=ksize)
         elif sequence_model == 'gsu':
             self.sequence_model = GSUNet(input_size=input_size,
                                          hidden_size=hidden_size,
@@ -98,17 +84,6 @@ class SequenceModel(nn.Module):
                                                      time_window=time_window,
                                                      T=1,
                                                      use_flatten=True)
-        # if sequence_model in ['GSN', 'LIF', 'PLIF', 'ALIF']:
-        #     self.sequence_model = efficient_spiking_neuron(
-        #         input_size=input_size,
-        #         hidden_size=hidden_size,
-        #         num_layers=num_layers,
-        #         shared_weights=shared_weights,
-        #         bn=bn,
-        #         neuron_name=sequence_model,
-        #         decay_factor=decay_factor,
-        #         threshold=threshold
-        #     )
         elif sequence_model == "LSTM":
             self.sequence_model = nn.LSTM(
                 input_size=input_size,
