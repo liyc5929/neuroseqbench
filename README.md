@@ -485,9 +485,9 @@ Each experiment in the paper  is organized by task and placed under `experiments
 - `AD/run_all.sh`
 - `ASR/run_all.sh`
 
-Before running any experiments, please refer to the [`experiments/neuromorphic_sequential_arena/README.md`](./experiments/neuromorphic_sequential_arena/README.md) for detailed installation instructions and dataset download procedures specific to each task.
+Before running any experiments, please refer to the [`experiments/neuromorphic_sequential_arena/README.md`](./experiments/neuromorphic_sequential_arena/README.md) for detailed **installation instructions** and **dataset download procedures** specific to each task.
 
-All datasets used in these experiments are also hosted on [`our Hugging Face repository`](https://huggingface.co/datasets/liyc5929/neuroseqbench/tree/main/neuromorphic_sequential_arena) to facilitate easy access and ensure reproducibility.
+**All datasets used in these experiments are hosted on [`our Hugging Face repository`](https://huggingface.co/datasets/liyc5929/neuroseqbench/tree/main/neuromorphic_sequential_arena) to facilitate easy access and ensure reproducibility.**
 
 
 ## Cite & Contact
