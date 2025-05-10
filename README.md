@@ -2,13 +2,16 @@
 
 The goal of Neuromorphic Sequential Benchmark is to enable consistent performance comparisons across different approaches to Spiking Neural Networks (SNNs) for temporal processing and to facilitate the tracking of advancements in the field.
 
-This repository currently contains the source code and implementation details for the evaluation results in the research paper titled ["Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects"](https://arxiv.org/abs/2502.09449). We are in the process of developing a comprehensive benchmark suite tailored for neuromorphic temporal processing. Guidelines will be provided to guarantee fair and consistent evaluations of emerging SNN approaches using this benchmark suite.
+This repository contains the source code and implementation details associated with two research papers:
+1.  ["Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects"](https://arxiv.org/abs/2502.09449), presents a systematic evaluation of the temporal processing capabilities of recently proposed SNN approaches and highlights key limitations in existing neuromorphic benchmarks.
+2.  "Neuromorphic Sequential Arena: A Benchmark for Neuromorphic Temporal Processing", introduces a comprehensive benchmark suite tailored for neuromorphic temporal processing.
 
-We warmly invite researchers and practitioners in the field of neuromorphic temporal processing to engage with us by providing feedback and contributing. By integrating more comprehensive temporal processing benchmarks and advanced SNN methods, your contributions can significantly advance this field. We value your insights and look forward to collaborating to drive innovation together.
+Guidelines are provided to guarantee fair and consistent evaluations of emerging SNN approaches using this repository. We warmly invite researchers and practitioners in the field of neuromorphic temporal processing to engage with us by providing feedback and contributing. By integrating more comprehensive temporal processing benchmarks and advanced SNN methods, your contributions can significantly advance this field. We value your insights and look forward to collaborating to drive innovation together.
 
 ## Table of Contents
 1. [Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects](#spiking-neural-networks-for-temporal-processing-status-quo-and-future-prospects)
 2. [Neuromorphic Sequential Arena: A Benchmark for Neuromorphic Temporal Processing](#neuromorphic-sequential-arena-a-benchmark-for-neuromorphic-temporal-processing)
+   
 
 ---
 
