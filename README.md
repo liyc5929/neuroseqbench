@@ -448,6 +448,8 @@ python ./experiments/runner.py --paper_name segregated_temporal_probe --experime
 
 > **Abstract:** Temporal processing is vital for extracting meaningful information from time-varying signals. Recent advancements in Spiking Neural Networks (SNNs) have shown immense promise in efficiently processing these signals. However, progress in this field has been impeded by the lack of effective and standardized benchmarks, which complicates the consistent measurement of technological advancements and limits the practical applicability of SNNs. To bridge this gap, we introduce the Neuromorphic Sequential Arena (NSA), a comprehensive benchmark that offers an effective, versatile, and application-oriented evaluation framework for neuromorphic temporal processing. The NSA includes seven real-world temporal processing tasks from a diverse range of application scenarios, each capturing rich temporal dynamics across multiple timescales. Utilizing NSA, we conduct extensive comparisons of recently introduced spiking neuron models and neural architectures, presenting comprehensive baselines in terms of task performance, training speed, memory usage, and energy efficiency. Our findings emphasize an urgent need for efficient SNN designs that can consistently deliver high performance across tasks with varying temporal complexities while maintaining low computational costs. NSA enables systematic tracking of advancements in neuromorphic algorithm research and paves the way for the development of effective and efficient neuromorphic temporal processing systems.
 
+👉 **Supplementary Material** for this paper can be found in the [`NSA_Supplementary_Materials`](./NSA_Supplementary_Materials.pdf) directory.
+
 ## Steps to Reproduce Results
 
 ### Dependencies
@@ -490,7 +492,7 @@ Each experiment in the paper  is organized by task and placed under `experiments
 
 Before running any experiments, please refer to the [`experiments/neuromorphic_sequential_arena/README.md`](./experiments/neuromorphic_sequential_arena/README.md) for detailed **installation instructions** and **dataset download procedures** specific to each task.
 
-**All datasets used in these experiments are hosted on [`our Hugging Face repository`](https://huggingface.co/datasets/liyc5929/neuroseqbench/tree/main/neuromorphic_sequential_arena) to facilitate easy access and ensure reproducibility.**
+**All datasets** used in these experiments are hosted on [`our Hugging Face repository`](https://huggingface.co/datasets/liyc5929/neuroseqbench/tree/main/neuromorphic_sequential_arena) to facilitate easy access and ensure reproducibility.
 
 
 ## Cite & Contact
