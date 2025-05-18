@@ -27,7 +27,7 @@ speed_perturb_factors="0.9 1.0 1.1"
     --nj 16 \
     --inference_nj 16 \
     --ngpu 2 \
-    --stage 10 \
+    --stage 1 \
     --expdir "${expdir}" \
     --asr_tag "${asr_tag}" \
     --lang zh \
