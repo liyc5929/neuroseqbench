@@ -463,9 +463,6 @@ toml
 # Data processing
 datasets, h5py, tqdm, scipy
 
-# Delay learning model
-dcls
-
 # S4D model
 einops
 
@@ -481,6 +478,11 @@ pip install -e .
 ```
 
 ### Experiments
+
+✨ Before running any experiments, please refer to the [`experiments/neuromorphic_sequential_arena/README.md`](./experiments/neuromorphic_sequential_arena/README.md) for detailed **installation instructions** and **dataset download procedures** specific to each task.
+
+✅ **All datasets** used in these experiments are hosted on [`our Hugging Face repository`](https://huggingface.co/datasets/liyc5929/neuroseqbench/tree/main/neuromorphic_sequential_arena) to facilitate easy access and ensure reproducibility.
+
 Each experiment in the paper  is organized by task and placed under `experiments/neuromorphic_sequential_arena/`. We provide the following scripts to run all experiments for each task:
 - `AL/run_all.sh`
 - `HAR/run_all.sh`
@@ -490,9 +492,6 @@ Each experiment in the paper  is organized by task and placed under `experiments
 - `AD/run_all.sh`
 - `ASR/run_all.sh`
 
-Before running any experiments, please refer to the [`experiments/neuromorphic_sequential_arena/README.md`](./experiments/neuromorphic_sequential_arena/README.md) for detailed **installation instructions** and **dataset download procedures** specific to each task.
-
-**All datasets** used in these experiments are hosted on [`our Hugging Face repository`](https://huggingface.co/datasets/liyc5929/neuroseqbench/tree/main/neuromorphic_sequential_arena) to facilitate easy access and ensure reproducibility.
 
 
 ## Cite & Contact
