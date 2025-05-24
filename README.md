@@ -484,14 +484,16 @@ pip install -e .
 ✅ **All datasets** used in these experiments are hosted on [`our Hugging Face repository`](https://huggingface.co/datasets/liyc5929/neuroseqbench/tree/main/neuromorphic_sequential_arena) to facilitate easy access and ensure reproducibility.
 
 Each experiment in the paper  is organized by task and placed under `experiments/neuromorphic_sequential_arena/`. We provide the following scripts to run all experiments for each task:
-- `AL/run_all.sh`
-- `HAR/run_all.sh`
-- `EEG-MI/run_all.sh`
-- `SSL/run_all.sh`
-- `ALR/run_all.sh`
-- `AD/run_all.sh`
-- `ASR/run_all.sh`
 
+```shell
+bash AL/run_all.sh
+bash HAR/run_all.sh
+bash EEG-MI/run_all.sh
+bash SSL/run_all.sh
+bash ALR/run_all.sh
+bash AD/run_all.sh
+bash ASR/run_all.sh
+```
 
 
 ## Cite & Contact
