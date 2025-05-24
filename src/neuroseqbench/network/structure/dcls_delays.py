@@ -4,7 +4,6 @@ According to: Ilyass Hammouamri \emph{et al.}, Learning Delays in Spiking Neural
 
 import torch
 from torch.nn import Sequential, BatchNorm1d, ConstantPad1d
-from DCLS.construct.modules import Dcls1d
 
 from ..neuron import NonSpikingLIF
 from . import BaseArchitecture, Permute, ANNSequential
@@ -36,6 +35,7 @@ class DCLS_Delays(BaseArchitecture):
             exec_mode  = self.spiking_neuron.exec_mode,
         )
         # Initialize model
+        from DCLS.construct.modules import Dcls1d # lazy import
         self.features = Sequential(
             # Calculate delays
             Permute(1, 2, 0),

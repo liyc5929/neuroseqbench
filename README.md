@@ -461,7 +461,7 @@ torch, torchvision, torchaudio
 toml
 
 # Data processing
-datasets, h5py, tqdm, scipy
+datasets, h5py, tqdm, pandas, scipy
 
 # S4D model
 einops
