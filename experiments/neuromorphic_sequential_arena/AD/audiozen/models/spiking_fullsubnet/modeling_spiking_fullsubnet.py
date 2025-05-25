@@ -6,7 +6,7 @@ from einops import rearrange, repeat
 from torch.nn import functional as F
 
 from audiozen.acoustics.audio_feature import istft, stft
-from spiking_networks import SpikingNet, SSMNet, GSUNet,SpkTransformerNet
+from spiking_networks import SpikingNet, SSMNet, GSN, SpkTransformerNet
 
 
 class SequenceModel(nn.Module):
@@ -52,7 +52,7 @@ class SequenceModel(nn.Module):
                                              beta=beta,
                                              k=k,
                                              learning_rule=learning_rule)
-        elif sequence_model in ['binaryssm', 'gsussm']:
+        elif sequence_model in ['binaryssm', 'gsnssm']:
             self.sequence_model = SSMNet(input_size=input_size,
                                          hidden_size=hidden_size,
                                          num_layers=num_layers,
@@ -65,8 +65,8 @@ class SequenceModel(nn.Module):
                                          threshold=threshold,
                                          time_window=time_window,
                                          lr=0.1)
-        elif sequence_model == 'gsu':
-            self.sequence_model = GSUNet(input_size=input_size,
+        elif sequence_model == 'gsn':
+            self.sequence_model = GSN(input_size=input_size,
                                          hidden_size=hidden_size,
                                          num_hidden_layers=num_layers,
                                          threshold=threshold,)

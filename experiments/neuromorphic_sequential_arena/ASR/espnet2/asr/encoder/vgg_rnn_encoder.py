@@ -54,7 +54,7 @@ class VGGRNNEncoder(AbsEncoder):
         self.rnn_type = rnn_type
         self.bidirectional = bidirectional
         self.use_projection = use_projection
-        if rnn_type not in {"lstm", "gru", "spiking_lstm", "lif", "ltc", "pmsn", "spsn", "celif", "tcn", "spkbinaryssm", "gsussm", "spktransformer"}:
+        if rnn_type not in {"lstm", "gru", "spiking_lstm", "lif", "ltc", "pmsn", "spsn", "celif", "tcn", "spkbinaryssm", "gsnssm", "spktransformer"}:
             raise ValueError(f"Not supported rnn_type={rnn_type}")
 
         # Subsample is not used for VGGRNN

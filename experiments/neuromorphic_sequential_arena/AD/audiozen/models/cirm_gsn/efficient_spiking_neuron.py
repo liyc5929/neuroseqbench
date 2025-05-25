@@ -32,20 +32,20 @@ def efficient_spiking_neuron(
     # assert shared_weights
     # assert bn
 
-    return StackedGSU(
+    return StackedGSN(
         num_layers,
-        GSULayer,
-        first_layer_args=[GSUCell, input_size, hidden_size, shared_weights, bn],
-        other_layer_args=[GSUCell, hidden_size, hidden_size, shared_weights, bn],
+        GSNLayer,
+        first_layer_args=[GSNCell, input_size, hidden_size, shared_weights, bn],
+        other_layer_args=[GSNCell, hidden_size, hidden_size, shared_weights, bn],
     )
 
 
-class StackedGSU(nn.Module):
+class StackedGSN(nn.Module):
     # __constants__ = ["layers"]  # Necessary for iterating through self.layers
 
     def __init__(self, num_layers, layer, first_layer_args, other_layer_args):
-        super(StackedGSU, self).__init__()
-        self.layers = init_stacked_gsu(num_layers, layer, first_layer_args, other_layer_args)
+        super(StackedGSN, self).__init__()
+        self.layers = init_stacked_gsn(num_layers, layer, first_layer_args, other_layer_args)
 
     def forward(self, input, states):
         output_states = []
@@ -62,14 +62,14 @@ class StackedGSU(nn.Module):
         return output, output_states, all_layer_output
 
 
-def init_stacked_gsu(num_layers, layer, first_layer_args, other_layer_args):
+def init_stacked_gsn(num_layers, layer, first_layer_args, other_layer_args):
     layers = [layer(*first_layer_args)] + [layer(*other_layer_args) for _ in range(num_layers - 1)]
     return nn.ModuleList(layers)
 
 
-class GSULayer(nn.Module):
+class GSNLayer(nn.Module):
     def __init__(self, cell, *cell_args):
-        super(GSULayer, self).__init__()
+        super(GSNLayer, self).__init__()
         self.cell = cell(*cell_args)
 
     def forward(self, input, state):
@@ -101,9 +101,9 @@ class Triangle(torch.autograd.Function):
         return grad_input, None
 
 
-class GSUCell(nn.Module):
+class GSNCell(nn.Module):
     def __init__(self, input_size, hidden_size, shared_weights=False, bn=False):
-        super(GSUCell, self).__init__()
+        super(GSNCell, self).__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.shared_weights = shared_weights

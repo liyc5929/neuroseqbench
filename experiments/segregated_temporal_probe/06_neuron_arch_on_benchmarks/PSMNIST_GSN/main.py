@@ -123,7 +123,7 @@ def main():
     )
     args.multi_step = False
 
-    model = LSTMNet(input_size=1, hidden_size=args.hidden_size, output_size=num_classes, rnn_type="gsu", num_hidden_layers=args.hidden_layers, spiking_neuron=spiking_neuron)
+    model = LSTMNet(input_size=1, hidden_size=args.hidden_size, output_size=num_classes, rnn_type="gsn", num_hidden_layers=args.hidden_layers, spiking_neuron=spiking_neuron)
     logging.info(str(model))
 
     para = count_parameters(model)

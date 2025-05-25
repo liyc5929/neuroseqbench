@@ -54,7 +54,7 @@ class LSTMLayer(nn.Module):
         return torch.stack(outputs), state
 
 
-class GSUCell(nn.Module):
+class GSNCell(nn.Module):
     def __init__(self, input_size, hidden_size):
         super().__init__()
         self.input_size = input_size
@@ -133,7 +133,7 @@ def script_lstm(
     num_layers,
     bias=True,
     batch_first=False,
-    GSU=False,
+    GSN=False,
     spiking_neuron=None
 ):
     """Returns a ScriptModule that mimics a PyTorch native LSTM."""
@@ -145,8 +145,8 @@ def script_lstm(
     stack_type = StackedLSTM
     layer_type = LSTMLayer
     dirs = 1
-    if GSU:
-        cell_type = GSUCell
+    if GSN:
+        cell_type = GSNCell
 
     else:
         cell_type = LSTMCell
@@ -177,11 +177,11 @@ class LSTMNet(nn.Module):
                                  self.hidden_size[l],
                                  num_layers=1, batch_first=False)
                          for l in range(num_hidden_layers)]
-        elif rnn_type == 'gsu':
+        elif rnn_type == 'gsn':
             self.spiking_neuron = spiking_neuron()
             self.rnns = [script_lstm(input_size if l == 0 else self.hidden_size[l-1],
                                      self.hidden_size[l],
-                                     num_layers=1, batch_first=False, GSU=True)
+                                     num_layers=1, batch_first=False, GSN=True)
                          for l in range(num_hidden_layers)]
 
         else:
@@ -198,7 +198,7 @@ class LSTMNet(nn.Module):
                      weight.new_zeros(1, batch_size,
                                       self.hidden_size[l]).to(device))
                     for l in range(self.nlayers)]
-        elif self.rnn_type == 'gsu':
+        elif self.rnn_type == 'gsn':
             return [[(weight.new_zeros(batch_size,
                                        self.hidden_size[l]).to(device),
                       weight.new_zeros(batch_size,
@@ -214,7 +214,7 @@ class LSTMNet(nn.Module):
         state = self.init_hidden(batch_size=hiddens.size(1), device=hiddens.device)
 
         for l, rnn in enumerate(self.rnns):
-            if self.rnn_type == 'gsu':
+            if self.rnn_type == 'gsn':
                 hiddens, final_states = rnn(hiddens, state[l], threshold=self.spiking_neuron.neuron_thresh,
                                             surrogate_function=self.spiking_neuron.surro_func)
             elif self.rnn_type == 'lstm':
@@ -307,11 +307,11 @@ class LMLSTM(nn.Module):
                                      num_layers=1, batch_first=False)
                          for l in range(nlayers)]
 
-        elif rnn_type == 'gsu':
+        elif rnn_type == 'gsn':
             self.spiking_neuron = spiking_neuron()
             self.rnns = [script_lstm(emb_dim if l == 0 else hidden_dim,
                                      emb_dim if l == nlayers - 1 else hidden_dim,
-                                     num_layers=1, batch_first=False, GSU=True)
+                                     num_layers=1, batch_first=False, GSN=True)
                          for l in range(nlayers)
                          ]
         else:
@@ -332,7 +332,7 @@ class LMLSTM(nn.Module):
                      weight.new_zeros(1, batch_size,
                                       self.emb_dim if l == self.nlayers - 1 else self.hidden_dim))
                     for l in range(self.nlayers)]
-        elif self.rnn_type == 'gsu':
+        elif self.rnn_type == 'gsn':
             return [[(weight.new_zeros(batch_size,
                                        self.emb_dim if l == self.nlayers - 1 else self.hidden_dim),
                       weight.new_zeros(batch_size,
@@ -355,7 +355,7 @@ class LMLSTM(nn.Module):
         new_states = []
         hiddens = embedded
         for l, rnn in enumerate(self.rnns):
-            if self.rnn_type == 'gsu':
+            if self.rnn_type == 'gsn':
                 hiddens, final_states = rnn(hiddens, state[l], threshold=self.spiking_neuron.neuron_thresh, surrogate_function=self.spiking_neuron.surro_func)
             elif self.rnn_type == 'lstm':
                 hiddens, final_states = rnn(hiddens, state[l])

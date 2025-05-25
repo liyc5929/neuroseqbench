@@ -276,9 +276,9 @@ def main():
     elif args.net == "tcn":
         model = TCN(input_channels, num_classes, args.hidden_dim, kernel_size=args.ksize, dropout=0.0,
                     spiking_neuron=spiking_neuron, output_last_step=False)
-    elif args.net == "gsu":
+    elif args.net == "gsn":
         model = LSTMNet(input_size=input_channels, hidden_size=args.hidden_dim, output_size=num_classes,
-                        rnn_type="gsu", num_hidden_layers=len(args.hidden_dim), spiking_neuron=spiking_neuron)
+                        rnn_type="gsn", num_hidden_layers=len(args.hidden_dim), spiking_neuron=spiking_neuron)
     elif args.net == "spktransformer":
         model = SpkTransformerNet(input_size=input_channels, hidden_size=args.hidden_dim[0], output_size=num_classes,
                                   nhead=args.nhead, num_hidden_layers=len(args.hidden_dim), dropout=0.,
@@ -288,18 +288,18 @@ def main():
                                  dropout=0.1,
                                  lr=min(0.001, args.lr),
                                  binary="binary",
-                                 threshold=0.,
+                                 threshold=0.0,
                                  time_step=args.time_window,
                                  surro_grad=surro_grad
                                  )
         model = SSM(input_size=input_channels, hidden_size=args.hidden_dim, output_size=num_classes,
                     num_hidden_layers=len(args.hidden_dim),
                     spiking_neuron=spiking_neuron, dataset=args.dataset, neuron_type=args.neuron)
-    elif args.net == "gsussm":
+    elif args.net == "gsnssm":
         spiking_neuron = partial(S4D,
                                  dropout=0.1,
                                  lr=min(0.001, args.lr),
-                                 binary="GSU"
+                                 binary="GSN"
                                  )
         model = SSM(input_size=input_channels, hidden_size=args.hidden_dim, output_size=num_classes,
                     num_hidden_layers=len(args.hidden_dim),
@@ -318,7 +318,7 @@ def main():
     else:
         raise NotImplementedError
 
-    if args.net in ["ssm", "binaryssm", "gsussm"]:
+    if args.net in ["ssm", "binaryssm", "gsnssm"]:
         optimizer, _ = setup_optimizer(model, lr=args.lr, weight_decay=args.weight_decay, epochs=args.epochs, optim=args.optim)
 
     criterion = torch.nn.CrossEntropyLoss(label_smoothing=0.2)

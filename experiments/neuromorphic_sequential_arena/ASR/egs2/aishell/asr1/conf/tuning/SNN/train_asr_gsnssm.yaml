@@ -2,7 +2,7 @@
 # encoder related
 encoder: vgg_rnn
 encoder_conf:
-    rnn_type: gsussm
+    rnn_type: gsnssm
     bidirectional: False
     use_projection: False
     num_layers: 3

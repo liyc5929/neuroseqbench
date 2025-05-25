@@ -13,7 +13,7 @@ sh run snn_rcelif.sh
 sh run snn_rltc.sh
 
 # Neural Architecture
-sh run snn_gsu.sh
+sh run snn_gsn.sh
 sh run snn_spktransformer.sh
 sh run snn_binaryssm.sh
-sh run snn_gsussm.sh
+sh run snn_gsnssm.sh

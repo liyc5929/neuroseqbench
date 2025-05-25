@@ -17,8 +17,7 @@ from neuroseqbench.utils.tools import (
 from neuroseqbench.utils.dataset import DVSLip
 from neuroseqbench.network.trainer import SurrogateGradient
 from neuroseqbench.network.neuron import LIF, RLIF, CELIF, SPSN, LTC
-from neuroseqbench.network.structure import MergeDimension, SplitDimension
-from neuroseqbench.network.structure import TCN, LSTMNet, TransformerNet, SpkTransformerNet
+from neuroseqbench.network.structure import TCN, LSTMNet, SpkTransformerNet
 
 
 def embedded_dropout(embed, words, dropout=0.1, scale=None):
@@ -167,7 +166,7 @@ parser = argparse.ArgumentParser(description="PyTorch Training")
 # args of datasets
 parser.add_argument("--dataset", default="dvslip", type=str,
                     help="dataset")
-parser.add_argument("--data-path", default="/datasets/MNIST",
+parser.add_argument("--data-path", default="/benchmark_data",
                     help="path to dataset,")
 parser.add_argument("-j", "--workers", default=4, type=int, metavar="N",
                     help="number of data loading workers (default: 4)")
@@ -415,13 +414,13 @@ def main():
         model = SSMNet(input_size=input_size, hidden_size=args.hidden_size, output_size=num_classes,
                       num_hidden_layers=args.hidden_layers,
                       spiking_neuron=spiking_neuron)
-    elif args.net == "gsussm":
+    elif args.net == "gsnssm":
         from neuroseqbench.network.neuron import S4D
         surro_grad = SurrogateGradient(func_name=args.surrogate, a=args.alpha)
         spiking_neuron = partial(S4D,
                                  dropout=args.dropout,
                                  lr=min(0.001, args.lr),
-                                 binary="GSU"
+                                 binary="GSN"
                                  )
         input_size = 88 * 88 * 2
         model = SSMNet(input_size=input_size, hidden_size=args.hidden_size, output_size=num_classes,
@@ -435,14 +434,13 @@ def main():
     # logging.info(f"Parameter number: {para}")
 
     if args.optim == "sgd":
-        optimizer = torch.optim.SGD(model.parameters(), lr=args.lr, weight_decay=args.weight_decay,
-                                    momentum=args.momentum, nesterov=True)
+        optimizer = torch.optim.SGD(model.parameters(), lr=args.lr, weight_decay=args.weight_decay, momentum=args.momentum, nesterov=True)
     elif args.optim == "adam":
         optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     else:
         raise NotImplementedError
     # assert args.cos_lr
-    if args.net in ["binaryssm", "gsussm"]:
+    if args.net in ["binaryssm", "gsnssm"]:
         from neuroseqbench.network.neuron.s4d import setup_optimizer
         optimizer, _ = setup_optimizer(
             model, lr=args.lr, weight_decay=args.weight_decay, epochs=args.epochs, optim=args.optim)
@@ -473,11 +471,11 @@ def standard_train(train_loader, val_loader, model, criterion, optimizer, schedu
     loss_train_record = []
 
     for epoch in range(args.start_epoch, args.epochs):
-        # train for one epoch
+        # Train for one epoch
         train_acc1, train_loss, loss_train_record = train_one_epoch(train_loader, model, criterion, optimizer, epoch, scaler, args, loss_train_record)
         if scheduler is not None:
             scheduler.step()
-        # evaluate on validation set
+        # Evaluate on validation set
         val_acc1, val_loss = validate_one_epoch(val_loader, model, criterion, args)
 
         out_string = "Train Acc. {:.4f} Test Acc. {:.4f} lr {:.4f}\t".format(train_acc1, val_acc1, optimizer.param_groups[0]["lr"])
@@ -514,9 +512,9 @@ def train_one_epoch(train_loader, model, criterion, optimizer, epoch, scaler, ar
     progress = ProgressMeter(
         len(train_loader),
         [batch_time, data_time, losses, top1, top5],
-        prefix="Epoch: [{}]".format(epoch))
+        prefix="Epoch: [{}]".format(epoch),
+    )
 
-    # switch to train mode
     model.train()
     end = time.time()
     for i, (images, labels) in enumerate(train_loader):
@@ -546,7 +544,7 @@ def train_one_epoch(train_loader, model, criterion, optimizer, epoch, scaler, ar
                 scaler.step(optimizer)
                 scaler.update()
         else:
-            output = model(images)  # [T, B, N]
+            output = model(images) # [T, B, N]
             if args.final_step_cls:
                 output = output[-1]
             else:
@@ -557,14 +555,14 @@ def train_one_epoch(train_loader, model, criterion, optimizer, epoch, scaler, ar
                 torch.nn.utils.clip_grad_norm_(model.parameters(), args.grad_clip)
             optimizer.step()
 
-        # measure accuracy and record loss
+        # Measure accuracy and record loss
         acc1, acc5 = accuracy(output, target, topk=(1, 5))
         top1.update(acc1[0], target.size(0))
         top5.update(acc5[0], target.size(0))
         losses.update(loss.item(), target.size(0))
         loss_train_record.append(loss.item())
 
-        # measure elapsed time
+        # Measure elapsed time
         batch_time.update(time.time() - end)
         end = time.time()
 
@@ -582,11 +580,10 @@ def validate_one_epoch(val_loader, model, criterion, args):
     progress = ProgressMeter(
         len(val_loader),
         [batch_time, losses, top1, top5],
-        prefix="Test: ")
+        prefix="Test: ",
+    )
 
-    # switch to evaluate mode
     model.eval()
-
     with torch.no_grad():
         end = time.time()
         for i, (images, target) in enumerate(val_loader):
@@ -599,22 +596,20 @@ def validate_one_epoch(val_loader, model, criterion, args):
             elif args.dataset in ["add", "psmnist", "smnist", "imdb", "binadd", "ecg", "20news"]:
                 images = images.transpose(0, 1).contiguous()  # [T, B, N]
 
-            # compute output
             output = model(images)
-
             if args.final_step_cls:
                 output = output[-1]
             else:
                 output = output.mean(0)
             loss = criterion(output, target)
 
-            # measure accuracy and record loss
+            # Measure accuracy and record loss
             acc1, acc5 = accuracy(output, target, topk=(1, 5))
             top1.update(acc1[0], target.size(0))
             top5.update(acc5[0], target.size(0))
             losses.update(loss.item(), target.size(0))
 
-            # measure elapsed time
+            # Measure elapsed time
             batch_time.update(time.time() - end)
             end = time.time()
 

@@ -15,8 +15,8 @@ python "${TASK_DIR}/main.py" --lr 1e-3 --grad-clip 0. --decay 0.5 --alpha 0.6 --
 
 
 # Neural Architecture
-python "${TASK_DIR}/main.py" --lr 5e-3 --decay 0.5 --alpha 0.6 --neuron lif --net gsu --hidden-dim 64 112 112
+python "${TASK_DIR}/main.py" --lr 5e-3 --decay 0.5 --alpha 0.6 --neuron lif --net gsn --hidden-dim 64 112 112
 python "${TASK_DIR}/main.py" --lr 3e-3 --decay 0.5 --alpha 1 --neuron lif --net tcn --ksize 7 --hidden-dim 28 28 28 28 28 28 28 28 --name spktcn_
 python "${TASK_DIR}/main.py" --lr 5e-4 --decay 0.5 --alpha 0.6 --neuron lif --net spktransformer --hidden-dim 64 64 --nhead 8 --name spktrans_
 python "${TASK_DIR}/main.py" --lr 1e-2 --weight-decay 5e-3 --decay 0.5 --alpha 0.6 --net binaryssm --hidden-dim 128 128
-python "${TASK_DIR}/main.py" --lr 1e-2 --weight-decay 5e-3 --decay 0.5 --alpha 0.6 --net gsussm --hidden-dim 152 152
+python "${TASK_DIR}/main.py" --lr 1e-2 --weight-decay 5e-3 --decay 0.5 --alpha 0.6 --net gsnssm --hidden-dim 152 152

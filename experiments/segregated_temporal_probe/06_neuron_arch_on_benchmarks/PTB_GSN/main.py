@@ -110,7 +110,7 @@ def main():
     )
     args.multi_step = False
 
-    model = LMLSTM(rnn_type="gsu",
+    model = LMLSTM(rnn_type="gsn",
         nlayers=args.num_layers,
         emb_dim=args.embedding_dim,
         hidden_dim=args.hidden_dim,

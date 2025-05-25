@@ -110,7 +110,7 @@ class S4D(nn.Module):
         self.dropout = dropout_fn(dropout) if dropout > 0.0 else nn.Identity()
 
         # position-wise output transform to mix features
-        if self.binary != 'GSU':
+        if self.binary != 'GSN':
             self.output_linear = nn.Sequential(
                 nn.Conv1d(self.h, 2*self.h, kernel_size=1),
                 nn.GLU(dim=-2),
@@ -133,7 +133,7 @@ class S4D(nn.Module):
         B,H,L = u.size()
         z = u
 
-        if self.binary != 'GSU':
+        if self.binary != 'GSN':
             u = self.LN(u.transpose(-2,-1)).transpose(-2,-1)
 
         # Compute SSM Kernel
@@ -151,11 +151,11 @@ class S4D(nn.Module):
 
         if self.binary == 'binary':
             y = self.dropout(LIFAct.apply(y, 0., 0., self.threshold, self.time_step, self.surro_grad))
-        elif self.binary == 'GSU':
+        elif self.binary == 'GSN':
             y = self.dropout(y)
         else:
             y = self.dropout(self.activation(y))
-        if self.binary != 'GSU':
+        if self.binary != 'GSN':
             y = self.output_linear(y)
         else:
             y = y.permute(2,0,1).reshape(-1, self.h) # B*L,H

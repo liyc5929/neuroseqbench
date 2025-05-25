@@ -12,8 +12,8 @@ num_workers = 8
 save_dir = "exp"
 description = "Train a model using Generative Adversarial Networks (GANs)"
 seed = 20220815
-exp_id = "gsu_Eparams"
-config_path = "/home/chenxiangma/projects/spiking-fullsubnet/recipes/intel_ndns/spiking_fullsubnet/gsu_Eparams.toml"
+exp_id = "gsn_Eparams"
+config_path = "/home/chenxiangma/projects/spiking-fullsubnet/recipes/intel_ndns/spiking_fullsubnet/gsn_Eparams.toml"
 
 [trainer]
 path = "trainer.Trainer"
@@ -80,7 +80,7 @@ use_pre_layer_norm_fb = true
 use_pre_layer_norm_sb = true
 bn = false
 shared_weights = true
-sequence_model = "gsu"
+sequence_model = "gsn"
 recurrent = false
 surrogate = "triangle"
 alpha = 1.0

@@ -151,13 +151,13 @@ class SSMNet(nn.Module):
                                      surro_grad=surro_grad
                                      )
 
-        elif spiking_neuron_name == 'gsussm':
+        elif spiking_neuron_name == 'gsnssm':
             surro_grad = SurrogateGradient(func_name=surrogate, a=alpha)
             exec_mode = "serial"
             spiking_neuron = partial(S4D,
                                      dropout=0.1,
                                      lr=min(0.001, lr),
-                                     binary='GSU'
+                                     binary='GSN'
                                      )
         else:
             print(f"{spiking_neuron_name}")
@@ -185,13 +185,13 @@ class SSMNet(nn.Module):
         return output, output_states, all_layer_output
 
 
-class GSUNet(nn.Module):
+class GSN(nn.Module):
     def __init__(self, input_size,
                  hidden_size,
                  num_hidden_layers=1,
                  threshold=0.3,
                  ):
-        super(GSUNet, self).__init__()
+        super(GSN, self).__init__()
 
         self.nlayers = num_hidden_layers
         self.threshold = threshold
