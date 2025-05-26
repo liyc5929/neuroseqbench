@@ -123,11 +123,10 @@ class PMSN_kernel(nn.Module):
         B = self.VinvB_real + 1j * self.VinvB_imag  #(H,N)
         C = self.CV_real + self.CV_imag * 1j
 
-        # Materialize parameters
         dt = torch.exp(self.log_dt)  # (H,1)
         A_bar = torch.exp(A*dt.unsqueeze(-1))  #[H,N]
         B_bar = (A_bar-1)*B/A
-        # Vandermonde multiplication
+   
         logK = (A*dt.unsqueeze(-1)).unsqueeze(-1) * torch.arange(L, device=A.device) # [H,N,L]
         K = torch.exp(logK)
         KB = torch.einsum('hnl,hn->hnl',K,B_bar) 
