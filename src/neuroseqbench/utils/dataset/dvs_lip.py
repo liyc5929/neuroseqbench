@@ -248,7 +248,7 @@ class DVSLip(Dataset):
 
         # PRE-PROCESSING
         time_step = 4e4 / (self.T / 30)
-        ts = (np.round(sample[:, 0] / time_step).astype(np.int))
+        ts = (np.round(sample[:, 0] / time_step).astype(int))
         # print(f"idx: {idx}, max: {ts.max()}")
         # remove events >= T
         restrict_idx = (ts < self.T)
