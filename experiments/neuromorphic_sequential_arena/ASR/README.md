@@ -11,7 +11,7 @@ Follow the instructions below to **reproduce the results reported in our paper**
 Please first navigate to the target directory:
 
 ```bash
-cd ./neuroseqbench/experiments/neuromorphic_sequential_arena/ASR/
+cd neuroseqbench/experiments/neuromorphic_sequential_arena/ASR/
 ```
 
 Then clone ESPnet and prepare necessary components:
@@ -51,7 +51,7 @@ make kenlm.done
 
 Install neuroseqbench:
 ```bash
-cd /neuroseqbench/
+cd neuroseqbench/
 pip install -e .
 ```
 
