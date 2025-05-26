@@ -18,4 +18,4 @@ python "${TASK_DIR}/main.py" --lr 1e-3 --decay 0.5 --alpha 0.4 --neuron lif --ne
 python "${TASK_DIR}/main.py" --lr 3e-3 --decay 0.5 --alpha 1 --neuron lif --net tcn --ksize 3 --hidden-dim 46 46 46 46 46 46 46 46
 python "${TASK_DIR}/main.py" --lr 5e-4 --decay 0.5 --alpha 0.6 --neuron lif --net spktransformer --hidden-dim 64 64 --nhead 4
 python "${TASK_DIR}/main.py" --lr 1e-2 --weight-decay 5e-3 --decay 0.5 --alpha 0.6 --net binaryssm --hidden-dim 128 128
-python "${TASK_DIR}/main.py" --lr 1e-2 --weight-decay 5e-3 --decay 0.5 --alpha 0.6 --net gsnssm --hidden-dim 152 152
+python "${TASK_DIR}/main.py" --lr 1e-2 --weight-decay 5e-3 --decay 0.5 --alpha 0.6 --net gsussm --hidden-dim 152 152

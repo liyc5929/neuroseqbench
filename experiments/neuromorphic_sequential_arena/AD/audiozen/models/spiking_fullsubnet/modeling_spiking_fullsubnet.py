@@ -52,7 +52,7 @@ class SequenceModel(nn.Module):
                                              beta=beta,
                                              k=k,
                                              learning_rule=learning_rule)
-        elif sequence_model in ['binaryssm', 'gsnssm']:
+        elif sequence_model in ['binaryssm', 'gsussm']:
             self.sequence_model = SSMNet(input_size=input_size,
                                          hidden_size=hidden_size,
                                          num_layers=num_layers,

@@ -151,7 +151,7 @@ class SSMNet(nn.Module):
                                      surro_grad=surro_grad
                                      )
 
-        elif spiking_neuron_name == 'gsnssm':
+        elif spiking_neuron_name == 'gsussm':
             surro_grad = SurrogateGradient(func_name=surrogate, a=alpha)
             exec_mode = "serial"
             spiking_neuron = partial(S4D,

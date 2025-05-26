@@ -187,7 +187,7 @@ class SSMNet(nn.Module):
                                  surro_grad=surro_grad
                                  )
             
-        elif spiking_neuron_name == 'gsnssm':
+        elif spiking_neuron_name == 'gsussm':
             surro_grad = SurrogateGradient(func_name=surrogate, a=alpha)
             exec_mode = "serial"
             spiking_neuron = partial(S4D,
@@ -951,7 +951,7 @@ class SLSTM(torch.nn.Module):
                         time_window=512,
                         T=1,
                         )
-        elif neuron_type in ['spkbinaryssm', 'gsnssm']:
+        elif neuron_type in ['spkbinaryssm', 'gsussm']:
             self.nbrnn = SSMNet(input_size=idim, 
                         hidden_size=cdim, 
                         num_layers=elayers, 

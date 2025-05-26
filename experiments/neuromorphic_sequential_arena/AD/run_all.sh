@@ -28,6 +28,6 @@ accelerate launch --multi_gpu --num_processes=2 --gpu_ids 0,1 --main_process_por
 accelerate launch --multi_gpu --num_processes=2 --gpu_ids 0,1 --main_process_port 46531 "${TASK_DIR}/run.py" -C ./conf/spikedriven_transformer.toml
 # Binary S4D
 accelerate launch --multi_gpu --num_processes=2 --gpu_ids 0,1 --main_process_port 46531 "${TASK_DIR}/run.py" -C ./conf/binarys4d.toml
-# GSN-SSM
-accelerate launch --multi_gpu --num_processes=2 --gpu_ids 0,1 --main_process_port 46531 "${TASK_DIR}/run.py" -C ./conf/gsnssm.toml
+# GSU-SSM
+accelerate launch --multi_gpu --num_processes=2 --gpu_ids 0,1 --main_process_port 46531 "${TASK_DIR}/run.py" -C ./conf/gsussm.toml
 

@@ -415,7 +415,7 @@ def main():
         model = SSMNet(input_size=input_size, hidden_size=args.hidden_size, output_size=num_classes,
                       num_hidden_layers=args.hidden_layers,
                       spiking_neuron=spiking_neuron)
-    elif args.net == "gsnssm":
+    elif args.net == "gsussm":
         from neuroseqbench.network.neuron import S4D
         surro_grad = SurrogateGradient(func_name=args.surrogate, a=args.alpha)
         spiking_neuron = partial(S4D,
@@ -441,7 +441,7 @@ def main():
     else:
         raise NotImplementedError
     # assert args.cos_lr
-    if args.net in ["binaryssm", "gsnssm"]:
+    if args.net in ["binaryssm", "gsussm"]:
         from neuroseqbench.network.neuron.s4d import setup_optimizer
         optimizer, _ = setup_optimizer(
             model, lr=args.lr, weight_decay=args.weight_decay, epochs=args.epochs, optim=args.optim)

@@ -295,7 +295,7 @@ def main():
         model = SSM(input_size=input_channels, hidden_size=args.hidden_dim, output_size=num_classes,
                     num_hidden_layers=len(args.hidden_dim),
                     spiking_neuron=spiking_neuron, dataset=args.dataset, neuron_type=args.neuron)
-    elif args.net == "gsnssm":
+    elif args.net == "gsussm":
         spiking_neuron = partial(S4D,
                                  dropout=0.1,
                                  lr=min(0.001, args.lr),
@@ -318,7 +318,7 @@ def main():
     else:
         raise NotImplementedError
 
-    if args.net in ["ssm", "binaryssm", "gsnssm"]:
+    if args.net in ["ssm", "binaryssm", "gsussm"]:
         optimizer, _ = setup_optimizer(model, lr=args.lr, weight_decay=args.weight_decay, epochs=args.epochs, optim=args.optim)
 
     criterion = torch.nn.CrossEntropyLoss(label_smoothing=0.2)
