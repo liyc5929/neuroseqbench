@@ -7,6 +7,7 @@ python "${TASK_DIR}/main.py" --lr 1e-3 --decay 1.0 --alpha 0.6 --neuron lif
 python "${TASK_DIR}/main.py" --lr 1e-3 --decay 0.3 --alpha 0.6 --neuron celif --hidden-dim 128 128 128
 python "${TASK_DIR}/main.py" --lr 1e-3 --grad-clip 0.0 --decay 0.5 --alpha 0.6 --neuron ltc --hidden-dim 96 112
 python "${TASK_DIR}/main.py" --lr 3e-3 --decay 0.5 --alpha 0.6 --neuron spsn --hidden-dim 128 256 256
+python "${TASK_DIR}/main.py" --lr 5e-3  --decay 0.5 --neuron pmsn --hidden-dim 64 256 256
 
 # Recurrent Spiking Neuron
 python "${TASK_DIR}/main.py" --lr 2e-4 --decay 1.0 --alpha 0.6 --neuron lif --recurrent --hidden-dim 128 176 176

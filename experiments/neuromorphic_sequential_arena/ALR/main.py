@@ -15,7 +15,7 @@ from neuroseqbench.utils.tools import (
 )
 from neuroseqbench.utils.dataset import DVSLip
 from neuroseqbench.network.trainer import SurrogateGradient
-from neuroseqbench.network.neuron import LIF, RLIF, CELIF, SPSN, LTC
+from neuroseqbench.network.neuron import LIF, RLIF, CELIF, PMSN, SPSN, LTC
 from neuroseqbench.network.structure import TCN, LSTMNet, SpkTransformerNet
 
 
@@ -361,6 +361,17 @@ def main():
                                  exec_mode=exec_mode,
                                  recurrent=args.recurrent,
                                  beta=beta
+                                 )
+    elif args.neuron == "pmsn":
+        surro_grad = SurrogateGradient(func_name=args.surrogate, a=args.alpha)
+        exec_mode = "serial"
+        spiking_neuron = partial(PMSN,
+                                 decay=args.decay,
+                                 threshold=args.threshold,
+                                 time_step=args.time_window,
+                                 surro_grad=surro_grad,
+                                 exec_mode=exec_mode,
+                                 recurrent=args.recurrent
                                  )
     elif args.neuron == "spsn":
         surro_grad = SurrogateGradient(func_name=args.surrogate, a=args.alpha)

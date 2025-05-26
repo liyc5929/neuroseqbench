@@ -8,6 +8,7 @@ from .generalized_lif import GLIF
 from .complementary_lif import CLIF
 from .context_embedding_lif import CELIF
 from .two_compartment_lif import TCLIF
+from .parallel_multi_compartment_spiking_neuron import PMSN
 from .parallel_spiking_neural_model import SPSN
 from .learnable_multi_hierarchical_model import LMH
 from .liquid_time_constant_neuron import LTC

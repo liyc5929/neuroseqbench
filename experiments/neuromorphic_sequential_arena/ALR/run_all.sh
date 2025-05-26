@@ -11,6 +11,8 @@ python "${TASK_DIR}/main.py" --dataset dvslip --net ffsnn --lr 3e-3 --optim adam
 python "${TASK_DIR}/main.py" --dataset dvslip --net ffsnn --lr 3e-3 --optim adam --epochs 100 --batch-size 256 --time-window 200 --decay 0.95 --threshold 0.8 --cos-lr --hidden-size 352 --hidden-layers 6  --surrogate triangle --bn bn --dropout 0.0 --neuron ltc --amp --final-step-cls --name dvslip_T200_tri_bn_L6_bs256_3e-3_decay095_thresh_08_352_ltc_lastStep # 53.72 48.46 48.93
 ## SPSN
 python "${TASK_DIR}/main.py" --dataset dvslip --net ffsnn --lr 3e-3 --optim adam --epochs 100 --batch-size 256 --time-window 200 --decay 0.8 --threshold 0.8 --cos-lr --hidden-size 512 --hidden-layers 6  --surrogate triangle --bn bn --dropout 0.0 --neuron spsn --amp --final-step-cls --name dvslip_T200_tri_bn_L6_bs256_3e-3_decay08_thresh_08_512_spsn_lastStep # 95.52 45.17 45.73
+## PMSN
+python "${TASK_DIR}/main.py" --dataset dvslip --net ffsnn --lr 3e-3 --optim adam --epochs 100 --batch-size 256 --time-window 200 --decay 0.8 --threshold 0.8 --cos-lr --hidden-size 512 --hidden-layers 6  --surrogate triangle --bn bn --dropout 0.0 --neuron pmsn  --final-step-cls --name dvslip_T200_tri_bn_L6_bs256_3e-3_decay08_thresh_08_512_pmsn_lastStep # 99.70 56.56 57.43
 
 
 # SRNN
@@ -32,4 +34,4 @@ python "${TASK_DIR}/main.py" --dataset dvslip --net spktransformer --lr 5e-4 --o
 ## Binary S4D
 python "${TASK_DIR}/main.py" --dataset dvslip --net binaryssm --lr 3e-3 --optim adam --epochs 100 --batch-size 256 --time-window 200 --decay 0.8 --threshold 0.8 --cos-lr --hidden-size 435 --hidden-layers 6  --surrogate triangle --neuron pmsn  --final-step-cls --amp --name dvslip_T200_tri_bn_L6_bs256_3e-3_435_binaryssn_lastStep_dp02_wd5e-4 --dropout 0.2 --wd 5e-4 # 96.78 44.58 44.80
 ## GSU-SSM
-python "${TASK_DIR}/main.py" --dataset dvslip --net gsussm --lr 3e-3 --optim adam --epochs 100 --batch-size 256 --time-window 200 --decay 0.8 --threshold 0.8 --cos-lr --hidden-size 485 --hidden-layers 6  --surrogate triangle --neuron pmsn  --final-step-cls --name dvslip_T200_tri_bn_L6_bs256_3e-3_485_gsussn_lastStep_dp02_wd5e-4 --dropout 0.2 --wd 5e-4 # 97.90 40.76 41.35
+python "${TASK_DIR}/main.py" --dataset dvslip --net gsussm --lr 3e-3 --optim adam --epochs 100 --batch-size 256 --time-window 200 --decay 0.8 --threshold 0.8 --cos-lr --hidden-size 485 --hidden-layers 6  --surrogate triangle --neuron pmsn  --final-step-cls --name dvslip_T200_tri_bn_L6_bs256_3e-3_485_gsussm_lastStep_dp02_wd5e-4 --dropout 0.2 --wd 5e-4 # 97.90 40.76 41.35

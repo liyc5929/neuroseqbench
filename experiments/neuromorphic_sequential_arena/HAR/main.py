@@ -13,7 +13,7 @@ from neuroseqbench.utils.tools import (
     setup_logging, save_checkpoint, AverageMeter, ProgressMeter, accuracy, count_parameters, dump_json
 )
 from neuroseqbench.network.trainer import SurrogateGradient
-from neuroseqbench.network.neuron import Recurrent_LIF, CELIF, SPSN, LTC, S4D
+from neuroseqbench.network.neuron import Recurrent_LIF, CELIF, PMSN, SPSN, LTC, S4D
 from neuroseqbench.network.neuron.s4d import setup_optimizer
 from neuroseqbench.network.structure import SSM, TCN, LSTMNet, SpkTransformerNet
 from neuroseqbench.network.structure import MergeDimension, SplitDimension
@@ -274,6 +274,15 @@ def main():
                                  exec_mode=exec_mode,
                                  recurrent=args.recurrent,
                                  beta=beta
+                                 )
+    elif args.neuron == "pmsn":
+        spiking_neuron = partial(PMSN,
+                                 decay=args.decay,
+                                 threshold=args.threshold,
+                                 time_step=args.time_window,
+                                 surro_grad=surro_grad,
+                                 exec_mode=exec_mode,
+                                 recurrent=args.recurrent,
                                  )
     elif args.neuron == "spsn":
         spiking_neuron = partial(SPSN,

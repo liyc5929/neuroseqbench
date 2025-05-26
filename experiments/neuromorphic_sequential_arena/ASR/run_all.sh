@@ -7,6 +7,7 @@ sh run snn_lif.sh
 sh run snn_celif.sh
 sh run snn_ltc.sh
 sh run snn_spsn.sh
+sh run snn_pmsn.sh
 
 # Recurrent Spiking Neuron
 sh run snn_rlif.sh
