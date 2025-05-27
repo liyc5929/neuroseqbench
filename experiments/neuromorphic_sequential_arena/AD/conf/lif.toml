@@ -2,11 +2,11 @@
 path = "dataloader.DNSAudio"
 
 [validate_dataset.args]
-root = "/datasets/datasets_fullband/validation_set/"
+root = "/benchmark_data/AD/validation_set/"
 train = false
 [validate_dataset.dataloader]
 batch_size = 16
-num_workers = 8
+num_workers = 0
 
 [meta]
 save_dir = "exp"
@@ -90,13 +90,13 @@ num_spks = 1
 learning_rule = "stbp"
 
 [train_dataset.args]
-root = "/datasets/datasets_fullband/training_set/"
+root = "/benchmark_data/AD/training_set/"
 limit = false
 offset = 0
 
 [train_dataset.dataloader]
 batch_size = 64
-num_workers = 8
+num_workers = 0
 drop_last = true
 pin_memory = true
 

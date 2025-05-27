@@ -8,6 +8,9 @@ from torch.nn import functional as F
 from audiozen.acoustics.audio_feature import istft, stft
 from spiking_networks import SpikingNet, SSMNet, GSN, SpkTransformerNet
 
+from collections import namedtuple
+MemoryState = namedtuple("MemoryState", ["hx", "cx"])
+
 
 class SequenceModel(nn.Module):
     def __init__(
