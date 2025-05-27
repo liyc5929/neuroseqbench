@@ -477,11 +477,16 @@ git clone https://github.com/liyc5929/neuroseqbench.git
 pip install -e .
 ```
 
-### Experiments
-
-✨ Before running any experiments, please refer to the [`experiments/neuromorphic_sequential_arena/README.md`](./experiments/neuromorphic_sequential_arena/README.md) for detailed **installation instructions** and **dataset download procedures** specific to each task.
+### Data Availability
 
 ✅ **All datasets** used in these experiments are hosted on [`our Hugging Face repository`](https://huggingface.co/datasets/liyc5929/neuroseqbench/tree/main/neuromorphic_sequential_arena) to facilitate easy access and ensure reproducibility.
+
+📦 For detailed dataset preparation procedures, including how to download and preprocess the raw data for each task, please refer to the dataset preparation section in the [`experiments/neuromorphic_sequential_arena/README.md`](./experiments/neuromorphic_sequential_arena/README.md).
+
+### Experiments
+✨ Before running any experiments, please make sure all dependencies are properly installed for each task.
+
+📌 *Note: For the AD and ASR tasks, please make sure to follow the dependency setup described in their respective* [`AD/README.md`](./experiments/neuromorphic_sequential_arena/AD/README.md) *and* [`ASR/README.md`](./experiments/neuromorphic_sequential_arena/ASR/README.md) files.
 
 Each experiment in the paper  is organized by task and placed under `experiments/neuromorphic_sequential_arena/`. We provide the following scripts to run all experiments for each task:
 
@@ -494,6 +499,7 @@ bash ALR/run_all.sh
 bash AD/run_all.sh
 bash ASR/run_all.sh
 ```
+
 
 
 ## Cite & Contact
