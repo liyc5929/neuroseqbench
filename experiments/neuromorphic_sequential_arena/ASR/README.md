@@ -49,6 +49,8 @@ Install kenlm:
 make kenlm.done
 ```
 
+> ⚠️ Note: If you encounter the error of "Could not find a version that satisfies the requirement torch==2.6.0", please edit the first line in the `Makefile` file from TH_VERSION :=2.6.0 to TH_VERSION :=2.4.1
+
 Install neuroseqbench:
 ```bash
 cd neuroseqbench/
