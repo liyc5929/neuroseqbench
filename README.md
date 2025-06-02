@@ -4,7 +4,7 @@ The goal of Neuromorphic Sequential Benchmark is to enable consistent performanc
 
 This repository contains the source code and implementation details associated with two research papers:
 1.  ["Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects"](https://arxiv.org/abs/2502.09449), presents a systematic evaluation of the temporal processing capabilities of recently proposed SNN approaches and highlights key limitations in existing neuromorphic benchmarks.
-2.  "Neuromorphic Sequential Arena: A Benchmark for Neuromorphic Temporal Processing", introduces a comprehensive benchmark suite tailored for neuromorphic temporal processing.
+2.  ["Neuromorphic Sequential Arena: A Benchmark for Neuromorphic Temporal Processing"](https://arxiv.org/abs/2505.22035), introduces a comprehensive benchmark suite tailored for neuromorphic temporal processing.
 
 Guidelines are provided to guarantee fair and consistent evaluations of emerging SNN approaches using this repository. We warmly invite researchers and practitioners in the field of neuromorphic temporal processing to engage with us by providing feedback and contributing. By integrating more comprehensive temporal processing benchmarks and advanced SNN methods, your contributions can significantly advance this field. We value your insights and look forward to collaborating to drive innovation together.
 
@@ -514,6 +514,15 @@ If you find this repository helpful for your work, please cite it as follows:
     volume = {abs/2502.09449},
     eprinttype = {arXiv},
     eprint = {2502.09449},
+}
+
+@article{neuromorphicsequentialarena,
+    title = {Neuromorphic Sequential Arena: A Benchmark for Neuromorphic Temporal Processing}, 
+    author = {Xinyi Chen and Chenxiang Ma and Yujie Wu and Kay Chen Tan and Jibin Wu},
+    year = {2025},
+    volume = {abs/2505.22035},
+    eprinttype = {arXiv},
+    eprint = {2505.22035},
 }
 ```
 
