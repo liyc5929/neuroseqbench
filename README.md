@@ -11,7 +11,6 @@ Guidelines are provided to guarantee fair and consistent evaluations of emerging
 ## Table of Contents
 1. [Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects](#spiking-neural-networks-for-temporal-processing-status-quo-and-future-prospects)
 2. [Neuromorphic Sequential Arena: A Benchmark for Neuromorphic Temporal Processing](#neuromorphic-sequential-arena-a-benchmark-for-neuromorphic-temporal-processing)
-   
 
 ---
 
@@ -448,7 +447,7 @@ python ./experiments/runner.py --paper_name segregated_temporal_probe --experime
 
 > **Abstract:** Temporal processing is vital for extracting meaningful information from time-varying signals. Recent advancements in Spiking Neural Networks (SNNs) have shown immense promise in efficiently processing these signals. However, progress in this field has been impeded by the lack of effective and standardized benchmarks, which complicates the consistent measurement of technological advancements and limits the practical applicability of SNNs. To bridge this gap, we introduce the Neuromorphic Sequential Arena (NSA), a comprehensive benchmark that offers an effective, versatile, and application-oriented evaluation framework for neuromorphic temporal processing. The NSA includes seven real-world temporal processing tasks from a diverse range of application scenarios, each capturing rich temporal dynamics across multiple timescales. Utilizing NSA, we conduct extensive comparisons of recently introduced spiking neuron models and neural architectures, presenting comprehensive baselines in terms of task performance, training speed, memory usage, and energy efficiency. Our findings emphasize an urgent need for efficient SNN designs that can consistently deliver high performance across tasks with varying temporal complexities while maintaining low computational costs. NSA enables systematic tracking of advancements in neuromorphic algorithm research and paves the way for the development of effective and efficient neuromorphic temporal processing systems.
 
-👉 **Supplementary Material** for this paper can be found in the [`NSA_Supplementary_Materials`](./NSA_Supplementary_Materials.pdf) directory.
+👉 **Supplementary Material** for this paper can be found in the [`neuromorphic_sequential_arena_supp.pdf`](./docs/source/_static/neuromorphic_sequential_arena_supp.pdf) file.
 
 ## Steps to Reproduce Results
 
