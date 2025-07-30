@@ -9,7 +9,8 @@ import torch
 import torch.nn as nn
 from datetime import datetime
 from neuroseqbench.utils.tools import (
-    setup_logging, save_checkpoint, AverageMeter, ProgressMeter, accuracy, count_parameters, dump_json
+    setup_logging, save_checkpoint, AverageMeter, ProgressMeter, 
+    accuracy, count_parameters, dump_json, setup_neurobench_metrics,
 )
 from neuroseqbench.network.trainer import SurrogateGradient
 from neuroseqbench.network.neuron import Recurrent_LIF, CELIF, PMSN, SPSN, LTC, S4D
@@ -164,13 +165,12 @@ def main():
             save_path = "exp/" + args.dataset  + "/" + args.name + args.net + "_" + args.dataset + "_" + str(args.time_window) + "_" + str(args.capacity) + "_" + args.neuron + "_" + "FF_" + str(args.seed) + "_" + save_path
     else:
         save_path = args.save_path
-    print(save_path)
 
     if not os.path.exists(save_path):
         os.makedirs(save_path)
     # Logging settings
     setup_logging(os.path.join(save_path, "log.txt"))
-    logging.info("saving to:" + str(save_path))
+    logging.info("Saving to: \t" + str(save_path))
 
 
     is_cuda = torch.cuda.is_available()
@@ -355,7 +355,7 @@ def standard_train(train_loader, val_loader, model, criterion, optimizer, schedu
         train_acc1, train_loss, loss_train_record = train_one_epoch(train_loader, model, criterion, optimizer, epoch,
                                                                     device, args, loss_train_record)
         scheduler.step()
-        val_acc1,val_loss = validate_one_epoch(val_loader, model, criterion, device, args)
+        val_acc1, val_loss = validate_one_epoch(val_loader, model, criterion, device, save_path, args)
         out_string = "Train Acc. {:.4f} Test Acc. {:.4f} \n ".format(train_acc1, val_acc1)
         logging.info(out_string)
         # remember best acc@1 and save checkpoint
@@ -425,7 +425,7 @@ def train_one_epoch(train_loader, model, criterion, optimizer, epoch, device, ar
     return top1.avg, losses.avg, loss_train_record
 
 
-def validate_one_epoch(val_loader, model, criterion, device, args):
+def validate_one_epoch(val_loader, model, criterion, device, save_path, args):
     batch_time = AverageMeter("Time", ":6.3f")
     losses = AverageMeter("Loss", ":.4e")
     top1 = AverageMeter("Acc@1", ":6.2f")
@@ -433,35 +433,60 @@ def validate_one_epoch(val_loader, model, criterion, device, args):
     progress = ProgressMeter(
         len(val_loader),
         [batch_time, losses, top1, top2],
-        prefix="Test: ")
+        prefix="Test: ",
+    )
 
-    # switch to evaluate mode
+    from neurobench.models import NeuroBenchModel
+    from neurobench.metrics.manager.static_manager import StaticMetricManager
+    from neurobench.metrics.manager.workload_manager import WorkloadMetricManager
+    wrapped_model: NeuroBenchModel
+    static_mgr: StaticMetricManager
+    workload_mgr: WorkloadMetricManager
+
     model.eval()
-
+    wrapped_model, static_mgr, workload_mgr = setup_neurobench_metrics(model)
     with torch.no_grad():
         end = time.time()
         for i, (images, target) in enumerate(val_loader):
             images = images.to(device, non_blocking=True)
-            images = images.transpose(0,1).contiguous()  # [T, B, ..]
+            images = images.transpose(0, 1).contiguous()  # [T, B, ..]
             target = target.to(device, non_blocking=True)
 
-            # compute output
             output = model(images) # [T, B, N]
-            output = output.mean(0)
-            loss = criterion(output, target)
+            output_mean = output.mean(0)
+            loss = criterion(output_mean, target)
 
-            # measure accuracy and record loss
-            acc1, acc5 = accuracy(output, target, topk=(1, 2))
+            # Accuracy
+            acc1, acc5 = accuracy(output_mean, target, topk=(1, 2))
             top1.update(acc1[0], target.size(0))
             top2.update(acc5[0], target.size(0))
             losses.update(loss.item(), target.size(0))
 
-            # measure elapsed time
+            # Workload metrics
+            workload_mgr.run_metrics(wrapped_model, output, (images, target), target.size(0), len(val_loader.dataset))
+            workload_mgr.reset_hooks(wrapped_model)
+
             batch_time.update(time.time() - end)
             end = time.time()
 
             if (i + 1) % args.print_freq == 0 or (i + 1) == len(val_loader):
                 progress.display(i + 1)
+
+    # Finalize metrics
+    static_results = static_mgr.run_metrics(wrapped_model)
+    workload_results = workload_mgr.results
+    workload_mgr.clean_results()
+
+    logging.info(f"Neurobench Static Metrics:\n{json.dumps(static_results, indent=2)}")
+    logging.info(f"Neurobench Workload Metrics:\n{json.dumps(workload_results, indent=2)}")
+
+    # Save results
+    benchmark_results = {
+        "static": static_results,
+        "workload": workload_results
+    }
+    dump_json(benchmark_results, save_path, "neurobench_metrics.json")
+
     return top1.avg, losses.avg
 
 

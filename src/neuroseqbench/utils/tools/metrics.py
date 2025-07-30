@@ -1,5 +1,6 @@
 import torch
 import logging
+from typing import Tuple
 
 
 class AverageMeter(object):
@@ -59,3 +60,48 @@ def accuracy(output, target, topk=(1,)):
             correct_k = correct[:k].reshape(-1).float().sum(0, keepdim=True)
             res.append(correct_k.mul_(100.0 / batch_size))
         return res
+
+
+# Incorporate metrics of `neurobench`
+from neurobench.metrics.manager.static_manager import StaticMetricManager
+from neurobench.metrics.manager.workload_manager import WorkloadMetricManager
+from neurobench.metrics.static import ParameterCount, ConnectionSparsity, Footprint
+from neurobench.metrics.workload import ActivationSparsity, MembraneUpdates, SynapticOperations
+from neurobench.models import NeuroBenchModel
+
+
+class _WrappedNeuroBenchModel(NeuroBenchModel):
+    def __init__(self, model: torch.nn.Module):
+        super().__init__()
+        self.model = model
+
+    def __call__(self, batch):
+        # Assume batch is (input, target) tuple
+        x, _ = batch
+        return self.model(x)
+
+    def __net__(self):
+        return self.model  # return the actual `nn.Module` for hook detection
+
+
+def setup_neurobench_metrics(model: torch.nn.Module) -> Tuple[NeuroBenchModel, StaticMetricManager, WorkloadMetricManager]:
+    # Static metrics
+    static_metrics = [
+        ParameterCount,
+        ConnectionSparsity,
+        Footprint,
+    ]
+    static_mgr = StaticMetricManager(static_metrics)
+
+    # Workload metrics
+    workload_metrics = [
+        ActivationSparsity,
+        MembraneUpdates,
+        SynapticOperations,
+    ]
+
+    wrapped_model = _WrappedNeuroBenchModel(model)
+    workload_mgr = WorkloadMetricManager(workload_metrics)
+    workload_mgr.register_hooks(wrapped_model)
+
+    return wrapped_model, static_mgr, workload_mgr

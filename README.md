@@ -393,7 +393,7 @@ The table below provides a comprehensive overview of the SNN methods that have b
 ## Steps to Reproduce Results
 
 ### Dependencies
-```shell
+```bash
 # Environment dependencies
 torch, torchvision, torchaudio
 
@@ -409,7 +409,7 @@ dcls
 
 To incorporate the `neuroseqbench` module into your experimental code, please follow these steps:
 
-```shell
+```bash
 git clone https://github.com/liyc5929/neuroseqbench.git
 pip install -e .
 ```
@@ -425,7 +425,7 @@ Each experiment in the paper has a corresponding `toml` configuration in a folde
 
 Here is an example to reproduce the experiments of spiking neuron models by executing the file `run_05_spiking_neuron_on_benchmarks.sh`,  which contains the following commands:
 
-```shell
+```bash
 # PennTreebank
 python ./experiments/runner.py --paper_name segregated_temporal_probe --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PTB_LIF_feedforward --data_root /benchmark_data --device 0
 python ./experiments/runner.py --paper_name segregated_temporal_probe --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PTB_LIF_recurrent --data_root /benchmark_data --device 0
@@ -452,7 +452,7 @@ python ./experiments/runner.py --paper_name segregated_temporal_probe --experime
 ## Steps to Reproduce Results
 
 ### Dependencies
-```shell
+```bash
 # Environment dependencies
 torch, torchvision, torchaudio
 
@@ -471,10 +471,17 @@ scikit-learn
 
 To incorporate the `neuroseqbench` module into your experimental code, please follow these steps:
 
-```shell
+```bash
 git clone https://github.com/liyc5929/neuroseqbench.git
 pip install -e .
 ```
+
+If you've configured a `uv` environment, you can simply run:
+
+```bash
+uv sync
+```
+to install all dependencies at once.
 
 ### Data Availability
 
@@ -489,7 +496,7 @@ pip install -e .
 
 Each experiment in the paper  is organized by task and placed under `experiments/neuromorphic_sequential_arena/`. We provide the following scripts to run all experiments for each task:
 
-```shell
+```bash
 bash AL/run_all.sh
 bash HAR/run_all.sh
 bash EEG-MI/run_all.sh
