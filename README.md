@@ -506,6 +506,11 @@ bash AD/run_all.sh
 bash ASR/run_all.sh
 ```
 
+### Extended Metrics Support
+
+We provide built-in support for [NeuroBench metrics](https://github.com/NeuroBench/neurobench) to evaluate neuromorphic models using standardized, hardware-agnostic performance indicators. These metrics are connected to our pipeline and have been tested on selected tasks. 
+The relevant implementation is available at [`src/neuroseqbench/utils/criterion/neurobench`](./src/neuroseqbench/utils/criterion/neurobench).
+
 
 
 ## Cite & Contact
