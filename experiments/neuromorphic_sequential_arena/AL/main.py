@@ -10,7 +10,11 @@ import torch.nn as nn
 from datetime import datetime
 from neuroseqbench.utils.tools import (
     setup_logging, save_checkpoint, AverageMeter, ProgressMeter, 
-    accuracy, count_parameters, dump_json, setup_neurobench_metrics,
+    accuracy, count_parameters, dump_json, 
+)
+from neuroseqbench.utils.criterion.neurobench import (
+    NeuroBenchModel, StaticMetricManager, WorkloadMetricManager, 
+    setup_neurobench_metrics,
 )
 from neuroseqbench.network.trainer import SurrogateGradient
 from neuroseqbench.network.neuron import Recurrent_LIF, CELIF, PMSN, SPSN, LTC, S4D
@@ -436,9 +440,6 @@ def validate_one_epoch(val_loader, model, criterion, device, save_path, args):
         prefix="Test: ",
     )
 
-    from neurobench.models import NeuroBenchModel
-    from neurobench.metrics.manager.static_manager import StaticMetricManager
-    from neurobench.metrics.manager.workload_manager import WorkloadMetricManager
     wrapped_model: NeuroBenchModel
     static_mgr: StaticMetricManager
     workload_mgr: WorkloadMetricManager
