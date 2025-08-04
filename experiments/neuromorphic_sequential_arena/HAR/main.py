@@ -67,7 +67,7 @@ class FFSNN(nn.Module):
         if time_step is None:
             time_step = x.size(0)
         output = self.multi_step_forward(x, time_step)
-        if self.dataset in ["add", "biadd", "EEG"]: # last-step decision
+        if self.dataset in ["EEG"]: # last-step decision
             output=output[-1, ...].unsqueeze(0)
         return output
 
@@ -331,7 +331,7 @@ def main():
         spiking_neuron = partial(S4D,
                                  dropout=0.1,
                                  lr=min(0.001, args.lr),
-                                 binary="GSN"
+                                 binary="GSU"
                                  )
         model = SSM(input_size=input_channels, hidden_size=args.hidden_dim, output_size=num_classes,
                     num_hidden_layers=len(args.hidden_dim),
@@ -504,3 +504,4 @@ def validate_one_epoch(val_loader, model, criterion, device, save_path, args):
 
 if __name__ == "__main__":
     main()
+
