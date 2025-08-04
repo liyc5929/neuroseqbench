@@ -311,7 +311,7 @@ def main():
         spiking_neuron = partial(S4D,
                                  dropout=0.1,
                                  lr=min(0.001, args.lr),
-                                 binary="GSN"
+                                 binary="GSU"
                                  )
         model = SSM(input_size=input_channels, hidden_size=args.hidden_dim, output_size=num_classes,
                     num_hidden_layers=len(args.hidden_dim),

@@ -11,6 +11,9 @@ import torch
 import torch.nn as nn
 from typing import Tuple
 from ....network.neuron import Recurrent_LIF, RLIF, LIF, CELIF, PMSN, SPSN, LTC, S4D
+from ....network.neuron.lif import SpikeGeneration
+from ....network.neuron.parallel_multi_compartment_spiking_neuron import PMSN_SpikeGeneration
+
 
 class NeuronHook(ABC):
     """
@@ -140,14 +143,8 @@ STATELESS_LAYERS = (
 
 # for neuroseqbench
 SPIKING_NEURONS = (
-    Recurrent_LIF,
-    LIF,
-    RLIF,
-    CELIF,
-    PMSN,
-    SPSN,
-    LTC,
-    S4D,
+    SpikeGeneration,
+    PMSN_SpikeGeneration
 )
 
 RECURRENT_CELLS = (nn.RNNCellBase,)

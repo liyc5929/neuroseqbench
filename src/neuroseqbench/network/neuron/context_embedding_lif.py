@@ -3,7 +3,7 @@ import torch.nn as nn
 
 from ..trainer import SurrogateGradient as SG
 from .base_neuron import BaseNeuron
-from .lif import LIFAct_thresh
+from .lif import LIFAct_thresh,SpikeGeneration
 
 
 class CELIF(BaseNeuron):
@@ -35,6 +35,7 @@ class CELIF(BaseNeuron):
         if self.recurrent:
             self.recurrent_weight = nn.Linear(self.neuron_num, self.neuron_num)
         self.return_mem = False
+        self.act = SpikeGeneration()
 
     def __repr__(self):
         return (
@@ -68,7 +69,8 @@ class CELIF(BaseNeuron):
                 x = x + self.recurrent_weight(y)
             thresh = thresh + v * self.TE[:self.neuron_num,step] - (thresh - self.threshold) * self.beta
             v = v * self.decay * (1. - y) + x
-            y = LIFAct_thresh.apply(v, self.rest, self.decay, thresh, self.time_step, self.surro_grad)
+            #y = LIFAct_thresh.apply(v, self.rest, self.decay, thresh, self.time_step, self.surro_grad)
+            y = self.act(v, self.rest, self.decay, thresh, self.time_step, self.surro_grad,thresh_require_grad=True)
             ty.append(y)
             step = step + 1
         if return_state:

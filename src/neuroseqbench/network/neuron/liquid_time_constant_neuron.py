@@ -3,7 +3,7 @@ import torch.nn as nn
 
 from ..trainer import SurrogateGradient as SG
 from .base_neuron import BaseNeuron
-from .lif import LIFAct_thresh
+from .lif import LIFAct_thresh,SpikeGeneration
 
 
 class LTC(BaseNeuron):
@@ -41,7 +41,7 @@ class LTC(BaseNeuron):
         nn.init.xavier_normal_(self.layer1_tauAdp.weight)
         nn.init.constant_(self.layer1_tauM.bias, 0)
         nn.init.constant_(self.layer1_tauAdp.bias, 0)
-
+        self.act = SpikeGeneration()
         if self.recurrent:
             self.recurrent_weight = nn.Linear(self.neuron_num, self.neuron_num)
 
@@ -86,7 +86,8 @@ class LTC(BaseNeuron):
             d_mem = - mem + x
             mem = mem + d_mem * alpha
 
-            y = LIFAct_thresh.apply(mem, self.rest, self.decay, B, self.time_step, self.surro_grad)
+            #y = LIFAct_thresh.apply(mem, self.rest, self.decay, B, self.time_step, self.surro_grad)
+            y = self.act(mem, self.rest, self.decay, B, self.time_step, self.surro_grad, thresh_require_grad=True)
             mem = (1 - y) * mem
             ty.append(y)
             step = step + 1

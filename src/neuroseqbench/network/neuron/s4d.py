@@ -5,7 +5,7 @@ import math
 import torch
 import torch.nn as nn
 from einops import rearrange, repeat
-from .lif import LIFAct
+from .lif import LIFAct,SpikeGeneration
 
 
 class DropoutNd(nn.Module):
@@ -110,7 +110,7 @@ class S4D(nn.Module):
         self.dropout = dropout_fn(dropout) if dropout > 0.0 else nn.Identity()
 
         # position-wise output transform to mix features
-        if self.binary != 'GSN':
+        if self.binary != 'GSU':
             self.output_linear = nn.Sequential(
                 nn.Conv1d(self.h, 2*self.h, kernel_size=1),
                 nn.GLU(dim=-2),
@@ -126,14 +126,14 @@ class S4D(nn.Module):
         self.LN = nn.LayerNorm(self.h)
         self.threshold = threshold
         self.surro_grad = surro_grad
+        self.act = SpikeGeneration()
 
     def forward(self, u, state=None, **kwargs): # absorbs return_output and transformer src mask
-        """ Input and output shape (L, B, H) """
         u = u.permute(1,2,0) # [B, H, L]
         B,H,L = u.size()
         z = u
 
-        if self.binary != 'GSN':
+        if self.binary != 'GSU':
             u = self.LN(u.transpose(-2,-1)).transpose(-2,-1)
 
         # Compute SSM Kernel
@@ -150,12 +150,14 @@ class S4D(nn.Module):
         y = y + u * self.D.unsqueeze(-1)
 
         if self.binary == 'binary':
-            y = self.dropout(LIFAct.apply(y, 0., 0., self.threshold, self.time_step, self.surro_grad))
-        elif self.binary == 'GSN':
+            # y = self.dropout(LIFAct.apply(y, 0., 0., self.threshold, self.time_step, self.surro_grad))
+            y = self.act(y, 0., 0., self.threshold, self.time_step, self.surro_grad)
+            y = self.dropout(y)
+        elif self.binary == 'GSU':
             y = self.dropout(y)
         else:
             y = self.dropout(self.activation(y))
-        if self.binary != 'GSN':
+        if self.binary != 'GSU':
             y = self.output_linear(y)
         else:
             y = y.permute(2,0,1).reshape(-1, self.h) # B*L,H

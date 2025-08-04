@@ -3,7 +3,7 @@ import torch.nn as nn
 
 from ..trainer import SurrogateGradient as SG
 from .base_neuron import BaseNeuron
-from .lif import LIFAct_thresh
+from .lif import LIFAct_thresh,SpikeGeneration
 
 
 class SPSN(BaseNeuron):
@@ -20,6 +20,7 @@ class SPSN(BaseNeuron):
         surro_grad: SG = None,  
         exec_mode: str = "serial",
         recurrent: bool = False,
+        k: int = 32
     ):
         super(SPSN, self).__init__(exec_mode=exec_mode)
         self.rest = rest
@@ -30,8 +31,9 @@ class SPSN(BaseNeuron):
         self.surro_grad = surro_grad
         self.recurrent = recurrent
         self.return_mem = False
+        self.act = SpikeGeneration()
 
-        self.k = 32
+        self.k = k
         self.backend = "conv"
         self.thresh = torch.tensor([self.threshold]).cuda()
 
@@ -69,8 +71,8 @@ class SPSN(BaseNeuron):
 
         v = v.squeeze(1).t().contiguous().view(step_num,-1,self.neuron_num) + self.bias * self.thresh
 
-        ty = LIFAct_thresh.apply(v, self.rest, self.decay, self.thresh, self.time_step, self.surro_grad)
-
+        #ty = LIFAct_thresh.apply(v, self.rest, self.decay, self.thresh, self.time_step, self.surro_grad)
+        ty = self.act(v, self.rest, self.decay, self.thresh, self.time_step, self.surro_grad, thresh_require_grad=True)
         if return_state:
             return ty, (state)
         elif self.return_mem:

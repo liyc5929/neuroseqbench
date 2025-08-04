@@ -437,7 +437,7 @@ def main():
         spiking_neuron = partial(S4D,
                                  dropout=args.dropout,
                                  lr=min(0.001, args.lr),
-                                 binary="GSN"
+                                 binary="GSU"
                                  )
         input_size = 88 * 88 * 2
         model = SSMNet(input_size=input_size, hidden_size=args.hidden_size, output_size=num_classes,

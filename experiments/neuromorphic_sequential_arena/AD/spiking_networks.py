@@ -157,7 +157,7 @@ class SSMNet(nn.Module):
             spiking_neuron = partial(S4D,
                                      dropout=0.1,
                                      lr=min(0.001, lr),
-                                     binary='GSN'
+                                     binary='GSU'
                                      )
         else:
             print(f"{spiking_neuron_name}")

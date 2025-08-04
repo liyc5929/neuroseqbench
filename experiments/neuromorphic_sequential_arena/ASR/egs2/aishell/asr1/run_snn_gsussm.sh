@@ -9,7 +9,7 @@ train_set=train
 valid_set=dev
 test_sets="dev test"
 
-asr_config=conf/tuning/SNN/train_asr_gsnssm.yaml
+asr_config=conf/tuning/SNN/train_asr_gsussm.yaml
 inference_config=conf/decode_asr_transformer.yaml
 
 expdir=exp/RNN
