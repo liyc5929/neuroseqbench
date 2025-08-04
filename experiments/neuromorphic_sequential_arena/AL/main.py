@@ -66,7 +66,7 @@ class FFSNN(nn.Module):
         if time_step is None:
             time_step = x.size(0)
         output = self.multi_step_forward(x, time_step)
-        if self.dataset in ["add", "biadd", "EEG"]: # last-step decision
+        if self.dataset in ["EEG"]: # last-step decision
             output=output[-1, ...].unsqueeze(0)
         return output
 

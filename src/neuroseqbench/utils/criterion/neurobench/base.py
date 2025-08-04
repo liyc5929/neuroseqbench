@@ -10,7 +10,7 @@ from abc import ABC, abstractmethod
 import torch
 import torch.nn as nn
 from typing import Tuple
-
+from ....network.neuron import Recurrent_LIF, RLIF, LIF, CELIF, PMSN, SPSN, LTC, S4D
 
 class NeuronHook(ABC):
     """
@@ -138,6 +138,17 @@ STATELESS_LAYERS = (
     nn.Conv3d,
 )
 
+# for neuroseqbench
+SPIKING_NEURONS = (
+    Recurrent_LIF,
+    LIF,
+    RLIF,
+    CELIF,
+    PMSN,
+    SPSN,
+    LTC,
+    S4D,
+)
 
 RECURRENT_CELLS = (nn.RNNCellBase,)
 RECURRENT_LAYERS = (nn.RNNBase,)
@@ -160,7 +171,8 @@ class NeuroBenchModel(ABC):
             net: A trained network
 
         """
-        self.activation_modules = list(SUPPORTED_ACTIVATIONS)
+        # self.activation_modules = list(SUPPORTED_ACTIVATIONS)
+        self.activation_modules = list(SPIKING_NEURONS)
         self.activation_hooks = []
         self.connection_hooks = []
         self.first_layer = None
@@ -211,6 +223,7 @@ class NeuroBenchModel(ABC):
 
         def is_activation_layer(module):
             """Check if a module is an activation layer."""
+            #print(module)
             return any(
                 isinstance(module, act_mod) for act_mod in self.activation_modules
             )
@@ -274,6 +287,7 @@ class NeuroBenchModel(ABC):
 
         # Registered activation hooks
         for layer in self.activation_layers():
+            print(layer)
             layer_name = layer["layer_name"]
             layer = layer["layer"]
             self.activation_hooks.append(NeuronHook(layer, layer_name))

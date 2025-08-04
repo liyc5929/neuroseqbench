@@ -55,8 +55,7 @@ class PMSN(BaseNeuron):
             return_state = True
         else:
             return_state = False
-        step_num = tx.size(0) 
-
+        step_num = tx.size(0)
         tx = self.bn(tx.view(-1, tx.size(-1))).view(step_num, -1, self.neuron_num)
         tx = tx.permute(1,2,0) # [B H T]
         k = self.kernel(L=step_num) # [H T]
@@ -67,14 +66,14 @@ class PMSN(BaseNeuron):
         y = _y + (tx * self.D.unsqueeze(-1))
         # proposed reset mechanism
         ty = PMSN_surrogate.apply(y.relu(), self.thresh.to(tx.device))
-        ty = ty.permute(2,0,1)
+        spikes = ty.permute(2,0,1)
 
         if return_state:
-            return ty, (_y[...,-1], None)
+            return spikes, (_y[...,-1], None)
         elif self.return_mem:
             return y[-1,].unsqueeze(0)
         else:
-            return ty
+            return spikes
 
 class PMSN_kernel(nn.Module):
     def __init__(self, d_model, N=4, dt_min=1e-3, dt_max=1e-1):
