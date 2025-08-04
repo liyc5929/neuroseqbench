@@ -9,7 +9,7 @@ import torch
 import torch.nn as nn
 from torch import Tensor
 from typing import List, Tuple
-from ...network.neuron.lif import LIFAct
+from ...network.neuron.lif import LIFAct,SpikeGeneration
 from ...network.neuron import SLIF
 from ...network.trainer import SurrogateGradient
 
@@ -66,6 +66,7 @@ class GSNCell(nn.Module):
         self.bias_ih = nn.Parameter(torch.randn(2 * hidden_size))
         self.bias_hh = nn.Parameter(torch.randn(2 * hidden_size))
         self.reset_parameters()
+        self.act = SpikeGeneration()
 
     def reset_parameters(self):
         stdv = 1.0 / math.sqrt(self.hidden_size) if self.hidden_size > 0 else 0
@@ -88,7 +89,8 @@ class GSNCell(nn.Module):
         cy = cx * updategate + (1 - updategate) * cell_gate
 
         if isinstance(surrogate_function, SurrogateGradient):
-            hy = LIFAct.apply(cy, 0, 0, threshold, 0, surrogate_function)
+            #hy = LIFAct.apply(cy, 0, 0, threshold, 0, surrogate_function)
+            hy = self.act(cy, 0, 0, threshold, 0, surrogate_function)
         else:
             hy = surrogate_function(cy - threshold)
         return hy, (hy, cy)
@@ -182,7 +184,13 @@ class LSTMNet(nn.Module):
                                  num_layers=1, batch_first=False)
                          for l in range(num_hidden_layers)]
         elif rnn_type == 'gsn':
-            self.spiking_neuron = spiking_neuron()
+            spiking_neuron = spiking_neuron()
+            if isinstance(spiking_neuron, SLIF):
+                self.threshold = spiking_neuron.neuron_thresh
+                self.surrogate_function = spiking_neuron.surro_func
+            else:
+                self.threshold = spiking_neuron.threshold
+                self.surrogate_function = spiking_neuron.surro_grad
             self.rnns = [script_lstm(input_size if l == 0 else self.hidden_size[l-1],
                                      self.hidden_size[l],
                                      num_layers=1, batch_first=False, GSN=True)
@@ -219,12 +227,8 @@ class LSTMNet(nn.Module):
 
         for l, rnn in enumerate(self.rnns):
             if self.rnn_type == 'gsn':
-                if isinstance(self.spiking_neuron, SLIF):
-                    hiddens, final_states = rnn(hiddens, state[l], threshold=self.spiking_neuron.neuron_thresh,
-                                            surrogate_function=self.spiking_neuron.surro_func)
-                else:
-                    hiddens, final_states = rnn(hiddens, state[l], threshold=self.spiking_neuron.threshold,
-                                                surrogate_function=self.spiking_neuron.surro_grad)
+                hiddens, final_states = rnn(hiddens, state[l], threshold=self.threshold,
+                                            surrogate_function=self.surrogate_function)
             elif self.rnn_type == 'lstm':
                 hiddens, final_states = rnn(hiddens, state[l])
             else:
