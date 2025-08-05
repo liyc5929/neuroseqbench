@@ -477,7 +477,10 @@ def validate_one_epoch(val_loader, model, criterion, device, save_path, args):
             top5.update(acc5[0], target.size(0))
             losses.update(loss.item(), target.size(0))
 
-            # measure elapsed time
+            # Workload metrics
+            workload_mgr.run_metrics(wrapped_model, output, (images, target), target.size(0), len(val_loader.dataset))
+            workload_mgr.reset_hooks(wrapped_model)
+
             batch_time.update(time.time() - end)
             end = time.time()
 
@@ -504,4 +507,3 @@ def validate_one_epoch(val_loader, model, criterion, device, save_path, args):
 
 if __name__ == "__main__":
     main()
-

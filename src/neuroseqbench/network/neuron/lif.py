@@ -11,12 +11,14 @@ from ..trainer.adaptive_smoothing_gradient_learning import EfficientNoisySpike, 
 from .base_neuron import BaseNeuron
 from .membrane_update import MembraneUpdate
 
+
 class SpikeGeneration(nn.Module):
     def forward(self, v, rest, decay, threshold, time_step, surro_grad, thresh_require_grad=False):
         if thresh_require_grad:
             return LIFAct_thresh.apply(v, rest, decay, threshold,time_step, surro_grad)
         else:
             return LIFAct.apply(v, rest, decay, threshold, time_step, surro_grad)
+
 
 class FusedLIF(Function):
     @staticmethod
@@ -156,7 +158,6 @@ class LIF(BaseNeuron):
             return_v = True
         for x in tx:
             v = self.mem_update(x, v, y, self.rest, self.decay, self.threshold)
-            #y = LIFAct.apply(v, self.rest, self.decay, self.threshold, self.time_step, self.surro_grad)
             y = self.act(v, self.rest, self.decay, self.threshold, self.time_step, self.surro_grad)
             ty.append(y)
         if return_v:
@@ -268,7 +269,6 @@ class RLIF(BaseNeuron):
                 v = self.decay * v + x
             else:
                 raise NotImplementedError
-            #y = LIFAct.apply(v, self.rest, self.decay, self.threshold, self.time_step, self.surro_grad)
             y = self.act(v, self.rest, self.decay, self.threshold, self.time_step, self.surro_grad)
             if self.learning_rule in ["sltt", "eprop", "sdbp", "ottt"]:
                 v = v - v * y.detach() + self.rest * y.detach()  # Hard reset
@@ -350,7 +350,6 @@ class Recurrent_LIF(BaseNeuron):
                 v = self.decay * v.detach() * (1.0 - y.detach()) + self.rest * y.detach() + x
             else:
                 v = self.decay * v * (1.0 - y) + self.rest * y + x
-            #y_ = LIFAct.apply(v, self.rest, self.decay, self.threshold, self.time_step, self.surro_grad)
             y = self.act(v, self.rest, self.decay, self.threshold, self.time_step, self.surro_grad)
             ty.append(y)
         if return_state:

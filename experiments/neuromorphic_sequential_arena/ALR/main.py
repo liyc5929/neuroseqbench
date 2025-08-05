@@ -474,7 +474,7 @@ def main():
         scheduler = None
     scaler = torch.amp.GradScaler() if args.amp else None
 
-    model = torch.nn.DataParallel(model).cuda()
+    model = model.cuda()
 
     standard_train(train_loader, val_loader, model, criterion, optimizer, scheduler, save_path, best_acc1, scaler, args)
 
@@ -600,7 +600,7 @@ def validate_one_epoch(val_loader, model, criterion, save_path, args):
     workload_mgr: WorkloadMetricManager
 
     model.eval()
-    wrapped_model, static_mgr, workload_mgr = setup_neurobench_metrics(model.module.to("cuda:0"))
+    wrapped_model, static_mgr, workload_mgr = setup_neurobench_metrics(model)
     with torch.no_grad():
         end = time.time()
         for i, (images, target) in enumerate(val_loader):

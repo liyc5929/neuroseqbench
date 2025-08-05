@@ -9,9 +9,9 @@ import torch
 import torch.nn as nn
 from torch import Tensor
 from typing import List, Tuple
-from ...network.neuron.lif import LIFAct,SpikeGeneration
-from ...network.neuron import SLIF
+from ...network.neuron import SLIF, SpikeGeneration
 from ...network.trainer import SurrogateGradient
+
 
 def init_stacked_lstm(num_layers, layer, first_layer_args, other_layer_args):
     layers = [layer(*first_layer_args)] + [
@@ -89,7 +89,6 @@ class GSNCell(nn.Module):
         cy = cx * updategate + (1 - updategate) * cell_gate
 
         if isinstance(surrogate_function, SurrogateGradient):
-            #hy = LIFAct.apply(cy, 0, 0, threshold, 0, surrogate_function)
             hy = self.act(cy, 0, 0, threshold, 0, surrogate_function)
         else:
             hy = surrogate_function(cy - threshold)
@@ -178,12 +177,12 @@ class LSTMNet(nn.Module):
             assert len(hidden_size) == num_hidden_layers
             self.hidden_size = hidden_size
 
-        if rnn_type == 'lstm':
+        if rnn_type == "lstm":
             self.rnns = [nn.LSTM(input_size if l == 0 else self.hidden_size[l-1],
                                  self.hidden_size[l],
                                  num_layers=1, batch_first=False)
                          for l in range(num_hidden_layers)]
-        elif rnn_type == 'gsn':
+        elif rnn_type == "gsn":
             spiking_neuron = spiking_neuron()
             if isinstance(spiking_neuron, SLIF):
                 self.threshold = spiking_neuron.neuron_thresh
@@ -203,14 +202,14 @@ class LSTMNet(nn.Module):
 
     def init_hidden(self, batch_size, device):
         weight = next(self.parameters())
-        if self.rnn_type == 'lstm':
+        if self.rnn_type == "lstm":
 
             return [(weight.new_zeros(1, batch_size,
                                       self.hidden_size[l]).to(device),
                      weight.new_zeros(1, batch_size,
                                       self.hidden_size[l]).to(device))
                     for l in range(self.nlayers)]
-        elif self.rnn_type == 'gsn':
+        elif self.rnn_type == "gsn":
             return [[(weight.new_zeros(batch_size,
                                        self.hidden_size[l]).to(device),
                       weight.new_zeros(batch_size,
@@ -219,17 +218,17 @@ class LSTMNet(nn.Module):
 
         else:
             raise NotImplementedError(
-                f"Model '{self.rnn_type}' not implemented.")
+                f"Model `{self.rnn_type}` not implemented.")
 
     def forward(self, inputs, **kwargs):
         hiddens = inputs
         state = self.init_hidden(batch_size=hiddens.size(1), device=hiddens.device)
 
         for l, rnn in enumerate(self.rnns):
-            if self.rnn_type == 'gsn':
+            if self.rnn_type == "gsn":
                 hiddens, final_states = rnn(hiddens, state[l], threshold=self.threshold,
                                             surrogate_function=self.surrogate_function)
-            elif self.rnn_type == 'lstm':
+            elif self.rnn_type == "lstm":
                 hiddens, final_states = rnn(hiddens, state[l])
             else:
                 raise NotImplementedError
@@ -313,13 +312,13 @@ class LMLSTM(nn.Module):
 
         # RNN model definition
         self.rnn_type = rnn_type
-        if rnn_type == 'lstm':
+        if rnn_type == "lstm":
             self.rnns = [nn.LSTM(emb_dim if l == 0 else hidden_dim,
                                      emb_dim if l == nlayers - 1 else hidden_dim,
                                      num_layers=1, batch_first=False)
                          for l in range(nlayers)]
 
-        elif rnn_type == 'gsn':
+        elif rnn_type == "gsn":
             self.spiking_neuron = spiking_neuron()
             self.rnns = [script_lstm(emb_dim if l == 0 else hidden_dim,
                                      emb_dim if l == nlayers - 1 else hidden_dim,
@@ -327,7 +326,7 @@ class LMLSTM(nn.Module):
                          for l in range(nlayers)
                          ]
         else:
-            raise NotImplementedError(f"Model '{rnn_type}' not implemented.")
+            raise NotImplementedError(f"Model `{rnn_type}` not implemented.")
 
         self.rnns = nn.ModuleList(self.rnns)
 
@@ -338,13 +337,13 @@ class LMLSTM(nn.Module):
 
     def init_hidden(self, batch_size):
         weight = next(self.parameters())
-        if self.rnn_type == 'lstm':
+        if self.rnn_type == "lstm":
             return [(weight.new_zeros(1, batch_size,
                                       self.emb_dim if l == self.nlayers - 1 else self.hidden_dim),
                      weight.new_zeros(1, batch_size,
                                       self.emb_dim if l == self.nlayers - 1 else self.hidden_dim))
                     for l in range(self.nlayers)]
-        elif self.rnn_type == 'gsn':
+        elif self.rnn_type == "gsn":
             return [[(weight.new_zeros(batch_size,
                                        self.emb_dim if l == self.nlayers - 1 else self.hidden_dim),
                       weight.new_zeros(batch_size,
@@ -352,7 +351,7 @@ class LMLSTM(nn.Module):
                     for l in range(self.nlayers)]
         else:
             raise NotImplementedError(
-                f"Model '{self.rnn_type}' not implemented.")
+                f"Model `{self.rnn_type}` not implemented.")
 
     def forward(self, inputs, state):
 
@@ -367,14 +366,14 @@ class LMLSTM(nn.Module):
         new_states = []
         hiddens = embedded
         for l, rnn in enumerate(self.rnns):
-            if self.rnn_type == 'gsn':
+            if self.rnn_type == "gsn":
                 if isinstance(self.spiking_neuron, SLIF):
                     hiddens, final_states = rnn(hiddens, state[l], threshold=self.spiking_neuron.neuron_thresh,
                                             surrogate_function=self.spiking_neuron.surro_func)
                 else:
                     hiddens, final_states = rnn(hiddens, state[l], threshold=self.spiking_neuron.threshold,
                                                 surrogate_function=self.spiking_neuron.surro_grad)
-            elif self.rnn_type == 'lstm':
+            elif self.rnn_type == "lstm":
                 hiddens, final_states = rnn(hiddens, state[l])
             else:
                 raise NotImplementedError

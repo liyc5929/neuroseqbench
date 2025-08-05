@@ -3,7 +3,7 @@ import torch.nn as nn
 
 from ..trainer import SurrogateGradient as SG
 from .base_neuron import BaseNeuron
-from .lif import LIFAct_thresh,SpikeGeneration
+from . import SpikeGeneration
 
 
 class SPSN(BaseNeuron):
@@ -71,7 +71,6 @@ class SPSN(BaseNeuron):
 
         v = v.squeeze(1).t().contiguous().view(step_num,-1,self.neuron_num) + self.bias * self.thresh
 
-        #ty = LIFAct_thresh.apply(v, self.rest, self.decay, self.thresh, self.time_step, self.surro_grad)
         ty = self.act(v, self.rest, self.decay, self.thresh, self.time_step, self.surro_grad, thresh_require_grad=True)
         if return_state:
             return ty, (state)

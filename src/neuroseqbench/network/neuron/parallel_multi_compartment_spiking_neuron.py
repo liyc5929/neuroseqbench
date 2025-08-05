@@ -6,9 +6,11 @@ from ..trainer import SurrogateGradient as SG
 from ..trainer.surrogate import PMSN_surrogate
 from .base_neuron import BaseNeuron
 
+
 class PMSN_SpikeGeneration(nn.Module):
     def forward(self, v, thresh):
         return PMSN_surrogate.apply(v.relu(), thresh)
+
 
 class PMSN(BaseNeuron):
     def __init__(

@@ -5,7 +5,7 @@ import math
 import torch
 import torch.nn as nn
 from einops import rearrange, repeat
-from .lif import LIFAct,SpikeGeneration
+from . import SpikeGeneration
 
 
 class DropoutNd(nn.Module):
@@ -24,13 +24,13 @@ class DropoutNd(nn.Module):
     def forward(self, X):
         """X: (batch, dim, lengths...)."""
         if self.training:
-            if not self.transposed: X = rearrange(X, 'b ... d -> b d ...')
+            if not self.transposed: X = rearrange(X, "b ... d -> b d ...")
             # binomial = torch.distributions.binomial.Binomial(probs=1-self.p) # This is incredibly slow because of CPU -> GPU copying
             mask_shape = X.shape[:2] + (1,) * (X.ndim - 2) if self.tie else X.shape
             # mask = self.binomial.sample(mask_shape)
             mask = torch.rand(*mask_shape, device=X.device) < 1. - self.p
             X = X * mask * (1.0 / (1 - self.p))
-            if not self.transposed: X = rearrange(X, 'b d ... -> b ... d')
+            if not self.transposed: X = rearrange(X, "b d ... -> b ... d")
             return X
         return X
 
@@ -51,7 +51,7 @@ class S4DKernel(nn.Module):
         self.register("log_dt", log_dt, lr)
 
         log_A_real = torch.log(0.5 * torch.ones(H, N//2))
-        A_imag = math.pi * repeat(torch.arange(N//2), 'n -> h n', h=H)
+        A_imag = math.pi * repeat(torch.arange(N//2), "n -> h n", h=H)
         self.register("log_A_real", log_A_real, lr)
         self.register("A_imag", A_imag, lr)
 
@@ -69,7 +69,7 @@ class S4DKernel(nn.Module):
         dtA = A * dt.unsqueeze(-1)  # (H N)
         K = dtA.unsqueeze(-1) * torch.arange(L, device=A.device) # (H N L)
         C = C * (torch.exp(dtA)-1.) / A
-        K = 2 * torch.einsum('hn, hnl -> hl', C, torch.exp(K)).real
+        K = 2 * torch.einsum("hn, hnl -> hl", C, torch.exp(K)).real
 
         return K
 
@@ -110,7 +110,7 @@ class S4D(nn.Module):
         self.dropout = dropout_fn(dropout) if dropout > 0.0 else nn.Identity()
 
         # position-wise output transform to mix features
-        if self.binary != 'GSU':
+        if self.binary != "GSU":
             self.output_linear = nn.Sequential(
                 nn.Conv1d(self.h, 2*self.h, kernel_size=1),
                 nn.GLU(dim=-2),
@@ -133,7 +133,7 @@ class S4D(nn.Module):
         B,H,L = u.size()
         z = u
 
-        if self.binary != 'GSU':
+        if self.binary != "GSU":
             u = self.LN(u.transpose(-2,-1)).transpose(-2,-1)
 
         # Compute SSM Kernel
@@ -149,15 +149,14 @@ class S4D(nn.Module):
         # Compute D term in state space equation - essentially a skip connection
         y = y + u * self.D.unsqueeze(-1)
 
-        if self.binary == 'binary':
-            # y = self.dropout(LIFAct.apply(y, 0., 0., self.threshold, self.time_step, self.surro_grad))
+        if self.binary == "binary":
             y = self.act(y, 0., 0., self.threshold, self.time_step, self.surro_grad)
             y = self.dropout(y)
-        elif self.binary == 'GSU':
+        elif self.binary == "GSU":
             y = self.dropout(y)
         else:
             y = self.dropout(self.activation(y))
-        if self.binary != 'GSU':
+        if self.binary != "GSU":
             y = self.output_linear(y)
         else:
             y = y.permute(2,0,1).reshape(-1, self.h) # B*L,H
@@ -175,7 +174,7 @@ class S4D(nn.Module):
             y = z + y
         y = y.permute(2, 0, 1) # [B, H, L] ->[L, B, H]
         if self.return_state:
-            return y, state # Return a dummy state to satisfy this repo's interface, but this can be modified
+            return y, state # Return a dummy state to satisfy this repo"s interface, but this can be modified
         else:
             return y
 
@@ -193,13 +192,13 @@ def setup_optimizer(model, lr, weight_decay, epochs, optim):
     # All parameters in the model
     all_parameters = list(model.parameters())
 
-    # General parameters don't contain the special _optim key
+    # General parameters don"t contain the special _optim key
     params = [p for p in all_parameters if not hasattr(p, "_optim")]
 
     # Create an optimizer with the general parameters
-    if optim == 'sgd':
+    if optim == "sgd":
         optimizer = torch.optim.SGD(params, lr=lr, weight_decay=weight_decay, momentum=0.0)
-    elif optim == 'adam':
+    elif optim == "adam":
         optimizer = torch.optim.AdamW(params, lr=lr, weight_decay=weight_decay)
 
     # Add parameters with special hyperparameters
@@ -221,7 +220,7 @@ def setup_optimizer(model, lr, weight_decay, epochs, optim):
     keys = sorted(set([k for hp in hps for k in hp.keys()]))
     for i, g in enumerate(optimizer.param_groups):
         group_hps = {k: g.get(k, None) for k in keys}
-        print(' | '.join([
+        print(" | ".join([
             f"Optimizer group {i}",
             f"{len(g['params'])} tensors",
         ] + [f"{k} {v}" for k, v in group_hps.items()]))
@@ -243,13 +242,13 @@ def setup_optimizer(model, lr, weight_decay, epochs, optim):
     # All parameters in the model
     all_parameters = list(model.parameters())
 
-    # General parameters don't contain the special _optim key
+    # General parameters don"t contain the special _optim key
     params = [p for p in all_parameters if not hasattr(p, "_optim")]
 
     # Create an optimizer with the general parameters
-    if optim == 'sgd':
+    if optim == "sgd":
         optimizer = torch.optim.SGD(params, lr=lr, weight_decay=weight_decay, momentum=0.0)
-    elif optim == 'adam':
+    elif optim == "adam":
         optimizer = torch.optim.AdamW(params, lr=lr, weight_decay=weight_decay)
 
     # Add parameters with special hyperparameters
@@ -271,7 +270,7 @@ def setup_optimizer(model, lr, weight_decay, epochs, optim):
     keys = sorted(set([k for hp in hps for k in hp.keys()]))
     for i, g in enumerate(optimizer.param_groups):
         group_hps = {k: g.get(k, None) for k in keys}
-        print(' | '.join([
+        print(" | ".join([
             f"Optimizer group {i}",
             f"{len(g['params'])} tensors",
         ] + [f"{k} {v}" for k, v in group_hps.items()]))
