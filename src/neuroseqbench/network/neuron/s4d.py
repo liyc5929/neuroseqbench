@@ -174,7 +174,7 @@ class S4D(nn.Module):
             y = z + y
         y = y.permute(2, 0, 1) # [B, H, L] ->[L, B, H]
         if self.return_state:
-            return y, state # Return a dummy state to satisfy this repo"s interface, but this can be modified
+            return y, state # Return a dummy state to satisfy interface of this repo, but this can be modified
         else:
             return y
 
@@ -192,7 +192,7 @@ def setup_optimizer(model, lr, weight_decay, epochs, optim):
     # All parameters in the model
     all_parameters = list(model.parameters())
 
-    # General parameters don"t contain the special _optim key
+    # General parameters that do not contain the special `_optim` key
     params = [p for p in all_parameters if not hasattr(p, "_optim")]
 
     # Create an optimizer with the general parameters
@@ -242,7 +242,7 @@ def setup_optimizer(model, lr, weight_decay, epochs, optim):
     # All parameters in the model
     all_parameters = list(model.parameters())
 
-    # General parameters don"t contain the special _optim key
+    # General parameters that do not contain the special `_optim` key
     params = [p for p in all_parameters if not hasattr(p, "_optim")]
 
     # Create an optimizer with the general parameters
