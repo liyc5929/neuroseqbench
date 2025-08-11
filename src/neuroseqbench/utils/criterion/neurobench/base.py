@@ -79,14 +79,9 @@ class NeuronHook(ABC):
             self.activation_outputs.append(output[0])
             if hasattr(layer, "mem"):
                 self.post_fire_mem_potential.append(layer.mem)
-
         else:
             self.activation_outputs.append(output)
 
-    # def empty_hook(self):
-    #     """Deletes the contents of the hooks, but keeps the hook registered."""
-    #     self.activation_outputs = []
-    #     self.activation_inputs = []
 
     def reset(self):
         """Resets the stored activation outputs and inputs."""
@@ -139,15 +134,16 @@ STATELESS_LAYERS = (
     nn.Conv3d,
 )
 
-# for neuroseqbench
+RECURRENT_CELLS = (nn.RNNCellBase,)
+RECURRENT_LAYERS = (nn.RNNBase,)
+SUPPORTED_LAYERS = STATELESS_LAYERS + RECURRENT_LAYERS + RECURRENT_CELLS
+
+# Module classes specific to the NeuroSeqBench framework.
 SPIKING_NEURONS = (
     SpikeGeneration,
     PMSN_SpikeGeneration
 )
 
-RECURRENT_CELLS = (nn.RNNCellBase,)
-RECURRENT_LAYERS = (nn.RNNBase,)
-SUPPORTED_LAYERS = STATELESS_LAYERS + RECURRENT_LAYERS + RECURRENT_CELLS
 
 
 class NeuroBenchModel(ABC):
@@ -320,7 +316,6 @@ def setup_neurobench_metrics(model: torch.nn.Module) -> Tuple[NeuroBenchModel, S
     # Workload metrics
     workload_metrics = [
         ActivationSparsity,
-        MembraneUpdates,
         SynapticOperations,
     ]
 

@@ -123,6 +123,7 @@ parser.add_argument("-b", "--batch-size", default=64, type=int,
 parser.add_argument("-p", "--print-freq", default=50, type=int,
                     metavar="N", help="print frequency (default: 10)")
 parser.add_argument("--save-ckpt",default=True, action="store_true", help="")
+parser.add_argument("--use-neurobench-metrics",default=True, action="store_true", help="Using metrics introduced by NeuroBench for evaluation")
 
 # args of optimizer
 parser.add_argument("--optim", default="adam", type=str, help="optimizer (default: adam)")
@@ -178,7 +179,6 @@ def main():
     # Logging settings
     setup_logging(os.path.join(save_path, "log.txt"))
     logging.info("Saving to: \t" + str(save_path))
-
 
     is_cuda = torch.cuda.is_available()
     assert is_cuda, "CPU is not supported!"
@@ -376,6 +376,8 @@ def standard_train(train_loader, val_loader, model, criterion, optimizer, schedu
         }
         dump_json(training_record, save_path, "loss_train_record.txt")
     logging.info(f"Best accuracy/mae: {best_cri}")
+    if args.use_neurobench_metrics:
+        benchmark_neurobench_metrics(val_loader, model, criterion, device, save_path, args)
 
 
 def train_one_epoch(train_loader, model, criterion, optimizer, epoch, device, args, loss_train_record):
@@ -442,12 +444,7 @@ def validate_one_epoch(val_loader, model, criterion, device, save_path, args):
         prefix="Test: ",
     )
 
-    wrapped_model: NeuroBenchModel
-    static_mgr: StaticMetricManager
-    workload_mgr: WorkloadMetricManager
-
     model.eval()
-    wrapped_model, static_mgr, workload_mgr = setup_neurobench_metrics(model)
     with torch.no_grad():
         end = time.time()
         for i, (images, target) in enumerate(val_loader):
@@ -467,15 +464,33 @@ def validate_one_epoch(val_loader, model, criterion, device, save_path, args):
             losses.update(loss.item(), target.size(0))
             maes.update(mae.item(), target.size(0))
 
-            # Workload metrics
-            workload_mgr.run_metrics(wrapped_model, output, (images, target), target.size(0), len(val_loader.dataset))
-            workload_mgr.reset_hooks(wrapped_model)
-
+            # measure inference time
             batch_time.update(time.time() - end)
             end = time.time()
 
             if (i + 1) % args.print_freq == 0 or (i + 1) == len(val_loader):
                 progress.display(i + 1)
+
+    return top1.avg, losses.avg, maes.avg
+
+def benchmark_neurobench_metrics(val_loader, model, criterion, device, save_path, args):
+    wrapped_model: NeuroBenchModel
+    static_mgr: StaticMetricManager
+    workload_mgr: WorkloadMetricManager
+
+    model.eval()
+    wrapped_model, static_mgr, workload_mgr = setup_neurobench_metrics(model)
+    with torch.no_grad():
+        for i, (images, target) in enumerate(val_loader):
+            images = images.to(device, non_blocking=True)
+            images = images.transpose(0, 1).contiguous()  # [T, B, ..]
+            target = target.to(device, non_blocking=True)
+            # compute output
+            output = model(images) # [T, B, N]
+            output = output.mean(0)
+            # Workload metrics
+            workload_mgr.run_metrics(wrapped_model, output, (images, target), target.size(0), len(val_loader.dataset))
+            workload_mgr.reset_hooks(wrapped_model)
 
     # Finalize metrics
     static_results = static_mgr.run_metrics(wrapped_model)
@@ -492,16 +507,12 @@ def validate_one_epoch(val_loader, model, criterion, device, save_path, args):
     }
     dump_json(benchmark_results, save_path, "neurobench_metrics.json")
 
-    return top1.avg, losses.avg, maes.avg
-
-
 def angular_distance_compute(label, pred):
     mae = []
     for i in range(len(label)):
         result = 180 - abs(abs(label[i] - pred[i]) - 180)
         mae.append(result)
     return sum(mae) / len(mae)
-
 
 if __name__ == "__main__":
     main()
