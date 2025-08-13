@@ -12,6 +12,14 @@ Guidelines are provided to guarantee fair and consistent evaluations of emerging
 1. [Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects](#spiking-neural-networks-for-temporal-processing-status-quo-and-future-prospects)
 2. [Neuromorphic Sequential Arena: A Benchmark for Neuromorphic Temporal Processing](#neuromorphic-sequential-arena-a-benchmark-for-neuromorphic-temporal-processing)
 
+
+## New Features
+We have integrated evaluation metrics from [NeuroBench](https://github.com/NeuroBench/neurobench) into the NSA benchmark framework. The adapted implementation is available in the [`criterion/neurobench`](./src/neuroseqbench/utils/criterion/neurobench). When running the main script, you can now enable these metrics via：
+```bash
+--use-neurobench-metrics
+```
+Currently supports NSA benchmarks AL, HAR, EEG-MI, and SSL.
+
 ---
 
 <h3 align="center"><a name="spiking-neural-networks-for-temporal-processing-status-quo-and-future-prospects"> Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects </a></h3>
