@@ -11,7 +11,7 @@ Guidelines are provided to guarantee fair and consistent evaluations of emerging
 
 ## News
 
-- [2025-08]: 🧠 Synchronized with [`NeuroBench`](https://github.com/NeuroBench/neurobench) to support standardized evaluation metrics. See [details](#extended-metrics-support).
+- [2025-08]: 🧠 Synchronized with [NeuroBench](https://github.com/NeuroBench/neurobench) to support standardized evaluation metrics. See [details](#extended-metrics-support).
 - [2025-05]: 🎉 The *Neuromorphic Sequential Arena* paper has been accepted to *IJCAI 2025*. See [details](#neuromorphic-sequential-arena-a-benchmark-for-neuromorphic-temporal-processing).
 - [2025-02]: 🚀 Launched the *Neuromorphic Sequential Benchmark* with an initial paper release. See [details](#spiking-neural-networks-for-temporal-processing-status-quo-and-future-prospects).
 
