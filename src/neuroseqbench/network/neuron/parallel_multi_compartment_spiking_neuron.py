@@ -7,6 +7,11 @@ from ..trainer.surrogate import PMSN_surrogate
 from .base_neuron import BaseNeuron
 
 
+class PMSN_SpikeGeneration(nn.Module):
+    def forward(self, v, thresh):
+        return PMSN_surrogate.apply(v.relu(), thresh)
+
+
 class PMSN(BaseNeuron):
     def __init__(
         self,
@@ -35,6 +40,7 @@ class PMSN(BaseNeuron):
         self.D = nn.Parameter(torch.randn(self.neuron_num))
         self.thresh = torch.tensor([self.threshold])
         self.bn = nn.BatchNorm1d(self.neuron_num)
+        self.act = PMSN_SpikeGeneration()
     def __repr__(self):
         return (
             f"{self.__class__.__name__}("
@@ -55,8 +61,7 @@ class PMSN(BaseNeuron):
             return_state = True
         else:
             return_state = False
-        step_num = tx.size(0) 
-
+        step_num = tx.size(0)
         tx = self.bn(tx.view(-1, tx.size(-1))).view(step_num, -1, self.neuron_num)
         tx = tx.permute(1,2,0) # [B H T]
         k = self.kernel(L=step_num) # [H T]
@@ -66,15 +71,16 @@ class PMSN(BaseNeuron):
         _y = torch.fft.irfft(u_f*k_f, n=2*step_num)[..., :step_num] # [B H T]
         y = _y + (tx * self.D.unsqueeze(-1))
         # proposed reset mechanism
-        ty = PMSN_surrogate.apply(y.relu(), self.thresh.to(tx.device))
-        ty = ty.permute(2,0,1)
+        #ty = PMSN_surrogate.apply(y.relu(), self.thresh.to(tx.device))
+        ty = self.act(y, self.thresh.to(tx.device))
+        spikes = ty.permute(2,0,1)
 
         if return_state:
-            return ty, (_y[...,-1], None)
+            return spikes, (_y[...,-1], None)
         elif self.return_mem:
             return y[-1,].unsqueeze(0)
         else:
-            return ty
+            return spikes
 
 class PMSN_kernel(nn.Module):
     def __init__(self, d_model, N=4, dt_min=1e-3, dt_max=1e-1):

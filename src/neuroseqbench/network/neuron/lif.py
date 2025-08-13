@@ -12,6 +12,14 @@ from .base_neuron import BaseNeuron
 from .membrane_update import MembraneUpdate
 
 
+class SpikeGeneration(nn.Module):
+    def forward(self, v, rest, decay, threshold, time_step, surro_grad, thresh_require_grad=False):
+        if thresh_require_grad:
+            return LIFAct_thresh.apply(v, rest, decay, threshold,time_step, surro_grad)
+        else:
+            return LIFAct.apply(v, rest, decay, threshold, time_step, surro_grad)
+
+
 class FusedLIF(Function):
     @staticmethod
     def forward(ctx, tx, rest, decay, threshold, time_step, surro_grad: SG, use_tv: bool = False):
@@ -124,6 +132,7 @@ class LIF(BaseNeuron):
         self.prop_mode  = prop_mode
         self.reset_mode = reset_mode
         self.mem_update = MembraneUpdate(prop_mode=self.prop_mode, reset_mode=self.reset_mode)
+        self.act = SpikeGeneration()
 
     def __repr__(self):
         return (
@@ -149,7 +158,7 @@ class LIF(BaseNeuron):
             return_v = True
         for x in tx:
             v = self.mem_update(x, v, y, self.rest, self.decay, self.threshold)
-            y = LIFAct.apply(v, self.rest, self.decay, self.threshold, self.time_step, self.surro_grad)
+            y = self.act(v, self.rest, self.decay, self.threshold, self.time_step, self.surro_grad)
             ty.append(y)
         if return_v:
             return torch.stack(ty), v
@@ -193,6 +202,7 @@ class RLIF(BaseNeuron):
         self.recurrent = recurrent
         self.bn = bn
         self.last_layer = last_layer
+        self.act = SpikeGeneration()
         if self.recurrent:
             self.recurrent_weight = nn.Linear(self.neuron_num, self.neuron_num)
 
@@ -259,7 +269,7 @@ class RLIF(BaseNeuron):
                 v = self.decay * v + x
             else:
                 raise NotImplementedError
-            y = LIFAct.apply(v, self.rest, self.decay, self.threshold, self.time_step, self.surro_grad)
+            y = self.act(v, self.rest, self.decay, self.threshold, self.time_step, self.surro_grad)
             if self.learning_rule in ["sltt", "eprop", "sdbp", "ottt"]:
                 v = v - v * y.detach() + self.rest * y.detach()  # Hard reset
             elif self.learning_rule == "notd":
@@ -305,6 +315,7 @@ class Recurrent_LIF(BaseNeuron):
         self.recurrent = recurrent
         self.return_mem = False
         self.cut_grad = cut_grad
+        self.act = SpikeGeneration()
         if self.recurrent:
             self.recurrent_weight = nn.Linear(self.neuron_num, self.neuron_num)
 
@@ -339,7 +350,7 @@ class Recurrent_LIF(BaseNeuron):
                 v = self.decay * v.detach() * (1.0 - y.detach()) + self.rest * y.detach() + x
             else:
                 v = self.decay * v * (1.0 - y) + self.rest * y + x
-            y = LIFAct.apply(v, self.rest, self.decay, self.threshold, self.time_step, self.surro_grad)
+            y = self.act(v, self.rest, self.decay, self.threshold, self.time_step, self.surro_grad)
             ty.append(y)
         if return_state:
             return torch.stack(ty), (v, y)

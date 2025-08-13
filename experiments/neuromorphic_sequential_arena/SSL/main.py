@@ -11,7 +11,12 @@ import torch.nn as nn
 from datetime import datetime
 
 from neuroseqbench.utils.tools import (
-    setup_logging, save_checkpoint, AverageMeter, ProgressMeter, accuracy, count_parameters, dump_json
+    setup_logging, save_checkpoint, AverageMeter, ProgressMeter, 
+    accuracy, count_parameters, dump_json, 
+)
+from neuroseqbench.utils.criterion.neurobench import (
+    NeuroBenchModel, StaticMetricManager, WorkloadMetricManager, 
+    setup_neurobench_metrics,
 )
 from neuroseqbench.network.trainer import SurrogateGradient
 from neuroseqbench.network.neuron import Recurrent_LIF, CELIF, PMSN, SPSN, LTC, S4D
@@ -63,7 +68,7 @@ class FFSNN(nn.Module):
         if time_step is None:
             time_step = x.size(0)
         output = self.multi_step_forward(x, time_step)
-        if self.dataset in ["add", "biadd", "EEG"]: # last-step decision
+        if self.dataset in ["EEG"]: # last-step decision
             output=output[-1, ...].unsqueeze(0)
         return output
 
@@ -118,6 +123,7 @@ parser.add_argument("-b", "--batch-size", default=64, type=int,
 parser.add_argument("-p", "--print-freq", default=50, type=int,
                     metavar="N", help="print frequency (default: 10)")
 parser.add_argument("--save-ckpt",default=True, action="store_true", help="")
+parser.add_argument("--use-neurobench-metrics",default=True, action="store_true", help="Using metrics introduced by NeuroBench for evaluation")
 
 # args of optimizer
 parser.add_argument("--optim", default="adam", type=str, help="optimizer (default: adam)")
@@ -167,14 +173,12 @@ def main():
             save_path = "exp/" + args.dataset  + "/" + args.name + args.net + "_" + args.dataset + "_" + str(args.time_window) + "_" + args.neuron + "_" + "FF_" + str(args.seed) + "_" + save_path
     else:
         save_path = args.save_path
-    print(save_path)
 
     if not os.path.exists(save_path):
         os.makedirs(save_path)
     # Logging settings
     setup_logging(os.path.join(save_path, "log.txt"))
-    logging.info("saving to:" + str(save_path))
-
+    logging.info("Saving to: \t" + str(save_path))
 
     is_cuda = torch.cuda.is_available()
     assert is_cuda, "CPU is not supported!"
@@ -222,7 +226,6 @@ def main():
                                              shuffle=False)
 
     print("Dataloader finish")
-    # TODO: Build spiking model
     args.surrogate = "triangle"
     surro_grad = SurrogateGradient(func_name=args.surrogate, a=args.alpha)
     exec_mode = "serial"
@@ -308,7 +311,7 @@ def main():
         spiking_neuron = partial(S4D,
                                  dropout=0.1,
                                  lr=min(0.001, args.lr),
-                                 binary="GSN"
+                                 binary="GSU"
                                  )
         model = SSM(input_size=input_channels, hidden_size=args.hidden_dim, output_size=num_classes,
                     num_hidden_layers=len(args.hidden_dim),
@@ -342,6 +345,7 @@ def main():
     model = model.to(device)
     standard_train(train_loader, val_loader, model, criterion, optimizer, scheduler, save_path, best_cri, device, args)
 
+
 def standard_train(train_loader, val_loader, model, criterion, optimizer, scheduler, save_path, best_cri, device, args):
     loss_train_record  = []
     for epoch in range(args.start_epoch, args.epochs):
@@ -349,7 +353,7 @@ def standard_train(train_loader, val_loader, model, criterion, optimizer, schedu
         train_acc1, train_loss, loss_train_record, train_mae = train_one_epoch(train_loader, model, criterion, optimizer, epoch,
                                                                     device, args, loss_train_record)
         scheduler.step()
-        val_acc1,val_loss,val_mae = validate_one_epoch(val_loader, model, criterion, device, args)
+        val_acc1,val_loss,val_mae = validate_one_epoch(val_loader, model, criterion, device, save_path, args)
         out_string = "Train Acc. {:.4f} Train MAE {:.4f} Test Acc. {:.4f} Test MAE {:.4f} \n ".format(train_acc1,
                                                                                                       train_mae,
                                                                                                       val_acc1,
@@ -372,6 +376,8 @@ def standard_train(train_loader, val_loader, model, criterion, optimizer, schedu
         }
         dump_json(training_record, save_path, "loss_train_record.txt")
     logging.info(f"Best accuracy/mae: {best_cri}")
+    if args.use_neurobench_metrics:
+        benchmark_neurobench_metrics(val_loader, model, criterion, device, save_path, args)
 
 
 def train_one_epoch(train_loader, model, criterion, optimizer, epoch, device, args, loss_train_record):
@@ -426,7 +432,7 @@ def train_one_epoch(train_loader, model, criterion, optimizer, epoch, device, ar
     return top1.avg, losses.avg, loss_train_record, maes.avg
 
 
-def validate_one_epoch(val_loader, model, criterion, device, args):
+def validate_one_epoch(val_loader, model, criterion, device, save_path, args):
     batch_time = AverageMeter("Time", ":6.3f")
     losses = AverageMeter("Loss", ":.4e")
     maes = AverageMeter("MAE", ":.4e")
@@ -435,16 +441,15 @@ def validate_one_epoch(val_loader, model, criterion, device, args):
     progress = ProgressMeter(
         len(val_loader),
         [batch_time, losses, top1, top5, maes],
-        prefix="Test: ")
+        prefix="Test: ",
+    )
 
-    # switch to evaluate mode
     model.eval()
-
     with torch.no_grad():
         end = time.time()
         for i, (images, target) in enumerate(val_loader):
             images = images.to(device, non_blocking=True)
-            images = images.transpose(0,1).contiguous()  # [T, B, ..]
+            images = images.transpose(0, 1).contiguous()  # [T, B, ..]
             target = target.to(device, non_blocking=True)
 
             # compute output
@@ -459,14 +464,48 @@ def validate_one_epoch(val_loader, model, criterion, device, args):
             losses.update(loss.item(), target.size(0))
             maes.update(mae.item(), target.size(0))
 
-
-            # measure elapsed time
+            # measure inference time
             batch_time.update(time.time() - end)
             end = time.time()
 
             if (i + 1) % args.print_freq == 0 or (i + 1) == len(val_loader):
                 progress.display(i + 1)
     return top1.avg, losses.avg, maes.avg
+
+
+def benchmark_neurobench_metrics(val_loader, model, criterion, device, save_path, args):
+    wrapped_model: NeuroBenchModel
+    static_mgr: StaticMetricManager
+    workload_mgr: WorkloadMetricManager
+
+    model.eval()
+    wrapped_model, static_mgr, workload_mgr = setup_neurobench_metrics(model)
+    with torch.no_grad():
+        for i, (images, target) in enumerate(val_loader):
+            images = images.to(device, non_blocking=True)
+            images = images.transpose(0, 1).contiguous()  # [T, B, ..]
+            target = target.to(device, non_blocking=True)
+            # compute output
+            output = model(images) # [T, B, N]
+            output = output.mean(0)
+            # Workload metrics
+            workload_mgr.run_metrics(wrapped_model, output, (images, target), target.size(0), len(val_loader.dataset))
+            workload_mgr.reset_hooks(wrapped_model)
+
+    # Finalize metrics
+    static_results = static_mgr.run_metrics(wrapped_model)
+    workload_results = workload_mgr.results
+    workload_mgr.clean_results()
+
+    logging.info(f"Neurobench Static Metrics:\n{json.dumps(static_results, indent=2)}")
+    logging.info(f"Neurobench Workload Metrics:\n{json.dumps(workload_results, indent=2)}")
+
+    # Save results
+    benchmark_results = {
+        "static": static_results,
+        "workload": workload_results
+    }
+    dump_json(benchmark_results, save_path, "neurobench_metrics.json")
 
 
 def angular_distance_compute(label, pred):

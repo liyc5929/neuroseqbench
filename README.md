@@ -8,9 +8,18 @@ This repository contains the source code and implementation details associated w
 
 Guidelines are provided to guarantee fair and consistent evaluations of emerging SNN approaches using this repository. We warmly invite researchers and practitioners in the field of neuromorphic temporal processing to engage with us by providing feedback and contributing. By integrating more comprehensive temporal processing benchmarks and advanced SNN methods, your contributions can significantly advance this field. We value your insights and look forward to collaborating to drive innovation together.
 
+
+## News
+
+- [Aug 2025]: 🔥 Synchronized with [*NeuroBench*](https://github.com/NeuroBench/neurobench) to support standardized evaluation metrics. See [details](#extended-metrics-support).
+- [May 2025]: 🎉 The *Neuromorphic Sequential Arena* paper has been accepted to *IJCAI 2025*. See [details](#neuromorphic-sequential-arena-a-benchmark-for-neuromorphic-temporal-processing).
+- [Feb 2025]: 🚀 Launched the *Neuromorphic Sequential Benchmark* with an initial paper release. See [details](#spiking-neural-networks-for-temporal-processing-status-quo-and-future-prospects).
+
+
 ## Table of Contents
 1. [Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects](#spiking-neural-networks-for-temporal-processing-status-quo-and-future-prospects)
 2. [Neuromorphic Sequential Arena: A Benchmark for Neuromorphic Temporal Processing](#neuromorphic-sequential-arena-a-benchmark-for-neuromorphic-temporal-processing)
+</br>
 
 ---
 
@@ -19,6 +28,8 @@ Guidelines are provided to guarantee fair and consistent evaluations of emerging
 ---
 
 > **Abstract:** Temporal processing is fundamental for both biological and artificial intelligence systems, as it enables the comprehension of dynamic environments and facilitates timely responses. Spiking Neural Networks (SNNs) excel in handling such data with high efficiency, owing to their rich neuronal dynamics and sparse activity patterns. Given the recent surge in the development of SNNs, there is an urgent need for a comprehensive evaluation of their temporal processing capabilities. In this paper, we first conduct an in-depth assessment of commonly used neuromorphic benchmarks, revealing critical limitations in their ability to evaluate the temporal processing capabilities of SNNs. To bridge this gap, we further introduce a benchmark suite consisting of three temporal processing tasks characterized by rich temporal dynamics across multiple timescales. Utilizing this benchmark suite, we perform a thorough evaluation of recently introduced SNN approaches to elucidate the current status of SNNs in temporal processing. Our findings indicate significant advancements in recently developed spiking neuron models and neural architectures regarding their temporal processing capabilities, while also highlighting a performance gap in handling long-range dependencies when compared to state-of-the-art non-spiking models. Finally, we discuss the key challenges and outline potential avenues for future research.
+
+- 📝 **Preprint** available on [arXiv:2502.09449](https://arxiv.org/abs/2502.09449).
 
 ## Features
 
@@ -393,7 +404,7 @@ The table below provides a comprehensive overview of the SNN methods that have b
 ## Steps to Reproduce Results
 
 ### Dependencies
-```shell
+```bash
 # Environment dependencies
 torch, torchvision, torchaudio
 
@@ -409,7 +420,7 @@ dcls
 
 To incorporate the `neuroseqbench` module into your experimental code, please follow these steps:
 
-```shell
+```bash
 git clone https://github.com/liyc5929/neuroseqbench.git
 pip install -e .
 ```
@@ -425,7 +436,7 @@ Each experiment in the paper has a corresponding `toml` configuration in a folde
 
 Here is an example to reproduce the experiments of spiking neuron models by executing the file `run_05_spiking_neuron_on_benchmarks.sh`,  which contains the following commands:
 
-```shell
+```bash
 # PennTreebank
 python ./experiments/runner.py --paper_name segregated_temporal_probe --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PTB_LIF_feedforward --data_root /benchmark_data --device 0
 python ./experiments/runner.py --paper_name segregated_temporal_probe --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item PTB_LIF_recurrent --data_root /benchmark_data --device 0
@@ -439,6 +450,8 @@ python ./experiments/runner.py --paper_name segregated_temporal_probe --experime
 python ./experiments/runner.py --paper_name segregated_temporal_probe --experiment_name 05_spiking_neuron_on_benchmarks --experiment_item BinaryAdding_LIF_recurrent --data_root /benchmark_data --device 0
 ```
 
+</br>
+
 ---
 
 <h3 align="center"><a name="neuromorphic-sequential-arena-a-benchmark-for-neuromorphic-temporal-processing"> Neuromorphic Sequential Arena: A Benchmark for Neuromorphic Temporal Processing </a></h3>
@@ -446,13 +459,13 @@ python ./experiments/runner.py --paper_name segregated_temporal_probe --experime
 ---
 
 > **Abstract:** Temporal processing is vital for extracting meaningful information from time-varying signals. Recent advancements in Spiking Neural Networks (SNNs) have shown immense promise in efficiently processing these signals. However, progress in this field has been impeded by the lack of effective and standardized benchmarks, which complicates the consistent measurement of technological advancements and limits the practical applicability of SNNs. To bridge this gap, we introduce the Neuromorphic Sequential Arena (NSA), a comprehensive benchmark that offers an effective, versatile, and application-oriented evaluation framework for neuromorphic temporal processing. The NSA includes seven real-world temporal processing tasks from a diverse range of application scenarios, each capturing rich temporal dynamics across multiple timescales. Utilizing NSA, we conduct extensive comparisons of recently introduced spiking neuron models and neural architectures, presenting comprehensive baselines in terms of task performance, training speed, memory usage, and energy efficiency. Our findings emphasize an urgent need for efficient SNN designs that can consistently deliver high performance across tasks with varying temporal complexities while maintaining low computational costs. NSA enables systematic tracking of advancements in neuromorphic algorithm research and paves the way for the development of effective and efficient neuromorphic temporal processing systems.
-
-👉 **Supplementary Material** for this paper can be found in the [`neuromorphic_sequential_arena_supp.pdf`](./docs/source/_static/neuromorphic_sequential_arena_supp.pdf) file.
+- 📘 **Accepted manuscript** to *IJCAI 2025* available on [arXiv:2505.22035](https://arxiv.org/abs/2505.22035).
+- 👉 **Supplementary Material** for this paper can be found in the [`neuromorphic_sequential_arena_supp.pdf`](./docs/source/_static/neuromorphic_sequential_arena_supp.pdf) file.
 
 ## Steps to Reproduce Results
 
 ### Dependencies
-```shell
+```bash
 # Environment dependencies
 torch, torchvision, torchaudio
 
@@ -471,10 +484,17 @@ scikit-learn
 
 To incorporate the `neuroseqbench` module into your experimental code, please follow these steps:
 
-```shell
+```bash
 git clone https://github.com/liyc5929/neuroseqbench.git
 pip install -e .
 ```
+
+If you've configured a `uv` environment, you can simply run:
+
+```bash
+uv sync
+```
+to install all dependencies at once.
 
 ### Data Availability
 
@@ -489,7 +509,7 @@ pip install -e .
 
 Each experiment in the paper  is organized by task and placed under `experiments/neuromorphic_sequential_arena/`. We provide the following scripts to run all experiments for each task:
 
-```shell
+```bash
 bash AL/run_all.sh
 bash HAR/run_all.sh
 bash EEG-MI/run_all.sh
@@ -499,6 +519,17 @@ bash AD/run_all.sh
 bash ASR/run_all.sh
 ```
 
+### Extended Metrics Support
+
+We provide built-in support for [NeuroBench metrics](https://github.com/NeuroBench/neurobench), enabling standardized, hardware-agnostic evaluation of neuromorphic models. These metrics have been integrated into our pipeline and tested on selected tasks.  
+Implementation is available at [`src/neuroseqbench/utils/criterion/neurobench`](./src/neuroseqbench/utils/criterion/neurobench).
+
+To enable NeuroBench metrics during evaluation, simply add the following flag when running your main script:
+
+```bash
+--use-neurobench-metrics
+```
+Currently supported in NSA benchmark tasks: `AL`, `HAR`, `EEG-MI`, and `SSL`.
 
 
 ## Cite & Contact
