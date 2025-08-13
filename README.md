@@ -8,10 +8,6 @@ This repository contains the source code and implementation details associated w
 
 Guidelines are provided to guarantee fair and consistent evaluations of emerging SNN approaches using this repository. We warmly invite researchers and practitioners in the field of neuromorphic temporal processing to engage with us by providing feedback and contributing. By integrating more comprehensive temporal processing benchmarks and advanced SNN methods, your contributions can significantly advance this field. We value your insights and look forward to collaborating to drive innovation together.
 
-## Table of Contents
-1. [Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects](#spiking-neural-networks-for-temporal-processing-status-quo-and-future-prospects)
-2. [Neuromorphic Sequential Arena: A Benchmark for Neuromorphic Temporal Processing](#neuromorphic-sequential-arena-a-benchmark-for-neuromorphic-temporal-processing)
-
 
 ## News
 
@@ -19,6 +15,11 @@ Guidelines are provided to guarantee fair and consistent evaluations of emerging
 - [2025-05]: 🎉 The *Neuromorphic Sequential Arena* paper has been accepted to *IJCAI 2025*. See [details](#neuromorphic-sequential-arena-a-benchmark-for-neuromorphic-temporal-processing).
 - [2025-02]: 🚀 Released the *Neuromorphic Sequential Benchmark* alongside our initial arXiv submission. See [details](#spiking-neural-networks-for-temporal-processing-status-quo-and-future-prospects).
 
+
+## Table of Contents
+1. [Spiking Neural Networks for Temporal Processing: Status Quo and Future Prospects](#spiking-neural-networks-for-temporal-processing-status-quo-and-future-prospects)
+2. [Neuromorphic Sequential Arena: A Benchmark for Neuromorphic Temporal Processing](#neuromorphic-sequential-arena-a-benchmark-for-neuromorphic-temporal-processing)
+</br>
 
 ---
 
