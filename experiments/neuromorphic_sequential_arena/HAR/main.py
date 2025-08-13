@@ -406,7 +406,8 @@ def train_one_epoch(train_loader, model, criterion, optimizer, epoch, device, ar
     progress = ProgressMeter(
         len(train_loader),
         [batch_time, data_time, losses, top1, top5],
-        prefix="Epoch: [{}]".format(epoch))
+        prefix="Epoch: [{}]".format(epoch),
+    )
 
     model.train()
     end = time.time()
@@ -481,8 +482,8 @@ def validate_one_epoch(val_loader, model, criterion, device, save_path, args):
 
             if (i + 1) % args.print_freq == 0 or (i + 1) == len(val_loader):
                 progress.display(i + 1)
-
     return top1.avg, losses.avg
+
 
 def benchmark_neurobench_metrics(val_loader, model, criterion, device, save_path, args):
     wrapped_model: NeuroBenchModel

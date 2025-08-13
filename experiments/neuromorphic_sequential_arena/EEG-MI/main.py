@@ -479,6 +479,7 @@ def validate_one_epoch(val_loader, model, criterion, device, save_path, args):
 
     return top1.avg, losses.avg
 
+
 def benchmark_neurobench_metrics(val_loader, model, criterion, device, save_path, args):
     wrapped_model: NeuroBenchModel
     static_mgr: StaticMetricManager

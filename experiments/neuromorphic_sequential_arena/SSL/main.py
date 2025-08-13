@@ -470,8 +470,8 @@ def validate_one_epoch(val_loader, model, criterion, device, save_path, args):
 
             if (i + 1) % args.print_freq == 0 or (i + 1) == len(val_loader):
                 progress.display(i + 1)
-
     return top1.avg, losses.avg, maes.avg
+
 
 def benchmark_neurobench_metrics(val_loader, model, criterion, device, save_path, args):
     wrapped_model: NeuroBenchModel
@@ -507,12 +507,14 @@ def benchmark_neurobench_metrics(val_loader, model, criterion, device, save_path
     }
     dump_json(benchmark_results, save_path, "neurobench_metrics.json")
 
+
 def angular_distance_compute(label, pred):
     mae = []
     for i in range(len(label)):
         result = 180 - abs(abs(label[i] - pred[i]) - 180)
         mae.append(result)
     return sum(mae) / len(mae)
+
 
 if __name__ == "__main__":
     main()
