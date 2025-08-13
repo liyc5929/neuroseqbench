@@ -13,7 +13,7 @@ Guidelines are provided to guarantee fair and consistent evaluations of emerging
 
 - [2025-08]: 🧠 Synchronized with [`NeuroBench`](https://github.com/NeuroBench/neurobench) to support standardized evaluation metrics. See [details](#extended-metrics-support).
 - [2025-05]: 🎉 The *Neuromorphic Sequential Arena* paper has been accepted to *IJCAI 2025*. See [details](#neuromorphic-sequential-arena-a-benchmark-for-neuromorphic-temporal-processing).
-- [2025-02]: 🚀 Released the *Neuromorphic Sequential Benchmark* alongside our initial arXiv submission. See [details](#spiking-neural-networks-for-temporal-processing-status-quo-and-future-prospects).
+- [2025-02]: 🚀 Launched the *Neuromorphic Sequential Benchmark* with an initial paper release. See [details](#spiking-neural-networks-for-temporal-processing-status-quo-and-future-prospects).
 
 
 ## Table of Contents
@@ -28,6 +28,8 @@ Guidelines are provided to guarantee fair and consistent evaluations of emerging
 ---
 
 > **Abstract:** Temporal processing is fundamental for both biological and artificial intelligence systems, as it enables the comprehension of dynamic environments and facilitates timely responses. Spiking Neural Networks (SNNs) excel in handling such data with high efficiency, owing to their rich neuronal dynamics and sparse activity patterns. Given the recent surge in the development of SNNs, there is an urgent need for a comprehensive evaluation of their temporal processing capabilities. In this paper, we first conduct an in-depth assessment of commonly used neuromorphic benchmarks, revealing critical limitations in their ability to evaluate the temporal processing capabilities of SNNs. To bridge this gap, we further introduce a benchmark suite consisting of three temporal processing tasks characterized by rich temporal dynamics across multiple timescales. Utilizing this benchmark suite, we perform a thorough evaluation of recently introduced SNN approaches to elucidate the current status of SNNs in temporal processing. Our findings indicate significant advancements in recently developed spiking neuron models and neural architectures regarding their temporal processing capabilities, while also highlighting a performance gap in handling long-range dependencies when compared to state-of-the-art non-spiking models. Finally, we discuss the key challenges and outline potential avenues for future research.
+
+- 📝 **Preprint** available on [arXiv:2502.09449](https://arxiv.org/abs/2502.09449).
 
 ## Features
 
@@ -455,8 +457,8 @@ python ./experiments/runner.py --paper_name segregated_temporal_probe --experime
 ---
 
 > **Abstract:** Temporal processing is vital for extracting meaningful information from time-varying signals. Recent advancements in Spiking Neural Networks (SNNs) have shown immense promise in efficiently processing these signals. However, progress in this field has been impeded by the lack of effective and standardized benchmarks, which complicates the consistent measurement of technological advancements and limits the practical applicability of SNNs. To bridge this gap, we introduce the Neuromorphic Sequential Arena (NSA), a comprehensive benchmark that offers an effective, versatile, and application-oriented evaluation framework for neuromorphic temporal processing. The NSA includes seven real-world temporal processing tasks from a diverse range of application scenarios, each capturing rich temporal dynamics across multiple timescales. Utilizing NSA, we conduct extensive comparisons of recently introduced spiking neuron models and neural architectures, presenting comprehensive baselines in terms of task performance, training speed, memory usage, and energy efficiency. Our findings emphasize an urgent need for efficient SNN designs that can consistently deliver high performance across tasks with varying temporal complexities while maintaining low computational costs. NSA enables systematic tracking of advancements in neuromorphic algorithm research and paves the way for the development of effective and efficient neuromorphic temporal processing systems.
-
-👉 **Supplementary Material** for this paper can be found in the [`neuromorphic_sequential_arena_supp.pdf`](./docs/source/_static/neuromorphic_sequential_arena_supp.pdf) file.
+- 📘 **Accepted manuscript** to *IJCAI 2025* available on [arXiv:2505.22035](https://arxiv.org/abs/2505.22035).
+- 👉 **Supplementary Material** for this paper can be found in the [`neuromorphic_sequential_arena_supp.pdf`](./docs/source/_static/neuromorphic_sequential_arena_supp.pdf) file.
 
 ## Steps to Reproduce Results
 
