@@ -13,12 +13,12 @@ Guidelines are provided to guarantee fair and consistent evaluations of emerging
 2. [Neuromorphic Sequential Arena: A Benchmark for Neuromorphic Temporal Processing](#neuromorphic-sequential-arena-a-benchmark-for-neuromorphic-temporal-processing)
 
 
-## New Features
-We have integrated evaluation metrics from [NeuroBench](https://github.com/NeuroBench/neurobench) into the NSA benchmark framework. The adapted implementation is available in the [`criterion/neurobench`](./src/neuroseqbench/utils/criterion/neurobench). When running the main script, you can now enable these metrics via：
-```bash
---use-neurobench-metrics
-```
-Currently supports NSA benchmarks AL, HAR, EEG-MI, and SSL.
+## News
+
+- [2025-08]: 🧠 Synchronized with [`NeuroBench`](https://github.com/NeuroBench/neurobench) to support standardized evaluation metrics. See [details](#extended-metrics-support).
+- [2025-05]: 🎉 The *Neuromorphic Sequential Arena* paper has been accepted to *IJCAI 2025*. See [details](#neuromorphic-sequential-arena-a-benchmark-for-neuromorphic-temporal-processing).
+- [2025-02]: 🚀 Released the *Neuromorphic Sequential Benchmark* alongside our initial arXiv submission. See [details](#spiking-neural-networks-for-temporal-processing-status-quo-and-future-prospects).
+
 
 ---
 
@@ -516,9 +516,15 @@ bash ASR/run_all.sh
 
 ### Extended Metrics Support
 
-We provide built-in support for [NeuroBench metrics](https://github.com/NeuroBench/neurobench) to evaluate neuromorphic models using standardized, hardware-agnostic performance indicators. These metrics are connected to our pipeline and have been tested on selected tasks. 
-The relevant implementation is available at [`src/neuroseqbench/utils/criterion/neurobench`](./src/neuroseqbench/utils/criterion/neurobench).
+We provide built-in support for [NeuroBench metrics](https://github.com/NeuroBench/neurobench), enabling standardized, hardware-agnostic evaluation of neuromorphic models. These metrics have been integrated into our pipeline and tested on selected tasks.  
+Implementation is available at [`src/neuroseqbench/utils/criterion/neurobench`](./src/neuroseqbench/utils/criterion/neurobench).
 
+To enable NeuroBench metrics during evaluation, simply add the following flag when running your main script:
+
+```bash
+--use-neurobench-metrics
+```
+Currently supported in NSA benchmark tasks: `AL`, `HAR`, `EEG-MI`, and `SSL`.
 
 
 ## Cite & Contact
