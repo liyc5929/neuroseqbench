@@ -478,10 +478,10 @@ def main():
 
     model = model.cuda()
 
-    standard_train(train_loader, val_loader, model, criterion, optimizer, scheduler, save_path, best_acc1, scaler, args)
+    standard_train(train_loader, val_loader, model, criterion, optimizer, scheduler, save_path, best_acc1, scaler, device, args)
 
 
-def standard_train(train_loader, val_loader, model, criterion, optimizer, scheduler, save_path, best_acc1, scaler, args):
+def standard_train(train_loader, val_loader, model, criterion, optimizer, scheduler, save_path, best_acc1, scaler, device, args):
     all_val_res = []
     loss_train_record = []
 
@@ -670,3 +670,4 @@ def benchmark_neurobench_metrics(val_loader, model, criterion, device, save_path
 
 if __name__ == "__main__":
     main()
+
